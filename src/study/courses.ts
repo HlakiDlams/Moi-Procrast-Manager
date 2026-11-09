@@ -1,12 +1,12 @@
 import type { Course, Lesson, Question } from './types'
 import { MATHS } from './content/maths'
+import { AFRIKAANS } from './content/afrikaans'
 
 /** Built-in courses. More get added stage by stage. */
-export const COURSES: Course[] = [MATHS]
+export const COURSES: Course[] = [MATHS, AFRIKAANS]
 
 /** Shown on the Study home as "coming soon" until their content is written. */
 export const COMING_SOON: { name: string; icon: string; group: 'school' | 'extra' }[] = [
-  { name: 'Afrikaans EAT', icon: '🗣️', group: 'school' },
   { name: 'EGD', icon: '📏', group: 'school' },
   { name: 'Information Technology', icon: '💻', group: 'school' },
   { name: 'English', icon: '📖', group: 'extra' },

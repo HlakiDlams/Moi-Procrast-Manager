@@ -3,6 +3,7 @@ import type { Lesson, Question } from './types'
 import QuestionView, { type Answered } from './QuestionView'
 import { addMistake, changeHearts, finishLesson, MAX_HEARTS, reviewResult, useHearts } from './progress'
 import { chime } from '../lib/sound'
+import { canSpeak, speak } from '../lib/speech'
 
 interface Item {
   q: Question
@@ -20,8 +21,10 @@ export default function LessonPlayer({
   lesson,
   review,
   color,
+  lang,
   onClose,
 }: {
+  lang?: string
   courseId: string
   lesson?: Lesson
   review?: { key: string; q: Question }[]
@@ -96,7 +99,14 @@ export default function LessonPlayer({
         <div className="player-body">
           <div className="teach">
             <div className="teach-badge">💡 Learn</div>
-            <h1>{lesson.title}</h1>
+            <div className="row-between">
+              <h1>{lesson.title}</h1>
+              {lesson.teach.say && canSpeak && (
+                <button className="icon-btn" onClick={() => speak(lesson.teach.say!, lang)} aria-label="Listen">
+                  🔊
+                </button>
+              )}
+            </div>
             <ul>
               {lesson.teach.text.map((t, i) => (
                 <li key={i}>{t}</li>
@@ -120,7 +130,7 @@ export default function LessonPlayer({
       {!teach && !done && item && (
         <div className="player-body">
           {item.attempt > 0 && <div className="pill retry-pill">🔁 Try this one again</div>}
-          <QuestionView key={`${idx}-${item.q.id}-${item.attempt}`} q={item.q} attempt={item.attempt} locked={!!result} onCheck={onCheck} />
+          <QuestionView key={`${idx}-${item.q.id}-${item.attempt}`} q={item.q} attempt={item.attempt} locked={!!result} lang={lang} onCheck={onCheck} />
         </div>
       )}
 

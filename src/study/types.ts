@@ -5,6 +5,10 @@ interface QBase {
   prompt: string
   /** shown after answering, right or wrong */
   explain: string
+  /** a reading passage shown above the question (comprehension) */
+  context?: string
+  /** text the 🔊 button reads aloud in the course language */
+  say?: string
 }
 
 export interface MCQ extends QBase {
@@ -41,7 +45,7 @@ export interface Lesson {
   id: string
   title: string
   /** short "teach me" card before the questions */
-  teach: { text: string[]; example?: string[] }
+  teach: { text: string[]; example?: string[]; /** read aloud with 🔊 */ say?: string }
   questions: Question[]
 }
 
@@ -61,5 +65,7 @@ export interface Course {
   /** matches a Planner subject name so study blocks can open it */
   subjectName?: string
   group: 'school' | 'extra'
+  /** BCP-47 language for text-to-speech, e.g. 'af-ZA' */
+  lang?: string
   units: Unit[]
 }

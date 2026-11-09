@@ -6,7 +6,7 @@ import LessonPlayer from '../study/LessonPlayer'
 import { useXpStats } from '../lib/xp'
 import { useSettings } from '../lib/settings'
 
-type Playing = { courseId: string; color: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
+type Playing = { courseId: string; color: string; lang?: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
 
 function mins(ms: number) {
   return Math.ceil(ms / 60_000)
@@ -118,7 +118,7 @@ export default function StudyScreen() {
     const list = (onlyDue ? due : cards).slice(0, 10)
     const items = list.map((c) => ({ key: c.key, q: findQuestion(c.courseId, c.qid)?.q })).filter((x): x is { key: string; q: NonNullable<typeof x.q> } => !!x.q)
     if (!items.length) return
-    setPlaying({ courseId: list[0].courseId, color: '#FF8AC8', review: items })
+    setPlaying({ courseId: list[0].courseId, color: '#FF8AC8', lang: COURSES.find((c) => c.id === list[0].courseId)?.lang, review: items })
   }
 
   function play(c: Course, l: Lesson) {
@@ -126,7 +126,7 @@ export default function StudyScreen() {
       alert(`You're out of hearts 💔 Next one in ${mins(hearts.nextIn ?? 0)} min, or review your mistakes to earn hearts now.`)
       return
     }
-    setPlaying({ courseId: c.id, color: c.color, lesson: l })
+    setPlaying({ courseId: c.id, color: c.color, lang: c.lang, lesson: l })
   }
 
   return (
@@ -207,7 +207,7 @@ export default function StudyScreen() {
         </div>
       )}
 
-      {playing && <LessonPlayer courseId={playing.courseId} lesson={playing.lesson} review={playing.review} color={playing.color} onClose={() => setPlaying(null)} />}
+      {playing && <LessonPlayer courseId={playing.courseId} lesson={playing.lesson} review={playing.review} color={playing.color} lang={playing.lang} onClose={() => setPlaying(null)} />}
     </>
   )
 }

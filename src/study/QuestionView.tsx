@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { Question } from './types'
 import { checkInput } from './check'
+import { canSpeak, speak } from '../lib/speech'
 
 function shuffle<T>(a: T[], seed: string): T[] {
   // deterministic per question so re-renders don't reshuffle
@@ -25,7 +26,7 @@ export interface Answered {
  * Renders one question. Calls onCheck once the learner taps "Check".
  * `locked` = already checked (show result, no more input).
  */
-export default function QuestionView({ q, attempt, locked, onCheck }: { q: Question; attempt: number; locked: boolean; onCheck: (a: Answered) => void }) {
+export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q: Question; attempt: number; locked: boolean; lang?: string; onCheck: (a: Answered) => void }) {
   const seed = q.id + attempt
   // MCQ
   const order = useMemo(() => (q.type === 'mcq' ? shuffle(q.options.map((_, i) => i), seed) : []), [q, seed])
@@ -64,7 +65,15 @@ export default function QuestionView({ q, attempt, locked, onCheck }: { q: Quest
 
   return (
     <div className="q">
-      <h2 className="q-prompt">{q.prompt}</h2>
+      {q.context && <div className="q-context">{q.context}</div>}
+      <div className="q-prompt-row">
+        <h2 className="q-prompt">{q.prompt}</h2>
+        {q.say && canSpeak && (
+          <button className="icon-btn" onClick={() => speak(q.say!, lang)} aria-label="Listen">
+            🔊
+          </button>
+        )}
+      </div>
 
       {q.type === 'mcq' && (
         <div className="q-options">
