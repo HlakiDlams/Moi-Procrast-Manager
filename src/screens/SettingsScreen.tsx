@@ -46,17 +46,6 @@ export default function SettingsScreen() {
     }
   }
 
-  async function toggleNotifications(on: boolean) {
-    if (on && 'Notification' in window) {
-      const p = await Notification.requestPermission()
-      if (p !== 'granted') {
-        setMsg('Notifications are blocked in your browser settings.')
-        return setSetting('notifications', false)
-      }
-    }
-    setSetting('notifications', on)
-  }
-
   async function onImport(file: File) {
     try {
       await importData(JSON.parse(await file.text()))
@@ -106,10 +95,9 @@ export default function SettingsScreen() {
             <input type="time" value={s.wakeTime} onChange={str('wakeTime')} />
           </Field>
         </div>
-        <label className="toggle">
-          <input type="checkbox" checked={s.notifications} onChange={(e) => toggleNotifications(e.target.checked)} />
-          <span>Gentle reminders (tasks, water, breaks, bedtime)</span>
-        </label>
+        <a className="btn btn-ghost full" href="#/alarms">
+          ⏰ Reminders & alarms ›
+        </a>
       </section>
 
       <section className="card">

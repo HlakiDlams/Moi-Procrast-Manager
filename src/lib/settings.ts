@@ -14,7 +14,15 @@ export interface Settings {
   bedtime: string // HH:MM
   wakeTime: string
   waterGoal: number // glasses
+  /** master switch for reminders */
   notifications: boolean
+  remindTasks: boolean
+  remindWater: boolean
+  /** minutes between water reminders (between wake and bedtime) */
+  waterEvery: number
+  remindBedtime: boolean
+  /** keep the screen on while a focus timer runs */
+  keepAwake: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -31,12 +39,17 @@ export const DEFAULT_SETTINGS: Settings = {
   wakeTime: '06:00',
   waterGoal: 8,
   notifications: false,
+  remindTasks: true,
+  remindWater: true,
+  waterEvery: 90,
+  remindBedtime: true,
+  keepAwake: true,
 }
 
 export async function getSettings(): Promise<Settings> {
   const rows = await db.settings.toArray()
   const out: Record<string, unknown> = { ...DEFAULT_SETTINGS }
-  for (const r of rows) out[r.key] = r.value
+  for (const r of rows) if (r.key in DEFAULT_SETTINGS) out[r.key] = r.value
   return out as unknown as Settings
 }
 

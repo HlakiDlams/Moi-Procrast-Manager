@@ -3,8 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import './index.css'
 import App from './App.tsx'
+import { isNative } from './lib/platform'
 
-registerSW({ immediate: true })
+// The Android app ships its files inside the APK, so it doesn't need a service worker.
+if (!isNative) registerSW({ immediate: true })
 
 // Ask the browser not to evict our IndexedDB data when storage is low.
 navigator.storage?.persist?.().catch(() => {})

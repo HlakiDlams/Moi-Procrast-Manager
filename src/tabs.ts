@@ -7,6 +7,7 @@ export type TabId =
   | 'exercise'
   | 'homework'
   | 'profile'
+  | 'alarms'
   | 'settings'
 
 export interface TabDef {
@@ -27,6 +28,7 @@ export const TABS: TabDef[] = [
   { id: 'exercise', label: 'Exercise', icon: '💪', accent: '#FF3B5C', primary: false },
   { id: 'homework', label: 'Homework Checker', icon: '✅', accent: '#FFD166', primary: false },
   { id: 'profile', label: 'Profile & Goals', icon: '🎯', accent: '#FF5FA2', primary: false },
+  { id: 'alarms', label: 'Alarms & Reminders', icon: '⏰', accent: '#FF2E93', primary: false },
   { id: 'settings', label: 'Settings', icon: '⚙️', accent: '#FFB3D9', primary: false },
 ]
 

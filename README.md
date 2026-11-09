@@ -12,13 +12,28 @@ npm run build    # production build in dist/
 npm run preview  # serve the build (service worker + install prompt work here)
 ```
 
-## Install on your phone
-Host `dist/` anywhere with HTTPS (GitHub Pages, Netlify, Vercel), open it in Chrome
-(Android) or Safari (iPhone), then "Add to Home screen".
+## Android app (Huawei etc.)
+Every push builds an APK with GitHub Actions (`.github/workflows/android.yml`) and
+publishes it as the **apk-latest** release. On the phone: open the repo's Releases page,
+download `hlakis-planner.apk`, tap it, and allow "install unknown apps".
+Updates install over the top and keep your data (the APK is always signed with the
+same key, `android/app/hlaki-planner.keystore` - personal use only, not for Play Store).
+
+The Android app adds scheduled reminders that fire while the app is closed and
+alarms handed to the phone's Clock app (`ClockPlugin.java`).
+
+**Huawei:** Settings -> Battery -> App launch -> Hlaki's Planner -> Manage manually,
+and turn on all three switches, or reminders may be blocked.
+
+Local Android build (needs Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`
+
+## Web / PWA
+Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen"
+(or "Install app" in Edge/Chrome on Windows).
 
 ## Build stages
 - [x] 1. App shell, pink/black theme, navigation, IndexedDB, shared XP/streaks, settings, JSON backup, PWA
-- [ ] 2. Today (2-minute starter, Pomodoro, reminders)
+- [x] 2. Android app + Today (2-minute starter, Pomodoro, reminders, alarms)
 - [ ] 3. Study (skill trees, lessons, review deck, Mistral)
 - [ ] 4. Planner
 - [ ] 5. Self-Care
@@ -26,3 +41,4 @@ Host `dist/` anywhere with HTTPS (GitHub Pages, Netlify, Vercel), open it in Chr
 - [ ] 7. Exercise
 - [ ] 8. Profile & Goals
 - [ ] 9. Homework Checker
+- [ ] 10. Windows app

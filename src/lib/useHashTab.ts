@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { tabById, type TabId } from '../tabs'
 
 function read(): TabId {
@@ -14,5 +14,8 @@ export function useHashTab(): [TabId, (t: TabId) => void] {
     window.addEventListener('hashchange', on)
     return () => window.removeEventListener('hashchange', on)
   }, [])
-  return [tab, (t) => (window.location.hash = `/${t}`)]
+  const go = useCallback((t: TabId) => {
+    window.location.hash = `/${t}`
+  }, [])
+  return [tab, go]
 }

@@ -1,0 +1,60 @@
+name: Build Android APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Build web app
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
+      - name: Copy web app into Android project
+        run: npx cap sync android
+
+      - name: Build APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../hlakis-planner.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hlakis-planner-apk
+          path: hlakis-planner.apk
+
+      - name: Publish as "latest" release (easy phone download)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete apk-latest -y --cleanup-tag || true
+          gh release create apk-latest hlakis-planner.apk \
+            --title "Hlaki's Planner (latest build)" \
+            --notes "Built from ${GITHUB_REF_NAME} @ ${GITHUB_SHA::7}, build #${GITHUB_RUN_NUMBER}. Download hlakis-planner.apk on your phone and tap to install." \
+            --target "${GITHUB_SHA}" --latest

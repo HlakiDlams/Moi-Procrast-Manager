@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
@@ -6,6 +6,13 @@ import { useSettings } from './lib/settings'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ComingSoon from './screens/ComingSoon'
+import AlarmsScreen from './screens/AlarmsScreen'
+import FocusOverlay from './components/FocusOverlay'
+import Alerts from './components/Alerts'
+import { useReminderSync } from './lib/reminders'
+import { onTapped } from './lib/notify'
+import { startStarter } from './lib/focus'
+import { db } from './lib/db'
 
 function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
   switch (tab) {
@@ -13,6 +20,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <TodayScreen go={go} />
     case 'settings':
       return <SettingsScreen />
+    case 'alarms':
+      return <AlarmsScreen />
     default:
       return <ComingSoon tab={tab} />
   }
@@ -28,6 +37,21 @@ export default function App() {
   const stats = useXpStats()
   const settings = useSettings()
   const def = tabById(tab)!
+  useReminderSync()
+
+  // Tapping a notification: jump to the right place (and start the 2-min timer for a task).
+  useEffect(
+    () =>
+      onTapped(async (extra) => {
+        if (extra.kind === 'water') return navigate('selfcare')
+        navigate('today')
+        if (extra.kind === 'block' && extra.start && typeof extra.blockId === 'number') {
+          const b = await db.blocks.get(extra.blockId)
+          if (b && b.status === 'planned') startStarter(b.title, b.id)
+        }
+      }),
+    [navigate],
+  )
 
   const primary = TABS.filter((t) => t.primary)
   const secondary = TABS.filter((t) => !t.primary)
@@ -58,6 +82,9 @@ export default function App() {
       <main className="screen" key={tab}>
         <Screen tab={tab} go={go} />
       </main>
+
+      <FocusOverlay />
+      <Alerts />
 
       {moreOpen && (
         <div className="sheet-backdrop" onClick={() => setMoreOpen(false)}>
