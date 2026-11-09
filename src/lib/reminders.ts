@@ -5,7 +5,12 @@ import { addDays, atTime, db, localDay, type Alarm, type Block } from './db'
 import { getSettings, type Settings } from './settings'
 import { replaceAll, type Reminder } from './notify'
 import { isNative } from './platform'
-import { kindInfo } from './blocks'
+import { blockEnd, kindInfo } from './blocks'
+
+const fmtEnd = (b: Block) => {
+  const e = blockEnd(b)
+  return `${String(e.getHours()).padStart(2, '0')}:${String(e.getMinutes()).padStart(2, '0')}`
+}
 
 const HORIZON_DAYS = 3
 
@@ -30,19 +35,24 @@ export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], no
         if (b.status !== 'planned' || b.kind === 'sleep') continue
         const start = atTime(b.day, b.start)
         const k = kindInfo(b.kind)
+        if (b.kind === 'prayer') {
+          out.push({ at: start, title: `🙏 ${b.title}`, body: 'Time to pray. Take a quiet moment with God.', channel: 'reminders', extra: { kind: 'prayer' } })
+          continue
+        }
+        const actionable = !b.fixed && b.kind !== 'meal'
         out.push({
           at: new Date(start.getTime() - 5 * 60_000),
           title: `${k.icon} Starting in 5 min: ${b.title}`,
-          body: `At ${b.start} for ${b.minutes} min. Get your stuff ready 💕`,
+          body: actionable ? `At ${b.start} for ${b.minutes} min. Get your stuff ready 💕` : `At ${b.start}.`,
           channel: 'reminders',
           extra: { kind: 'block', blockId: b.id },
         })
         out.push({
           at: start,
           title: `${k.icon} Time for ${b.title}`,
-          body: 'Just 2 minutes. Tap to start the timer.',
+          body: actionable ? 'Just 2 minutes. Tap to start the timer.' : `Until ${fmtEnd(b)}.`,
           channel: 'reminders',
-          extra: { kind: 'block', blockId: b.id, start: true },
+          extra: { kind: 'block', blockId: b.id, start: actionable },
         })
       }
     }

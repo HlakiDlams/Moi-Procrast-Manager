@@ -9,6 +9,7 @@ export const KINDS: { id: BlockKind; label: string; icon: string; color: string 
   { id: 'play', label: 'Play', icon: '🎮', color: '#C77DFF' },
   { id: 'exercise', label: 'Exercise', icon: '💪', color: '#FF3B5C' },
   { id: 'selfcare', label: 'Self-care', icon: '🧴', color: '#FFB3C7' },
+  { id: 'prayer', label: 'Prayer', icon: '🙏', color: '#FFE3A3' },
   { id: 'sleep', label: 'Sleep', icon: '😴', color: '#9B8CFF' },
   { id: 'other', label: 'Other', icon: '📌', color: '#D6249F' },
 ]

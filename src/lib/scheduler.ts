@@ -61,7 +61,8 @@ export function subjectWeight(sub: Subject, today: string): number {
   const pri = { 1: 1, 2: 2, 3: 3.5 }[sub.priority]
   const mark = sub.currentMark ?? Math.max(0, sub.targetMark - 20)
   const gap = Math.min(60, Math.max(0, sub.targetMark - mark))
-  let urgency = 1
+  // no exam = learning for fun/knowledge: steady but light
+  let urgency = 0.5
   if (sub.examDate) {
     const days = (new Date(sub.examDate + 'T12:00:00').getTime() - new Date(today + 'T12:00:00').getTime()) / 86_400_000
     urgency = days < 0 ? 0.3 : Math.min(2.5, Math.max(0.6, 150 / Math.max(7, days)))
@@ -187,6 +188,8 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
         const tg = target.get(id) || 1
         let score = (tg - (allocated.get(id) ?? 0)) / tg
         if (sub.priority === 3) score += good ? 0.35 : -0.15
+        // exam subjects get the best-focus hours, extras lean to the other slots
+        if (sub.group === 'extra' || !sub.examDate) score += good ? -0.4 : 0.3
         if (id === prev) score -= 1
         score -= (usedToday.get(id) ?? 0) * 0.3
         if (score > bestScore) {

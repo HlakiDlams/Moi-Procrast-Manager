@@ -19,7 +19,7 @@ export interface XpEvent {
   note?: string
 }
 
-export type BlockKind = 'study' | 'homework' | 'break' | 'meal' | 'play' | 'exercise' | 'selfcare' | 'sleep' | 'other'
+export type BlockKind = 'study' | 'homework' | 'break' | 'meal' | 'play' | 'exercise' | 'selfcare' | 'prayer' | 'sleep' | 'other'
 
 /** A time block on a given day. Today shows them; the Planner (later stage) generates them. */
 export interface Block {
