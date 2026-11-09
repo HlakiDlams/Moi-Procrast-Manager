@@ -8,6 +8,9 @@ import SettingsScreen from './screens/SettingsScreen'
 import ComingSoon from './screens/ComingSoon'
 import AlarmsScreen from './screens/AlarmsScreen'
 import ProfileScreen from './screens/ProfileScreen'
+import PlannerScreen from './screens/PlannerScreen'
+import { useAutoReschedule } from './lib/planner'
+import { ensurePlannerSeeded } from './lib/plannerSeed'
 import FocusOverlay from './components/FocusOverlay'
 import Alerts from './components/Alerts'
 import { useReminderSync } from './lib/reminders'
@@ -25,6 +28,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <AlarmsScreen />
     case 'profile':
       return <ProfileScreen />
+    case 'planner':
+      return <PlannerScreen />
     default:
       return <ComingSoon tab={tab} />
   }
@@ -41,6 +46,10 @@ export default function App() {
   const settings = useSettings()
   const def = tabById(tab)!
   useReminderSync()
+  useAutoReschedule()
+  useEffect(() => {
+    ensurePlannerSeeded().catch((e) => console.warn('seed failed', e))
+  }, [])
   useEffect(() => applyScale(settings.uiScale), [settings.uiScale])
 
   // Tapping a notification: jump to the right place (and start the 2-min timer for a task).

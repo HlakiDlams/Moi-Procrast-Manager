@@ -258,7 +258,7 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
             {done}/{blocks.length} done{missed ? ` · ${missed} missed` : ''}
           </span>
         </div>
-        {blocks.length === 0 && !adding && <p className="muted small">No blocks yet. Add one, or the Planner tab will fill your week once it's built.</p>}
+        {blocks.length === 0 && !adding && <p className="muted small">No blocks yet. Add one, or open the Planner and tap ✨ Generate week.</p>}
         <ul className="blocks">
           {blocks.map((b) => (
             <BlockRow key={b.id} b={b} now={now} />

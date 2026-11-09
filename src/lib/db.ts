@@ -32,6 +32,44 @@ export interface Block {
   subject?: string
   status: 'planned' | 'done' | 'skipped'
   doneAt?: string
+  subjectId?: number
+  /** made by the auto-planner (can be regenerated) */
+  generated?: boolean
+  /** a fixed commitment (church, work, chores, meals) */
+  fixed?: boolean
+  /** how many times it was auto-moved after being missed */
+  reschedules?: number
+  origDay?: string
+  origStart?: string
+}
+
+/** Something you study: a school subject or an extra (language, chess...). */
+export interface Subject {
+  id?: number
+  name: string
+  icon: string
+  color: string
+  /** 1 = keep it ticking, 2 = needs work, 3 = top priority */
+  priority: 1 | 2 | 3
+  examDate: string // YYYY-MM-DD ('' = none)
+  currentMark: number | null
+  targetMark: number
+  active: boolean
+  group: 'school' | 'extra'
+}
+
+/** A repeating fixed thing in your week: church, work, chores, meals. */
+export interface Commitment {
+  id?: number
+  title: string
+  /** 0=Sun ... 6=Sat */
+  days: number[]
+  start: string
+  end: string
+  /** minutes to get there (blocked before and after) */
+  travelMin: number
+  kind: BlockKind
+  active: boolean
 }
 
 /** A finished (or partly finished) focus session from the 2-minute starter / Pomodoro. */
@@ -78,6 +116,8 @@ class PlannerDB extends Dexie {
   water!: Table<WaterLog, number>
   alarms!: Table<Alarm, number>
   weights!: Table<WeightLog, number>
+  subjects!: Table<Subject, number>
+  commitments!: Table<Commitment, number>
 
   constructor() {
     super('hlakis-planner')
@@ -93,6 +133,10 @@ class PlannerDB extends Dexie {
     })
     this.version(3).stores({
       weights: '++id, day',
+    })
+    this.version(4).stores({
+      subjects: '++id, group',
+      commitments: '++id',
     })
   }
 }

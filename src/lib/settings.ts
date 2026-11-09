@@ -11,6 +11,19 @@ export interface Settings {
   countdownLabel: string
   matricStart: string // YYYY-MM-DD, the countdown date
   showCountdown: boolean
+  /** Planner: max study minutes on Mon-Fri / Sat-Sun */
+  studyCapWeekday: number
+  studyCapWeekend: number
+  /** length of one study block and the break after it */
+  studyBlock: number
+  breakMin: number
+  /** 0=Sun..6=Sat */
+  exerciseDays: number[]
+  exerciseMin: number
+  exerciseWhen: 'morning' | 'evening'
+  /** hour from which you focus best (hard subjects go after this) */
+  focusFrom: number
+  autoReschedule: boolean
   /** display size in %, like the phone's own display zoom */
   uiScale: number
   pomodoroWork: number // minutes
@@ -40,11 +53,20 @@ export const DEFAULT_SETTINGS: Settings = {
   matricStart: '2027-10-27',
   showCountdown: true,
   uiScale: 80,
+  studyCapWeekday: 360,
+  studyCapWeekend: 270,
+  studyBlock: 50,
+  breakMin: 10,
+  exerciseDays: [1, 2, 4, 6],
+  exerciseMin: 30,
+  exerciseWhen: 'morning',
+  focusFrom: 12,
+  autoReschedule: true,
   pomodoroWork: 25,
   pomodoroBreak: 5,
   dailyXpGoal: 50,
-  bedtime: '22:00',
-  wakeTime: '06:00',
+  bedtime: '21:00',
+  wakeTime: '04:00',
   waterGoal: 8,
   notifications: false,
   remindTasks: true,

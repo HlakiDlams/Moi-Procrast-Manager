@@ -35,10 +35,10 @@ Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen
 - [x] 1. App shell, pink/black theme, navigation, IndexedDB, shared XP/streaks, settings, JSON backup, PWA
 - [x] 2. Android app + Today (2-minute starter, Pomodoro, reminders, alarms)
 - [ ] 3. Study (skill trees, lessons, review deck, Mistral)
-- [ ] 4. Planner
+- [x] 4. Planner (auto week, drag edit, planned vs done, auto-reschedule)
 - [ ] 5. Self-Care
 - [ ] 6. Play
 - [ ] 7. Exercise
-- [ ] 8. Profile & Goals
+- [~] 8. Profile & Goals (About me done; goals next)
 - [ ] 9. Homework Checker
 - [ ] 10. Windows app
