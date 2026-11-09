@@ -9,6 +9,7 @@ import ComingSoon from './screens/ComingSoon'
 import AlarmsScreen from './screens/AlarmsScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import PlannerScreen from './screens/PlannerScreen'
+import StudyScreen from './screens/StudyScreen'
 import { useAutoReschedule } from './lib/planner'
 import { ensurePlannerSeeded } from './lib/plannerSeed'
 import FocusOverlay from './components/FocusOverlay'
@@ -30,6 +31,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <ProfileScreen />
     case 'planner':
       return <PlannerScreen />
+    case 'study':
+      return <StudyScreen />
     default:
       return <ComingSoon tab={tab} />
   }

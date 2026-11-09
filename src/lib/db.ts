@@ -108,6 +108,26 @@ export interface WeightLog {
   heightCm?: number
 }
 
+/** A finished lesson (best score kept). */
+export interface LessonDone {
+  lessonId: string
+  courseId: string
+  at: string
+  best: number // 0-100
+  times: number
+}
+
+/** A question you got wrong, in the spaced-repetition review deck. */
+export interface ReviewCard {
+  key: string // courseId:questionId
+  courseId: string
+  qid: string
+  /** Leitner box 1-5: higher = longer gap before you see it again */
+  box: number
+  due: string // YYYY-MM-DD
+  lapses: number
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -118,6 +138,8 @@ class PlannerDB extends Dexie {
   weights!: Table<WeightLog, number>
   subjects!: Table<Subject, number>
   commitments!: Table<Commitment, number>
+  lessons!: Table<LessonDone, string>
+  cards!: Table<ReviewCard, string>
 
   constructor() {
     super('hlakis-planner')
@@ -137,6 +159,10 @@ class PlannerDB extends Dexie {
     this.version(4).stores({
       subjects: '++id, group',
       commitments: '++id',
+    })
+    this.version(5).stores({
+      lessons: 'lessonId, courseId',
+      cards: 'key, courseId, due',
     })
   }
 }

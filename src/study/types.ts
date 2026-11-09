@@ -1,0 +1,65 @@
+/** Lesson content format. Built-in courses live in src/study/content/. */
+
+interface QBase {
+  id: string
+  prompt: string
+  /** shown after answering, right or wrong */
+  explain: string
+}
+
+export interface MCQ extends QBase {
+  type: 'mcq'
+  options: string[]
+  /** index into options */
+  answer: number
+}
+
+export interface InputQ extends QBase {
+  type: 'input'
+  /** accepted answers (compared after normalising spaces, minus signs, x= etc.) */
+  answers: string[]
+  /** compare as numbers (fractions like 3/4 allowed) */
+  numeric?: boolean
+  tolerance?: number
+  placeholder?: string
+}
+
+export interface MatchQ extends QBase {
+  type: 'match'
+  pairs: [string, string][]
+}
+
+export interface OrderQ extends QBase {
+  type: 'order'
+  /** in the correct order */
+  steps: string[]
+}
+
+export type Question = MCQ | InputQ | MatchQ | OrderQ
+
+export interface Lesson {
+  id: string
+  title: string
+  /** short "teach me" card before the questions */
+  teach: { text: string[]; example?: string[] }
+  questions: Question[]
+}
+
+export interface Unit {
+  id: string
+  title: string
+  icon: string
+  description: string
+  lessons: Lesson[]
+}
+
+export interface Course {
+  id: string
+  name: string
+  icon: string
+  color: string
+  /** matches a Planner subject name so study blocks can open it */
+  subjectName?: string
+  group: 'school' | 'extra'
+  units: Unit[]
+}
