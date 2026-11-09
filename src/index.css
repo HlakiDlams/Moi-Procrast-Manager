@@ -87,6 +87,8 @@ p {
   transition: border-color 0.3s;
 }
 .brand {
+  all: unset;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -102,11 +104,13 @@ p {
   transition: background 0.3s, box-shadow 0.3s;
 }
 .brand-name {
+  display: block;
   font-weight: 800;
   font-size: 1rem;
   white-space: nowrap;
 }
 .brand-tab {
+  display: block;
   font-size: 0.78rem;
   color: var(--accent);
   font-weight: 700;
@@ -957,4 +961,63 @@ a.btn {
   padding-left: 20px;
   display: grid;
   gap: 6px;
+}
+
+/* ---------- profile ---------- */
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.big-val {
+  font-size: 1.5rem;
+  font-weight: 900;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+}
+.bmi-box {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: var(--card-2);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--accent);
+}
+.bmi-box.tone-ok {
+  border-left-color: #6be3a4;
+}
+.bmi-box.tone-warn {
+  border-left-color: #ffd166;
+}
+.bmi-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.weigh-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+}
+.line-chart {
+  width: 100%;
+  height: auto;
+  margin-top: 12px;
+  background: var(--card-2);
+  border-radius: var(--radius-sm);
+}
+.history {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+}
+.history li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--line);
 }

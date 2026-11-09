@@ -7,6 +7,7 @@ import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ComingSoon from './screens/ComingSoon'
 import AlarmsScreen from './screens/AlarmsScreen'
+import ProfileScreen from './screens/ProfileScreen'
 import FocusOverlay from './components/FocusOverlay'
 import Alerts from './components/Alerts'
 import { useReminderSync } from './lib/reminders'
@@ -22,6 +23,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <SettingsScreen />
     case 'alarms':
       return <AlarmsScreen />
+    case 'profile':
+      return <ProfileScreen />
     default:
       return <ComingSoon tab={tab} />
   }
@@ -60,15 +63,15 @@ export default function App() {
   return (
     <div className="app" style={{ '--accent': def.accent } as CSSProperties}>
       <header className="topbar">
-        <div className="brand">
+        <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
           <span className="brand-dot" />
-          <div>
-            <div className="brand-name">{settings.name}'s Planner</div>
-            <div className="brand-tab">
+          <span>
+            <span className="brand-name">{settings.name}'s Planner</span>
+            <span className="brand-tab">
               {def.icon} {def.label}
-            </div>
-          </div>
-        </div>
+            </span>
+          </span>
+        </button>
         <div className="chips">
           <span className="chip" title="Day streak">
             🔥 {stats.streak}

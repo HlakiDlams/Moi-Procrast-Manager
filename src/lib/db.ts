@@ -62,6 +62,14 @@ export interface Alarm {
   mode: 'app' | 'clock'
 }
 
+/** One weigh-in. Height is stored with it so BMI history stays correct as you grow. */
+export interface WeightLog {
+  id?: number
+  day: string
+  kg: number
+  heightCm?: number
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -69,6 +77,7 @@ class PlannerDB extends Dexie {
   focus!: Table<FocusLog, number>
   water!: Table<WaterLog, number>
   alarms!: Table<Alarm, number>
+  weights!: Table<WeightLog, number>
 
   constructor() {
     super('hlakis-planner')
@@ -81,6 +90,9 @@ class PlannerDB extends Dexie {
       focus: '++id, day',
       water: '++id, day',
       alarms: '++id',
+    })
+    this.version(3).stores({
+      weights: '++id, day',
     })
   }
 }
