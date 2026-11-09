@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, localDay, type WeightLog } from '../lib/db'
-import { ageOn, bmi, bmiLabel, healthyRange, saveProfile, useProfile, type Profile } from '../lib/profile'
+import { ADULT_BMI_AGE, ageOn, bmi, bmiLabel, healthyRange, LIFE_STAGES, saveProfile, useProfile, type LifeStage, type Profile } from '../lib/profile'
 import { setSetting, useSettings } from '../lib/settings'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
@@ -54,6 +54,20 @@ export default function ProfileScreen() {
   const b = latest && height ? bmi(latest.kg, height) : null
   const lbl = b !== null ? bmiLabel(b, age) : null
 
+  const isSchool = p.lifeStage === 'school'
+  const isStudy = p.lifeStage === 'tertiary' || p.lifeStage === 'work-study'
+  const isWork = p.lifeStage === 'working' || p.lifeStage === 'work-study'
+  const stageBits = isSchool
+    ? [p.grade ? `Grade ${p.grade}` : null, p.school || null]
+    : [isWork ? p.jobTitle || 'Working' : null, isStudy ? p.course || 'Studying' : null, p.lifeStage === 'gap' ? 'Gap year' : null]
+
+  async function changeStage(st: LifeStage) {
+    await saveProfile({ lifeStage: st })
+    if (st !== 'school' && s.countdownLabel === 'Matric finals') {
+      if (confirm('Done with Matric? Turn off the Matric countdown on Today? (You can set a new countdown in Settings.)')) await setSetting('showCountdown', false)
+    }
+  }
+
   const text =
     <K extends keyof Profile>(k: K) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -77,7 +91,7 @@ export default function ProfileScreen() {
         <div className="hero-icon">🎯</div>
         <h1>{p.fullName || s.name}</h1>
         <p className="muted">
-          {[age !== null ? `${age} years old` : null, p.grade ? `Grade ${p.grade}` : null, p.school || null].filter(Boolean).join(' · ') || 'Fill in your details below'}
+          {[age !== null ? `${age} years old` : null, ...stageBits].filter(Boolean).join(' · ') || 'Fill in your details below'}
         </p>
       </section>
 
@@ -114,17 +128,65 @@ export default function ProfileScreen() {
               ))}
             </select>
           </Field>
-          <Field label="School">
-            <input value={p.school} onChange={text('school')} maxLength={60} />
-          </Field>
-          <Field label="Grade">
-            <input value={p.grade} onChange={text('grade')} maxLength={10} inputMode="numeric" />
-          </Field>
         </div>
         <Field label="Languages I speak">
           <input value={p.languages} onChange={text('languages')} placeholder="e.g. English, isiZulu, Afrikaans" maxLength={120} />
         </Field>
         <p className="field-hint">Everything here stays on your phone. All fields are optional.</p>
+      </section>
+
+      <section className="card">
+        <h2>Right now I'm…</h2>
+        <div className="stage-grid" role="radiogroup" aria-label="Life stage">
+          {LIFE_STAGES.map((st) => (
+            <button key={st.id} type="button" className={'stage-chip' + (p.lifeStage === st.id ? ' on' : '')} onClick={() => changeStage(st.id)} aria-pressed={p.lifeStage === st.id}>
+              <span className="stage-icon">{st.icon}</span>
+              {st.label}
+            </button>
+          ))}
+        </div>
+        {isSchool && (
+          <div className="grid-2">
+            <Field label="School">
+              <input value={p.school} onChange={text('school')} maxLength={60} />
+            </Field>
+            <Field label="Grade">
+              <input value={p.grade} onChange={text('grade')} maxLength={10} inputMode="numeric" />
+            </Field>
+          </div>
+        )}
+        {isStudy && (
+          <div className="grid-2">
+            <Field label="Course / qualification">
+              <input value={p.course} onChange={text('course')} placeholder="e.g. BSc IT, N6, short course" maxLength={80} />
+            </Field>
+            <Field label="Where">
+              <input value={p.institution} onChange={text('institution')} placeholder="e.g. UNISA, Wits, Coursera" maxLength={80} />
+            </Field>
+          </div>
+        )}
+        {isWork && (
+          <div className="grid-2">
+            <Field label="Job">
+              <input value={p.jobTitle} onChange={text('jobTitle')} placeholder="e.g. Junior developer" maxLength={60} />
+            </Field>
+            <Field label="Work hours / week">
+              <input
+                type="number"
+                inputMode="numeric"
+                value={p.workHoursPerWeek ?? ''}
+                onChange={(e) => saveProfile({ workHoursPerWeek: e.target.value ? Number(e.target.value) : null })}
+                min={0}
+                max={80}
+              />
+            </Field>
+          </div>
+        )}
+        <p className="field-hint">
+          {isWork
+            ? 'The Planner will treat your work shifts as fixed and fit study, gym and rest around them, with lighter study loads on long work days.'
+            : 'The Planner uses this to decide what is fixed in your week and what it can plan around.'}
+        </p>
       </section>
 
       <section className="card">
@@ -160,13 +222,13 @@ export default function ProfileScreen() {
             </div>
             <div className="bmi-text">
               <strong>{lbl.label}</strong>
-              {age !== null && age >= 20 && height ? (
+              {age !== null && age >= ADULT_BMI_AGE && height ? (
                 <span className="small muted">
                   Healthy range for {height} cm: {healthyRange(height)[0].toFixed(0)}–{healthyRange(height)[1].toFixed(0)} kg
                 </span>
               ) : (
                 <span className="small muted">
-                  Under 20, BMI is read on age-and-sex growth charts, not the adult scale, because your body is still developing. A clinic nurse can plot it for you.
+                  Under 18, BMI is read on age-and-sex growth charts, not the adult scale, because your body is still developing. A clinic nurse can plot it for you.
                 </span>
               )}
             </div>

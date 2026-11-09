@@ -4,6 +4,9 @@ import { registerSW } from 'virtual:pwa-register'
 import './index.css'
 import App from './App.tsx'
 import { isNative } from './lib/platform'
+import { applySavedScale } from './lib/settings'
+
+applySavedScale()
 
 // The Android app ships its files inside the APK, so it doesn't need a service worker.
 if (!isNative) registerSW({ immediate: true })

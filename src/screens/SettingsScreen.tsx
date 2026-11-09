@@ -68,9 +68,34 @@ export default function SettingsScreen() {
         <Field label="Your name">
           <input value={s.name} onChange={str('name')} maxLength={30} />
         </Field>
-        <Field label="Matric finals start" hint="Update this when the 2027 NSC timetable is released.">
-          <input type="date" value={s.matricStart} onChange={str('matricStart')} />
+        <label className="toggle">
+          <input type="checkbox" checked={s.showCountdown} onChange={(e) => setSetting('showCountdown', e.target.checked)} />
+          <span>Show a countdown on Today</span>
+        </label>
+        {s.showCountdown && (
+          <div className="grid-2">
+            <Field label="Counting down to">
+              <input value={s.countdownLabel} onChange={str('countdownLabel')} maxLength={40} placeholder="e.g. Matric finals, exams, payday" />
+            </Field>
+            <Field label="Date">
+              <input type="date" value={s.matricStart} onChange={str('matricStart')} />
+            </Field>
+          </div>
+        )}
+      </section>
+
+      <section className="card">
+        <h2>Display</h2>
+        <Field label={`Display size: ${s.uiScale}%`} hint="Smaller = more fits on screen. 80% is a good start.">
+          <input type="range" min={60} max={130} step={5} value={s.uiScale} onChange={num('uiScale', 60, 130)} className="range" />
         </Field>
+        <div className="btn-row">
+          {[70, 80, 90, 100].map((v) => (
+            <button key={v} className={'btn' + (s.uiScale === v ? ' btn-primary' : '')} onClick={() => setSetting('uiScale', v)}>
+              {v}%
+            </button>
+          ))}
+        </div>
       </section>
 
       <section className="card">

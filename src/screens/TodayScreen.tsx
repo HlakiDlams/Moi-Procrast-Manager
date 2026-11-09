@@ -124,6 +124,7 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
   const focus = useFocus()
   const today = localDay(now)
   const blocks = useLiveQuery(() => db.blocks.where('day').equals(today).sortBy('start'), [today]) ?? []
+  const focusToday = useLiveQuery(async () => (await db.focus.where('day').equals(today).toArray()).reduce((n, f) => n + f.minutes, 0), [today]) ?? 0
   const water = useLiveQuery(() => db.water.where('day').equals(today).count(), [today]) ?? 0
   const [adding, setAdding] = useState(false)
   const [freeTitle, setFreeTitle] = useState('')
@@ -221,12 +222,20 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
             </button>
           )}
         </section>
-        <section className="card stat">
-          <div className="stat-icon">🎓</div>
-          <div className="stat-num">{daysLeft}</div>
-          <div className="muted small">days to Matric finals</div>
-          <div className="muted small">{Math.floor(daysLeft / 7)} weeks</div>
-        </section>
+        {s.showCountdown ? (
+          <section className="card stat">
+            <div className="stat-icon">🎓</div>
+            <div className="stat-num">{daysLeft}</div>
+            <div className="muted small">days to {s.countdownLabel || 'the big day'}</div>
+            <div className="muted small">{Math.floor(daysLeft / 7)} weeks</div>
+          </section>
+        ) : (
+          <section className="card stat">
+            <div className="stat-icon">🍅</div>
+            <div className="stat-num">{focusToday}</div>
+            <div className="muted small">focus min today</div>
+          </section>
+        )}
       </div>
 
       <section className="card">

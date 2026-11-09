@@ -7,7 +7,12 @@ export interface Settings {
   mistralApiKey: string
   mistralTextModel: string
   mistralVisionModel: string
-  matricStart: string // YYYY-MM-DD
+  /** main countdown on Today (was Matric-only) */
+  countdownLabel: string
+  matricStart: string // YYYY-MM-DD, the countdown date
+  showCountdown: boolean
+  /** display size in %, like the phone's own display zoom */
+  uiScale: number
   pomodoroWork: number // minutes
   pomodoroBreak: number
   dailyXpGoal: number
@@ -31,7 +36,10 @@ export const DEFAULT_SETTINGS: Settings = {
   mistralTextModel: 'mistral-medium-latest',
   mistralVisionModel: 'mistral-medium-latest',
   // NSC final exams usually start late October / early November.
+  countdownLabel: 'Matric finals',
   matricStart: '2027-10-27',
+  showCountdown: true,
+  uiScale: 80,
   pomodoroWork: 25,
   pomodoroBreak: 5,
   dailyXpGoal: 50,
@@ -61,4 +69,28 @@ export async function setSetting<K extends keyof Settings>(key: K, value: Settin
 export function useSettings(): Settings {
   const s = useLiveQuery(getSettings, [])
   return s ?? DEFAULT_SETTINGS
+}
+
+const SCALE_KEY = 'hp-ui-scale'
+
+/** Apply display size by scaling the root font size (the whole UI is in rem). */
+export function applyScale(pct: number) {
+  const v = Math.min(130, Math.max(60, pct || 100))
+  document.documentElement.style.fontSize = `${(16 * v) / 100}px`
+  try {
+    localStorage.setItem(SCALE_KEY, String(v))
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Called before React renders, so the app doesn't flash at the wrong size. */
+export function applySavedScale() {
+  let v = DEFAULT_SETTINGS.uiScale
+  try {
+    v = Number(localStorage.getItem(SCALE_KEY)) || v
+  } catch {
+    /* ignore */
+  }
+  applyScale(v)
 }

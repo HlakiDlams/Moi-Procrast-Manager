@@ -1,6 +1,17 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from './db'
 
+export type LifeStage = 'school' | 'tertiary' | 'working' | 'work-study' | 'gap' | 'other'
+
+export const LIFE_STAGES: { id: LifeStage; label: string; icon: string }[] = [
+  { id: 'school', label: 'At school (Matric)', icon: '🎒' },
+  { id: 'tertiary', label: 'Studying (uni / college / online)', icon: '🎓' },
+  { id: 'working', label: 'Working', icon: '💼' },
+  { id: 'work-study', label: 'Working + studying', icon: '💼🎓' },
+  { id: 'gap', label: 'Gap year / between things', icon: '🌍' },
+  { id: 'other', label: 'Other', icon: '✨' },
+]
+
 export interface Profile {
   fullName: string
   dob: string // YYYY-MM-DD
@@ -8,8 +19,16 @@ export interface Profile {
   race: string
   pronouns: string
   heightCm: number | null
+  /** what life looks like right now; the Planner uses this for fixed blocks */
+  lifeStage: LifeStage
   school: string
   grade: string
+  /** tertiary / part-time studies */
+  course: string
+  institution: string
+  jobTitle: string
+  employer: string
+  workHoursPerWeek: number | null
   languages: string
   allergies: string
   conditions: string
@@ -23,8 +42,14 @@ export const EMPTY_PROFILE: Profile = {
   race: '',
   pronouns: '',
   heightCm: null,
+  lifeStage: 'school',
   school: 'Impaq',
   grade: '12',
+  course: '',
+  institution: '',
+  jobTitle: '',
+  employer: '',
+  workHoursPerWeek: null,
   languages: '',
   allergies: '',
   conditions: '',
@@ -59,12 +84,13 @@ export function bmi(kg: number, heightCm: number): number {
   return kg / (m * m)
 }
 
-/**
- * Adult BMI labels (WHO) are only meaningful from age 20.
- * Under 20, BMI must be read on age-and-sex percentile charts, so we don't label it.
- */
+/** From this age the adult BMI scale is used (NHS uses 18; WHO teen charts end at 19; US CDC uses 20). */
+export const ADULT_BMI_AGE = 18
+
+/** Under 18, BMI must be read on age-and-sex percentile charts, so we don't label it. */
 export function bmiLabel(value: number, age: number | null): { label: string; tone: 'ok' | 'warn' | 'info' } {
-  if (age === null || age < 20) return { label: 'Teen BMI: see note', tone: 'info' }
+  if (age === null) return { label: 'Add your date of birth', tone: 'info' }
+  if (age < ADULT_BMI_AGE) return { label: 'Teen BMI: see note', tone: 'info' }
   if (value < 18.5) return { label: 'Below the healthy range', tone: 'warn' }
   if (value < 25) return { label: 'Healthy range', tone: 'ok' }
   if (value < 30) return { label: 'Above the healthy range', tone: 'warn' }

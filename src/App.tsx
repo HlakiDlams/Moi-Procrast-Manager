@@ -2,7 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
-import { useSettings } from './lib/settings'
+import { applyScale, useSettings } from './lib/settings'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ComingSoon from './screens/ComingSoon'
@@ -41,6 +41,7 @@ export default function App() {
   const settings = useSettings()
   const def = tabById(tab)!
   useReminderSync()
+  useEffect(() => applyScale(settings.uiScale), [settings.uiScale])
 
   // Tapping a notification: jump to the right place (and start the 2-min timer for a task).
   useEffect(
