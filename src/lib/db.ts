@@ -193,6 +193,20 @@ export interface SymptomLog {
   note?: string
 }
 
+/** A finished (or partly finished) workout. */
+export interface WorkoutLog {
+  id?: number
+  day: string
+  at: string
+  workoutId: string
+  name: string
+  minutes: number
+  /** what was actually done, per exercise */
+  sets: { ex: string; reps?: number; secs?: number }[]
+  programmeWeek?: number
+  completed: boolean
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -213,6 +227,7 @@ class PlannerDB extends Dexie {
   routineChecks!: Table<RoutineCheck, string>
   periods!: Table<PeriodLog, number>
   symptoms!: Table<SymptomLog, string>
+  workouts!: Table<WorkoutLog, number>
 
   constructor() {
     super('hlakis-planner')
@@ -246,6 +261,9 @@ class PlannerDB extends Dexie {
       routineChecks: 'key, day',
       periods: '++id, start',
       symptoms: 'day',
+    })
+    this.version(7).stores({
+      workouts: '++id, day, workoutId',
     })
   }
 }

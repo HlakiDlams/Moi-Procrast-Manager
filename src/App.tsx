@@ -4,6 +4,7 @@ import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
 import { applyScale, useSettings, useSettingsLoaded, displayName } from './lib/settings'
 import Welcome from './components/Welcome'
+import ErrorBoundary from './components/ErrorBoundary'
 import { applyTheme, themeById } from './lib/themes'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
@@ -13,6 +14,7 @@ import ProfileScreen from './screens/ProfileScreen'
 import PlannerScreen from './screens/PlannerScreen'
 import StudyScreen from './screens/StudyScreen'
 import SelfCareScreen from './screens/SelfCareScreen'
+import ExerciseScreen from './screens/ExerciseScreen'
 import { useAutoReschedule } from './lib/planner'
 import { ensurePlannerSeeded } from './lib/plannerSeed'
 import FocusOverlay from './components/FocusOverlay'
@@ -38,6 +40,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <StudyScreen />
     case 'selfcare':
       return <SelfCareScreen />
+    case 'exercise':
+      return <ExerciseScreen />
     default:
       return <ComingSoon tab={tab} />
   }
@@ -108,7 +112,9 @@ export default function App() {
       </header>
 
       <main className="screen" key={tab}>
-        <Screen tab={tab} go={go} />
+        <ErrorBoundary key={tab} onHome={() => go('today')}>
+          <Screen tab={tab} go={go} />
+        </ErrorBoundary>
       </main>
 
       {loaded && !loaded.onboarded && <Welcome s={loaded} />}

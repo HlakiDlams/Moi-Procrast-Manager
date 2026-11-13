@@ -2060,3 +2060,70 @@ textarea {
 .welcome h1 {
   font-size: 1.45rem;
 }
+
+/* ---------- exercise ---------- */
+.prog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.prog-card h2 {
+  margin: 0;
+}
+.prog-weeks {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.25rem;
+}
+.prog-weeks i {
+  height: 0.6rem;
+  border-radius: 1rem;
+  background: var(--card-2);
+}
+.prog-weeks i.done {
+  background: var(--accent);
+}
+.prog-weeks i.now {
+  background: color-mix(in srgb, var(--accent) 50%, var(--card-2));
+  outline: 2px solid var(--accent);
+}
+.wk-list {
+  margin-top: 0.75rem;
+}
+.wk-body {
+  gap: 0.8rem;
+  justify-content: flex-start;
+  padding-top: 1.5rem;
+}
+.wk-icon {
+  font-size: 4rem;
+}
+.wk-timer {
+  font-size: 4rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  line-height: 1;
+}
+.wk-reps {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.wk-reps .icon-btn {
+  width: 3.4rem;
+  height: 3.4rem;
+  font-size: 1.6rem;
+}
+.wk-cues {
+  text-align: left;
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--soft);
+  display: grid;
+  gap: 0.3rem;
+  align-self: stretch;
+}
+.workout .btn-xl {
+  align-self: stretch;
+}
