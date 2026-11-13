@@ -140,6 +140,7 @@ export default function FocusOverlay() {
               </button>
             </>
           )}
+          {f.phase === 'work' && <p className="center small muted">🎮 That Pomodoro earned you play time. Check the Play tab.</p>}
           {f.phase === 'work' && (
             <button className="btn btn-primary btn-xl" onClick={() => startBreak()}>
               ☕ Take a {s.pomodoroBreak}-min break

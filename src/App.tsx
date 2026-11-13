@@ -15,6 +15,8 @@ import PlannerScreen from './screens/PlannerScreen'
 import StudyScreen from './screens/StudyScreen'
 import SelfCareScreen from './screens/SelfCareScreen'
 import ExerciseScreen from './screens/ExerciseScreen'
+import PlayScreen from './screens/PlayScreen'
+import PlayOverlay from './components/PlayOverlay'
 import { useAutoReschedule } from './lib/planner'
 import { ensurePlannerSeeded } from './lib/plannerSeed'
 import FocusOverlay from './components/FocusOverlay'
@@ -42,6 +44,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <SelfCareScreen />
     case 'exercise':
       return <ExerciseScreen />
+    case 'play':
+      return <PlayScreen />
     default:
       return <ComingSoon tab={tab} />
   }
@@ -119,6 +123,7 @@ export default function App() {
 
       {loaded && !loaded.onboarded && <Welcome s={loaded} />}
       <FocusOverlay />
+      <PlayOverlay />
       <Alerts />
 
       {moreOpen && (

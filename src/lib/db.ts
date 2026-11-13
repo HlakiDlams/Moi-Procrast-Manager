@@ -207,6 +207,27 @@ export interface WorkoutLog {
   completed: boolean
 }
 
+/** A hobby / game / fun activity you spend earned play time on. */
+export interface Hobby {
+  id?: number
+  name: string
+  icon: string
+  /** default session length in minutes */
+  minutes: number
+  active: boolean
+}
+
+export interface PlayLog {
+  id?: number
+  day: string
+  at: string
+  hobbyId?: number
+  name: string
+  minutes: number
+  /** came back when the timer said so */
+  onTime: boolean
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -228,6 +249,8 @@ class PlannerDB extends Dexie {
   periods!: Table<PeriodLog, number>
   symptoms!: Table<SymptomLog, string>
   workouts!: Table<WorkoutLog, number>
+  hobbies!: Table<Hobby, number>
+  playLogs!: Table<PlayLog, number>
 
   constructor() {
     super('hlakis-planner')
@@ -264,6 +287,10 @@ class PlannerDB extends Dexie {
     })
     this.version(7).stores({
       workouts: '++id, day, workoutId',
+    })
+    this.version(8).stores({
+      hobbies: '++id',
+      playLogs: '++id, day',
     })
   }
 }

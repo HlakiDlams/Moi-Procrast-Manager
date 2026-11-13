@@ -2127,3 +2127,20 @@ textarea {
 .workout .btn-xl {
   align-self: stretch;
 }
+
+/* ---------- play ---------- */
+.play-hero .big-num {
+  margin: 0.2rem 0;
+}
+.more-item.picked {
+  background: color-mix(in srgb, var(--accent) 22%, var(--card-2));
+  border-width: 2px;
+}
+.play-start {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+.play-overlay {
+  --accent: #c77dff;
+}

@@ -37,7 +37,7 @@ Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen
 - [~] 3. Study: 16 courses (96 lessons, 484 questions): school subjects, 8 languages, art, chess, music, finance, hearts, review deck done; other subjects, own content + Mistral next
 - [x] 4. Planner (auto week, drag edit, planned vs done, auto-reschedule)
 - [x] 5. Self-Care (mood, water, steps, sleep, meals, routines, period tracker)
-- [ ] 6. Play
+- [x] 6. Play (earned play time, hobby timers, back-on-time nudge, optional planner reward breaks)
 - [x] 7. Exercise (7 home workouts, low-impact mode, guided player, 12-week programme, PBs)
 - [~] 8. Profile & Goals (About me done; goals next)
 - [ ] 9. Homework Checker

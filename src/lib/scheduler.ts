@@ -74,7 +74,7 @@ export interface GenerateInput {
   days: string[] // the week
   today: string
   nowMin: number
-  settings: Pick<Settings, 'wakeTime' | 'bedtime' | 'studyCapWeekday' | 'studyCapWeekend' | 'studyBlock' | 'breakMin' | 'exerciseDays' | 'exerciseMin' | 'exerciseWhen' | 'focusFrom'>
+  settings: Pick<Settings, 'wakeTime' | 'bedtime' | 'studyCapWeekday' | 'studyCapWeekend' | 'studyBlock' | 'breakMin' | 'exerciseDays' | 'exerciseMin' | 'exerciseWhen' | 'focusFrom'> & Partial<Pick<Settings, 'playEvery' | 'playBreakMin'>>
   subjects: Subject[]
   commitments: Commitment[]
   existing: Block[] // blocks already on these days
@@ -135,7 +135,9 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
     }
 
     // 2. exercise
-    if (s.exerciseDays.includes(dow(day)) && !kept.some((b) => b.kind === 'exercise')) {
+    // a sport practice / class in your fixed week counts as that day's workout
+    const sportToday = inp.commitments.some((c) => c.active && c.kind === 'exercise' && c.days.includes(dow(day)))
+    if (s.exerciseDays.includes(dow(day)) && !sportToday && !kept.some((b) => b.kind === 'exercise')) {
       const free = subtract([{ s: startFrom, e: bed - 15 }], busy)
       const fits = free.filter((f) => f.e - f.s >= s.exerciseMin)
       const slot = s.exerciseWhen === 'morning' ? fits[0] : fits[fits.length - 1]
@@ -150,17 +152,32 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
     //    slots first (afternoon/evening), then assign subjects in time order.
     let capLeft = (isWeekend(day) ? s.studyCapWeekend : s.studyCapWeekday) - kept.filter((b) => b.kind === 'study').reduce((n, b) => n + b.minutes, 0)
     const free = subtract([{ s: startFrom, e: bed - 15 }], busy)
-    const slots: Interval[] = []
+    // Optional reward breaks: after every N study slots in a row, a play slot.
+    // A play slot is only used if the N study slots before it are actually chosen.
+    const every = s.playEvery ?? 0
+    const playLen = s.playBreakMin ?? 15
+    const slots: (Interval & { i: number })[] = []
+    const plays: { s: number; e: number; deps: number[] }[] = []
     for (const f of free) {
       let t = f.s
+      let run: number[] = []
       while (f.e - t >= 25) {
+        if (every > 0 && run.length === every && f.e - t >= playLen) {
+          plays.push({ s: t, e: t + playLen, deps: run })
+          run = []
+          t += playLen + 5
+          continue
+        }
         const len = Math.min(s.studyBlock, f.e - t)
-        slots.push({ s: t, e: t + len })
+        const i = slots.length
+        slots.push({ s: t, e: t + len, i })
+        run.push(i)
         t += len + s.breakMin
       }
     }
     const focusAt = s.focusFrom * 60
     const chosen: Interval[] = []
+    const chosenIdx = new Set<number>()
     for (const sl of [...slots].sort((x, y) => {
       const gx = x.s >= focusAt
       const gy = y.s >= focusAt
@@ -172,7 +189,11 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
       const len = Math.min(sl.e - sl.s, capLeft)
       if (len < 25) continue
       chosen.push({ s: sl.s, e: sl.s + len })
+      chosenIdx.add(sl.i)
       capLeft -= len
+    }
+    for (const pl of plays) {
+      if (pl.deps.every((i) => chosenIdx.has(i))) add.push({ day, start: fromMin(pl.s), minutes: pl.e - pl.s, title: 'Reward break 🎮', kind: 'play', status: 'planned', generated: true })
     }
     chosen.sort((x, y) => x.s - y.s)
 

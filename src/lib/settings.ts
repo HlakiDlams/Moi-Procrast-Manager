@@ -33,6 +33,15 @@ export interface Settings {
   stepsGoal: number
   /** 12-week programme start (a Monday), '' = not started */
   programmeStart: string
+  /** minutes of effort that earn 1 minute of play */
+  playRatio: number
+  /** free play minutes every day, before earning anything */
+  playBase: number
+  /** Planner: a reward break after every N study blocks (0 = off) */
+  playEvery: number
+  playBreakMin: number
+  /** weekly exercise goal in minutes (WHO: at least 150) */
+  exerciseGoalMin: number
   /** swap jumping moves for low-impact ones */
   lowImpact: boolean
   /** courses shown in Study; null = all of them */
@@ -82,6 +91,11 @@ export const DEFAULT_SETTINGS: Settings = {
   myCourses: null,
   programmeStart: '',
   lowImpact: true,
+  exerciseGoalMin: 150,
+  playRatio: 4,
+  playBase: 0,
+  playEvery: 0,
+  playBreakMin: 15,
   studyCapWeekday: 360,
   studyCapWeekend: 270,
   studyBlock: 50,

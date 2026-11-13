@@ -9,6 +9,7 @@ import type { TabId } from '../tabs'
 import WeekChart from '../components/WeekChart'
 import StreakCard from '../components/StreakCard'
 import CycleMini from '../components/CycleMini'
+import { usePlayBalance } from '../lib/play'
 import { useDueCards } from '../study/progress'
 
 function useNow(ms: number) {
@@ -33,6 +34,17 @@ function untilText(ms: number) {
   if (m < 60) return `in ${m} min`
   const h = Math.floor(m / 60)
   return `in ${h}h ${m % 60 ? `${m % 60}m` : ''}`.trim()
+}
+
+function PlayLink({ go }: { go: (t: TabId) => void }) {
+  const s = useSettings()
+  const bal = usePlayBalance(s)
+  return (
+    <button className="card link-card" onClick={() => go('play')}>
+      <span>🎮 Play time earned today</span>
+      <span className="muted small">{bal ? `${bal.left} min` : '…'} ›</span>
+    </button>
+  )
 }
 
 function AddBlock({ onDone }: { onDone: () => void }) {
@@ -285,6 +297,8 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
         <h2>This week</h2>
         <WeekChart data={stats.week} />
       </section>
+
+      <PlayLink go={go} />
 
       <button className="card link-card" onClick={() => go('alarms')}>
         <span>⏰ Alarms & reminders</span>
