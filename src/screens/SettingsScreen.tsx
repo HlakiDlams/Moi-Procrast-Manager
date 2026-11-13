@@ -207,7 +207,11 @@ export default function SettingsScreen() {
 
       <section className="card">
         <h2>Danger zone</h2>
+        <p className="muted small">Redo setup: choose your subjects, courses and fixed week again. Your logs, XP and marks stay.</p>
         <div className="btn-row">
+          <button className="btn" onClick={() => setSetting('onboarded', false)}>
+            🔄 Redo setup
+          </button>
           {import.meta.env.DEV && (
             <button className="btn btn-ghost" onClick={() => addXp(10, 'today', 'dev test')}>
               +10 test XP

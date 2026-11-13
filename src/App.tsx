@@ -56,9 +56,12 @@ export default function App() {
   const def = tabById(tab)!
   useReminderSync()
   useAutoReschedule()
+  // Existing installs keep their original setup (and get one-time migrations).
+  // New installs are set up by the welcome screen instead.
+  const onboarded = loaded?.onboarded
   useEffect(() => {
-    ensurePlannerSeeded().catch((e) => console.warn('seed failed', e))
-  }, [])
+    if (onboarded) ensurePlannerSeeded().catch((e) => console.warn('seed failed', e))
+  }, [onboarded])
   useEffect(() => applyScale(settings.uiScale), [settings.uiScale])
   const theme = themeById(settings.theme)
   useEffect(() => applyTheme(theme), [theme])

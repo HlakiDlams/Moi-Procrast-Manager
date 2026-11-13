@@ -31,6 +31,8 @@ export interface Settings {
   /** period tracker: auto = shown when gender is Female */
   trackPeriods: 'auto' | 'on' | 'off'
   stepsGoal: number
+  /** courses shown in Study; null = all of them */
+  myCourses: string[] | null
   /** display size in %, like the phone's own display zoom */
   uiScale: number
   pomodoroWork: number // minutes
@@ -73,6 +75,7 @@ export const DEFAULT_SETTINGS: Settings = {
   onboarded: false,
   trackPeriods: 'auto',
   stepsGoal: 8000,
+  myCourses: null,
   studyCapWeekday: 360,
   studyCapWeekend: 270,
   studyBlock: 50,

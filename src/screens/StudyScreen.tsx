@@ -4,7 +4,7 @@ import type { Course, Lesson } from '../study/types'
 import { MAX_HEARTS, useAllCards, useDueCards, useHearts, useLessonsDone } from '../study/progress'
 import LessonPlayer from '../study/LessonPlayer'
 import { useXpStats } from '../lib/xp'
-import { useSettings } from '../lib/settings'
+import { setSetting, useSettings } from '../lib/settings'
 import { themeById } from '../lib/themes'
 
 type Playing = { courseId: string; color: string; lang?: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
@@ -128,6 +128,13 @@ export default function StudyScreen() {
   const [playing, setPlaying] = useState<Playing | null>(null)
 
   const course = COURSES.find((c) => c.id === open)
+  const [managing, setManaging] = useState(false)
+  const mine = s.myCourses ? COURSES.filter((c) => s.myCourses!.includes(c.id)) : COURSES
+  const sectionOf = (c: Course) => (c.group === 'school' ? 'school' : c.section === 'Languages' ? 'lang' : 'skills')
+  const toggleCourse = (id: string) => {
+    const cur = s.myCourses ?? COURSES.map((c) => c.id)
+    setSetting('myCourses', cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id])
+  }
   const goalPct = Math.min(100, Math.round((stats.today / Math.max(1, s.dailyXpGoal)) * 100))
 
   function startReview(onlyDue: boolean) {
@@ -198,20 +205,27 @@ export default function StudyScreen() {
             <p className="field-hint">Each right answer in review: +2 XP and +1 ❤️. Cards you keep getting right come back less often.</p>
           </section>
 
-          <h2 className="section-title">📚 School</h2>
-          {COURSES.filter((c) => c.group === 'school').map((c) => (
-            <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
-          ))}
+          {mine.length === 0 && <p className="muted center">No courses yet. Tap the button below to pick some 📚</p>}
+          {[
+            ['school', '📚 School'],
+            ['lang', '🌍 Languages'],
+            ['skills', '✨ Skills & knowledge'],
+          ].map(([key, title]) =>
+            mine.some((c) => sectionOf(c) === key) ? (
+              <div key={key} className="stack-sm">
+                <h2 className="section-title">{title}</h2>
+                {mine
+                  .filter((c) => sectionOf(c) === key)
+                  .map((c) => (
+                    <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
+                  ))}
+              </div>
+            ) : null,
+          )}
 
-          <h2 className="section-title">🌍 Languages</h2>
-          {COURSES.filter((c) => c.group === 'extra' && c.section === 'Languages').map((c) => (
-            <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
-          ))}
-
-          <h2 className="section-title">✨ Skills & knowledge</h2>
-          {COURSES.filter((c) => c.group === 'extra' && c.section !== 'Languages').map((c) => (
-            <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
-          ))}
+          <button className="btn btn-ghost full" onClick={() => setManaging(true)}>
+            ＋ Add or remove courses
+          </button>
 
           {COMING_SOON.length > 0 && (
             <div className="soon-grid">
@@ -224,6 +238,27 @@ export default function StudyScreen() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {managing && (
+        <div className="sheet-backdrop modal" onClick={() => setManaging(false)}>
+          <div className="sheet modal-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="My courses">
+            <div className="sheet-handle" />
+            <h2>My courses</h2>
+            <p className="field-hint">Ticked courses show in Study. Your progress is kept even if you hide one.</p>
+            {COURSES.map((c) => (
+              <label key={c.id} className="toggle">
+                <input type="checkbox" checked={mine.includes(c)} onChange={() => toggleCourse(c.id)} />
+                <span>
+                  {c.icon} {c.name}
+                </span>
+              </label>
+            ))}
+            <button className="btn btn-primary full" onClick={() => setManaging(false)}>
+              Done
+            </button>
+          </div>
         </div>
       )}
 

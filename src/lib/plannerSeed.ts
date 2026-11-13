@@ -49,6 +49,21 @@ export async function ensurePlannerSeeded() {
     await db.settings.put({ key: 'plannerSeeded', value: true })
   })
   await migrateV2()
+  await migrateV3()
+}
+
+/**
+ * v3: profile defaults no longer say "Impaq / Grade 12" for everyone,
+ * so write them explicitly for the original install if they were never changed.
+ */
+async function migrateV3() {
+  if (await db.settings.get('profileMigV3')) return
+  const p = ((await db.settings.get('profile'))?.value as Record<string, unknown> | undefined) ?? {}
+  const patch: Record<string, unknown> = {}
+  if (!('school' in p)) patch.school = 'Impaq'
+  if (!('grade' in p)) patch.grade = '12'
+  await db.settings.put({ key: 'profile', value: { ...p, ...patch } })
+  await db.settings.put({ key: 'profileMigV3', value: true })
 }
 
 /**
