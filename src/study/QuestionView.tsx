@@ -66,6 +66,7 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
   return (
     <div className="q">
       {q.context && <div className="q-context">{q.context}</div>}
+      {q.code && <pre className="q-code">{q.code}</pre>}
       <div className="q-prompt-row">
         <h2 className="q-prompt">{q.prompt}</h2>
         {q.say && canSpeak && (

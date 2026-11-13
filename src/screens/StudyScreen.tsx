@@ -195,6 +195,9 @@ export default function StudyScreen() {
           </div>
 
           <h2 className="section-title">✨ Extra learning</h2>
+          {COURSES.filter((c) => c.group === 'extra').map((c) => (
+            <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
+          ))}
           <div className="soon-grid">
             {COMING_SOON.filter((c) => c.group === 'extra').map((c) => (
               <div key={c.name} className="soon">

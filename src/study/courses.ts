@@ -1,15 +1,15 @@
 import type { Course, Lesson, Question } from './types'
 import { MATHS } from './content/maths'
 import { AFRIKAANS } from './content/afrikaans'
+import { EGD } from './content/egd'
+import { IT } from './content/it'
+import { ENGLISH } from './content/english'
 
 /** Built-in courses. More get added stage by stage. */
-export const COURSES: Course[] = [MATHS, AFRIKAANS]
+export const COURSES: Course[] = [MATHS, AFRIKAANS, EGD, IT, ENGLISH]
 
 /** Shown on the Study home as "coming soon" until their content is written. */
 export const COMING_SOON: { name: string; icon: string; group: 'school' | 'extra' }[] = [
-  { name: 'EGD', icon: '📏', group: 'school' },
-  { name: 'Information Technology', icon: '💻', group: 'school' },
-  { name: 'English', icon: '📖', group: 'extra' },
   { name: 'CAT', icon: '🖥️', group: 'extra' },
   { name: 'Japanese', icon: '🇯🇵', group: 'extra' },
   { name: 'Korean', icon: '🇰🇷', group: 'extra' },

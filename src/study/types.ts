@@ -9,6 +9,8 @@ interface QBase {
   context?: string
   /** text the 🔊 button reads aloud in the course language */
   say?: string
+  /** a code snippet shown in a monospace box above the prompt */
+  code?: string
 }
 
 export interface MCQ extends QBase {

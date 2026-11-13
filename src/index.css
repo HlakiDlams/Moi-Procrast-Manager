@@ -1637,3 +1637,17 @@ textarea {
   overflow-y: auto;
   white-space: pre-line;
 }
+.q-code {
+  margin: 0;
+  background: #070707;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 0.9rem;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
+  color: #ffd6e8;
+}
