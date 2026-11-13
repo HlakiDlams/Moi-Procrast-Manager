@@ -7,6 +7,8 @@ import { blockEnd, blockState, kindInfo, KINDS, nextBlock, setBlockDone } from '
 import { startStarter, useFocus } from '../lib/focus'
 import type { TabId } from '../tabs'
 import WeekChart from '../components/WeekChart'
+import StreakCard from '../components/StreakCard'
+import { useDueCards } from '../study/progress'
 
 function useNow(ms: number) {
   const [now, setNow] = useState(() => new Date())
@@ -126,6 +128,7 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
   const blocks = useLiveQuery(() => db.blocks.where('day').equals(today).sortBy('start'), [today]) ?? []
   const focusToday = useLiveQuery(async () => (await db.focus.where('day').equals(today).toArray()).reduce((n, f) => n + f.minutes, 0), [today]) ?? 0
   const water = useLiveQuery(() => db.water.where('day').equals(today).count(), [today]) ?? 0
+  const dueCount = useDueCards().length
   const [adding, setAdding] = useState(false)
   const [freeTitle, setFreeTitle] = useState('')
 
@@ -190,12 +193,14 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
         </button>
       </section>
 
+      <StreakCard stats={stats} />
+
       <div className="grid-2">
-        <section className="card stat">
-          <div className="stat-icon">🔥</div>
-          <div className="stat-num">{stats.streak}</div>
-          <div className="muted small">day streak</div>
-        </section>
+        <button className="card stat stat-btn" onClick={() => go('study')}>
+          <div className="stat-icon">🧠</div>
+          <div className="stat-num">{dueCount}</div>
+          <div className="muted small">{dueCount ? 'mistakes to review' : 'reviews: all clear'}</div>
+        </button>
         <section className="card stat">
           <div className="stat-icon">⭐</div>
           <div className="stat-num">Lv {stats.level.level}</div>

@@ -14,6 +14,7 @@ export interface TabDef {
   id: TabId
   label: string
   icon: string
+  /** default (pink theme) colour; the active theme's colour is used at runtime */
   accent: string
   /** shown in the bottom bar (others live under "More") */
   primary: boolean

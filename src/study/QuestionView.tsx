@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { Question } from './types'
 import { checkInput } from './check'
 import { canSpeak, speak } from '../lib/speech'
+import { playTones } from '../lib/sound'
 
 function shuffle<T>(a: T[], seed: string): T[] {
   // deterministic per question so re-renders don't reshuffle
@@ -67,8 +68,15 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
     <div className="q">
       {q.context && <div className="q-context">{q.context}</div>}
       {q.code && <pre className="q-code">{q.code}</pre>}
+      {q.tones && (
+        <button className="btn btn-xl q-play" type="button" onClick={() => playTones(q.tones!)}>
+          ▶ Play {q.tones.length > 1 ? `${q.tones.length} notes` : 'note'}
+        </button>
+      )}
       <div className="q-prompt-row">
-        <h2 className="q-prompt">{q.prompt}</h2>
+        <h2 className="q-prompt" dir="auto">
+          {q.prompt}
+        </h2>
         {q.say && canSpeak && (
           <button className="icon-btn" onClick={() => speak(q.say!, lang)} aria-label="Listen">
             🔊
@@ -85,7 +93,7 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
               onClick={() => !locked && setPick(i)}
               disabled={locked}
             >
-              {q.options[i]}
+              <bdi>{q.options[i]}</bdi>
             </button>
           ))}
         </div>

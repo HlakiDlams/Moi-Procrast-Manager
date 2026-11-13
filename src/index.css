@@ -823,7 +823,7 @@ a.btn {
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: radial-gradient(circle at 50% 35%, #4a0f2c, var(--bg) 70%);
+  background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--accent) 30%, #000), var(--bg) 70%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1650,4 +1650,120 @@ textarea {
   overflow-x: auto;
   white-space: pre;
   color: #ffd6e8;
+}
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0.4rem 0 1rem;
+}
+.theme-chip {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.7rem 0.3rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--line);
+  background: var(--card-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.theme-chip.on {
+  border-color: var(--accent);
+}
+.theme-dots {
+  display: flex;
+  gap: 0.2rem;
+}
+.theme-dots i {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  display: block;
+}
+
+/* ---------- streak ---------- */
+.streak-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.streak-top {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.streak-fire {
+  font-size: 2.6rem;
+  filter: drop-shadow(0 0 10px rgba(255, 120, 0, 0.6));
+}
+.streak-fire.dim {
+  filter: grayscale(0.6) opacity(0.6);
+}
+.fire-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+}
+.fire-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.35rem 0 0.25rem;
+  border-radius: 0.8rem;
+  background: var(--card-2);
+}
+.fire-day.is-today {
+  outline: 2px solid var(--accent);
+}
+.fire-icon {
+  font-size: 1.35rem;
+  height: 1.7rem;
+  line-height: 1.7rem;
+  color: var(--muted);
+}
+.fire-day.mercy .fire-icon {
+  /* half fire: only the bottom half shows */
+  -webkit-mask-image: linear-gradient(to top, #000 50%, transparent 50%);
+  mask-image: linear-gradient(to top, #000 50%, transparent 50%);
+  opacity: 0.85;
+}
+.fire-day.missed {
+  opacity: 0.55;
+}
+.fire-letter {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+.warn-text {
+  color: #ffd166;
+  font-weight: 800;
+}
+.chip-warn {
+  border-color: #ffd166;
+  color: #ffd166;
+}
+.stat-btn {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+.prompt-card {
+  border-left: 5px solid var(--k);
+}
+.prompt-text {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0.3rem 0;
+}
+.q-play {
+  align-self: stretch;
 }

@@ -5,8 +5,10 @@ import './index.css'
 import App from './App.tsx'
 import { isNative } from './lib/platform'
 import { applySavedScale } from './lib/settings'
+import { applySavedTheme } from './lib/themes'
 
 applySavedScale()
+applySavedTheme()
 
 // The Android app ships its files inside the APK, so it doesn't need a service worker.
 if (!isNative) registerSW({ immediate: true })

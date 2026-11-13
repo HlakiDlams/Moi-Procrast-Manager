@@ -24,6 +24,8 @@ export interface Settings {
   /** hour from which you focus best (hard subjects go after this) */
   focusFrom: number
   autoReschedule: boolean
+  /** colour theme id (see lib/themes.ts) */
+  theme: string
   /** display size in %, like the phone's own display zoom */
   uiScale: number
   pomodoroWork: number // minutes
@@ -43,6 +45,15 @@ export interface Settings {
   keepAwake: boolean
 }
 
+/** Saved copies of look-and-feel settings, so the first paint (before the database loads) is right. */
+function saved(key: string): string | null {
+  try {
+    return localStorage.getItem(key)
+  } catch {
+    return null
+  }
+}
+
 export const DEFAULT_SETTINGS: Settings = {
   name: 'Hlaki',
   mistralApiKey: '',
@@ -52,7 +63,8 @@ export const DEFAULT_SETTINGS: Settings = {
   countdownLabel: 'Matric finals',
   matricStart: '2027-10-27',
   showCountdown: true,
-  uiScale: 80,
+  uiScale: Number(saved('hp-ui-scale')) || 80,
+  theme: saved('hp-theme') || 'pink',
   studyCapWeekday: 360,
   studyCapWeekend: 270,
   studyBlock: 50,

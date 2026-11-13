@@ -4,25 +4,31 @@ import { AFRIKAANS } from './content/afrikaans'
 import { EGD } from './content/egd'
 import { IT } from './content/it'
 import { ENGLISH } from './content/english'
+import { JAPANESE, KOREAN, MANDARIN, SPANISH, PORTUGUESE, FRENCH, HEBREW } from './content/languages'
+import { ART, CHESS, MUSIC, FINANCE } from './content/skills'
 
 /** Built-in courses. More get added stage by stage. */
-export const COURSES: Course[] = [MATHS, AFRIKAANS, EGD, IT, ENGLISH]
+export const COURSES: Course[] = [
+  MATHS,
+  AFRIKAANS,
+  EGD,
+  IT,
+  ENGLISH,
+  JAPANESE,
+  KOREAN,
+  MANDARIN,
+  SPANISH,
+  PORTUGUESE,
+  FRENCH,
+  HEBREW,
+  FINANCE,
+  ART,
+  CHESS,
+  MUSIC,
+]
 
 /** Shown on the Study home as "coming soon" until their content is written. */
-export const COMING_SOON: { name: string; icon: string; group: 'school' | 'extra' }[] = [
-  { name: 'CAT', icon: '🖥️', group: 'extra' },
-  { name: 'Japanese', icon: '🇯🇵', group: 'extra' },
-  { name: 'Korean', icon: '🇰🇷', group: 'extra' },
-  { name: 'Mandarin', icon: '🇨🇳', group: 'extra' },
-  { name: 'Portuguese', icon: '🇵🇹', group: 'extra' },
-  { name: 'Spanish', icon: '🇪🇸', group: 'extra' },
-  { name: 'Hebrew', icon: '🇮🇱', group: 'extra' },
-  { name: 'French', icon: '🇫🇷', group: 'extra' },
-  { name: 'Art', icon: '🎨', group: 'extra' },
-  { name: 'Chess', icon: '♟️', group: 'extra' },
-  { name: 'Music', icon: '🎵', group: 'extra' },
-  { name: 'Personal finance', icon: '💳', group: 'extra' },
-]
+export const COMING_SOON: { name: string; icon: string; group: 'school' | 'extra' }[] = []
 
 export const courseById = (id: string) => COURSES.find((c) => c.id === id)
 

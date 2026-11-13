@@ -11,6 +11,7 @@ export const ENGLISH: Course = {
   color: '#FFB3C7',
   subjectName: 'English',
   group: 'extra',
+  section: 'Languages',
   lang: 'en-ZA',
   units: [
     {

@@ -5,11 +5,18 @@ import { MAX_HEARTS, useAllCards, useDueCards, useHearts, useLessonsDone } from 
 import LessonPlayer from '../study/LessonPlayer'
 import { useXpStats } from '../lib/xp'
 import { useSettings } from '../lib/settings'
+import { themeById } from '../lib/themes'
 
 type Playing = { courseId: string; color: string; lang?: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
 
 function mins(ms: number) {
   return Math.ceil(ms / 60_000)
+}
+
+/** Days since 1 Jan 2020: picks the same prompt all day, a new one tomorrow. */
+function dayNumber() {
+  const d = new Date()
+  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(2020, 0, 1)) / 86_400_000)
 }
 
 function CourseCard({ c, onOpen }: { c: Course; onOpen: () => void }) {
@@ -48,6 +55,7 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
         <h1>
           {c.icon} {c.name}
         </h1>
+        {c.blurb && <p className="small">{c.blurb}</p>}
         <p className="muted small">
           {done.size}/{lessons.length} lessons · tap the glowing one to continue
         </p>
@@ -58,6 +66,14 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
           </button>
         )}
       </section>
+
+      {c.prompts && c.prompts.length > 0 && (
+        <section className="card prompt-card" style={{ '--k': c.color } as CSSProperties}>
+          <div className="muted small">✏️ Today's practice prompt</div>
+          <p className="prompt-text">{c.prompts[dayNumber() % c.prompts.length]}</p>
+          <p className="field-hint">A new one every day. Set a 10–15 min timer and just start.</p>
+        </section>
+      )}
 
       {c.units.map((u) => (
         <section key={u.id} className="card unit" style={{ '--k': c.color } as CSSProperties}>
@@ -116,9 +132,11 @@ export default function StudyScreen() {
 
   function startReview(onlyDue: boolean) {
     const list = (onlyDue ? due : cards).slice(0, 10)
-    const items = list.map((c) => ({ key: c.key, q: findQuestion(c.courseId, c.qid)?.q })).filter((x): x is { key: string; q: NonNullable<typeof x.q> } => !!x.q)
+    const items = list
+      .map((c) => ({ key: c.key, q: findQuestion(c.courseId, c.qid)?.q, lang: COURSES.find((x) => x.id === c.courseId)?.lang }))
+      .filter((x): x is { key: string; q: NonNullable<typeof x.q>; lang: string | undefined } => !!x.q)
     if (!items.length) return
-    setPlaying({ courseId: list[0].courseId, color: '#FF8AC8', lang: COURSES.find((c) => c.id === list[0].courseId)?.lang, review: items })
+    setPlaying({ courseId: list[0].courseId, color: themeById(s.theme).accents.study, review: items })
   }
 
   function play(c: Course, l: Lesson) {
@@ -137,9 +155,9 @@ export default function StudyScreen() {
         <div className="stack">
           <div className="grid-3 study-stats">
             <section className="card stat">
-              <div className="stat-icon">🔥</div>
+              <div className="stat-icon">{stats.streakInfo.atRisk ? '⚠️' : '🔥'}</div>
               <div className="stat-num">{stats.streak}</div>
-              <div className="muted small">streak</div>
+              <div className="muted small">{stats.streakInfo.atRisk ? 'save it today' : 'streak'}</div>
             </section>
             <section className="card stat">
               <div className="stat-icon">❤️</div>
@@ -184,29 +202,28 @@ export default function StudyScreen() {
           {COURSES.filter((c) => c.group === 'school').map((c) => (
             <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
           ))}
-          <div className="soon-grid">
-            {COMING_SOON.filter((c) => c.group === 'school').map((c) => (
-              <div key={c.name} className="soon">
-                <span>{c.icon}</span>
-                {c.name}
-                <span className="muted small">soon</span>
-              </div>
-            ))}
-          </div>
 
-          <h2 className="section-title">✨ Extra learning</h2>
-          {COURSES.filter((c) => c.group === 'extra').map((c) => (
+          <h2 className="section-title">🌍 Languages</h2>
+          {COURSES.filter((c) => c.group === 'extra' && c.section === 'Languages').map((c) => (
             <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
           ))}
-          <div className="soon-grid">
-            {COMING_SOON.filter((c) => c.group === 'extra').map((c) => (
-              <div key={c.name} className="soon">
-                <span>{c.icon}</span>
-                {c.name}
-                <span className="muted small">soon</span>
-              </div>
-            ))}
-          </div>
+
+          <h2 className="section-title">✨ Skills & knowledge</h2>
+          {COURSES.filter((c) => c.group === 'extra' && c.section !== 'Languages').map((c) => (
+            <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
+          ))}
+
+          {COMING_SOON.length > 0 && (
+            <div className="soon-grid">
+              {COMING_SOON.map((c) => (
+                <div key={c.name} className="soon">
+                  <span>{c.icon}</span>
+                  {c.name}
+                  <span className="muted small">soon</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

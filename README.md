@@ -34,7 +34,7 @@ Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen
 ## Build stages
 - [x] 1. App shell, pink/black theme, navigation, IndexedDB, shared XP/streaks, settings, JSON backup, PWA
 - [x] 2. Android app + Today (2-minute starter, Pomodoro, reminders, alarms)
-- [~] 3. Study: Maths, Afrikaans EAT, EGD, IT, English (62 lessons, 340 questions), hearts, review deck done; other subjects, own content + Mistral next
+- [~] 3. Study: 16 courses (96 lessons, 484 questions): school subjects, 8 languages, art, chess, music, finance, hearts, review deck done; other subjects, own content + Mistral next
 - [x] 4. Planner (auto week, drag edit, planned vs done, auto-reschedule)
 - [ ] 5. Self-Care
 - [ ] 6. Play

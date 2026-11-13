@@ -19,22 +19,82 @@ export function levelFromXp(total: number) {
   return { level, into: rest, need }
 }
 
-/** Consecutive days (ending today, or yesterday if nothing yet today) with any XP. */
-export function streakFromDays(days: Set<string>, today = new Date()): number {
+export type DayStatus = 'active' | 'mercy' | 'missed' | 'today' | 'future'
+
+export interface StreakInfo {
+  /** number of active days in the current streak */
+  count: number
+  /** days that were missed but forgiven (one-day mercy gap) */
+  mercy: Set<string>
+  /** today has no XP yet */
+  todayPending: boolean
+  /** yesterday was already a mercy day: missing today resets the streak */
+  atRisk: boolean
+}
+
+/**
+ * Streak with a one-day mercy gap: missing ONE day keeps the fire going
+ * (shown as a half fire); missing two days in a row resets it.
+ * Today never breaks the streak until it is over.
+ */
+export function computeStreak(active: Set<string>, today = new Date()): StreakInfo {
+  const todayKey = localDay(today)
+  const todayPending = !active.has(todayKey)
+  let count = todayPending ? 0 : 1
+  const mercy = new Set<string>()
   const d = new Date(today)
-  if (!days.has(localDay(d))) d.setDate(d.getDate() - 1)
-  let n = 0
-  while (days.has(localDay(d))) {
-    n++
+  let gap: string | null = null
+  for (let i = 0; i < 3660; i++) {
     d.setDate(d.getDate() - 1)
+    const k = localDay(d)
+    if (active.has(k)) {
+      if (gap) mercy.add(gap)
+      gap = null
+      count++
+    } else if (gap) {
+      break // second missed day in a row: the streak ends here
+    } else {
+      gap = k
+    }
   }
-  return n
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const atRisk = todayPending && count > 0 && mercy.has(localDay(yesterday))
+  if (count === 0) mercy.clear()
+  return { count, mercy, todayPending, atRisk }
+}
+
+/** Kept for older callers: just the number. */
+export function streakFromDays(days: Set<string>, today = new Date()): number {
+  return computeStreak(days, today).count
+}
+
+/** Mon–Sun of the current week with a status per day, for the fire strip. */
+export function weekStatus(active: Set<string>, info: StreakInfo, today = new Date()) {
+  const todayKey = localDay(today)
+  const monday = new Date(today)
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7))
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday)
+    d.setDate(monday.getDate() + i)
+    const k = localDay(d)
+    let status: DayStatus
+    if (active.has(k)) status = 'active'
+    else if (k === todayKey) status = 'today'
+    else if (k > todayKey) status = 'future'
+    else if (info.mercy.has(k)) status = 'mercy'
+    else status = 'missed'
+    return { day: k, status, isToday: k === todayKey }
+  })
 }
 
 export interface XpStats {
   total: number
   today: number
   streak: number
+  streakInfo: StreakInfo
+  /** Mon–Sun this week with fire status */
+  fireWeek: ReturnType<typeof weekStatus>
   level: ReturnType<typeof levelFromXp>
   /** last 7 days, oldest first */
   week: { day: string; xp: number }[]
@@ -56,10 +116,13 @@ function summarise(events: XpEvent[]): XpStats {
     week.push({ day: k, xp: byDay.get(k) ?? 0 })
   }
   const active = new Set([...byDay].filter(([, v]) => v > 0).map(([k]) => k))
+  const info = computeStreak(active)
   return {
     total,
     today: byDay.get(today) ?? 0,
-    streak: streakFromDays(active),
+    streak: info.count,
+    streakInfo: info,
+    fireWeek: weekStatus(active, info),
     level: levelFromXp(total),
     week,
   }

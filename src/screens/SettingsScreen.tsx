@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { setSetting, useSettings, type Settings } from '../lib/settings'
+import { THEMES } from '../lib/themes'
 import { downloadBackup, importData } from '../lib/backup'
 import { db } from '../lib/db'
 import { addXp } from '../lib/xp'
@@ -86,6 +87,19 @@ export default function SettingsScreen() {
 
       <section className="card">
         <h2>Display</h2>
+        <span className="field-label">Colour theme</span>
+        <div className="theme-grid" role="radiogroup" aria-label="Colour theme">
+          {THEMES.map((t) => (
+            <button key={t.id} type="button" className={'theme-chip' + (s.theme === t.id ? ' on' : '')} onClick={() => setSetting('theme', t.id)} aria-pressed={s.theme === t.id}>
+              <span className="theme-dots">
+                {[t.accents.today, t.accents.study, t.accents.planner, t.accents.selfcare].map((c) => (
+                  <i key={c} style={{ background: c }} />
+                ))}
+              </span>
+              {t.emoji} {t.name}
+            </button>
+          ))}
+        </div>
         <Field label={`Display size: ${s.uiScale}%`} hint="Smaller = more fits on screen. 80% is a good start.">
           <input type="range" min={60} max={130} step={5} value={s.uiScale} onChange={num('uiScale', 60, 130)} className="range" />
         </Field>

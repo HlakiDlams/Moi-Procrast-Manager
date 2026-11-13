@@ -3,6 +3,7 @@ import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
 import { applyScale, useSettings } from './lib/settings'
+import { applyTheme, themeById } from './lib/themes'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ComingSoon from './screens/ComingSoon'
@@ -54,6 +55,9 @@ export default function App() {
     ensurePlannerSeeded().catch((e) => console.warn('seed failed', e))
   }, [])
   useEffect(() => applyScale(settings.uiScale), [settings.uiScale])
+  const theme = themeById(settings.theme)
+  useEffect(() => applyTheme(theme), [theme])
+  const accent = (id: TabId) => theme.accents[id]
 
   // Tapping a notification: jump to the right place (and start the 2-min timer for a task).
   useEffect(
@@ -74,7 +78,7 @@ export default function App() {
   const onSecondary = !def.primary
 
   return (
-    <div className="app" style={{ '--accent': def.accent } as CSSProperties}>
+    <div className="app" style={{ '--accent': accent(def.id) } as CSSProperties}>
       <header className="topbar">
         <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
           <span className="brand-dot" />
@@ -86,8 +90,8 @@ export default function App() {
           </span>
         </button>
         <div className="chips">
-          <span className="chip" title="Day streak">
-            🔥 {stats.streak}
+          <span className={'chip' + (stats.streakInfo.atRisk ? ' chip-warn' : '')} title={stats.streakInfo.atRisk ? 'Streak at risk: do something today!' : 'Day streak'}>
+            {stats.streakInfo.atRisk ? '⚠️' : '🔥'} {stats.streak}
           </span>
           <span className="chip" title={`Level ${stats.level.level}`}>
             ⭐ {stats.total} XP
@@ -111,7 +115,7 @@ export default function App() {
                 <button
                   key={t.id}
                   className="more-item"
-                  style={{ '--accent': t.accent } as CSSProperties}
+                  style={{ '--accent': accent(t.id) } as CSSProperties}
                   onClick={() => go(t.id)}
                 >
                   <span className="more-icon">{t.icon}</span>
@@ -128,7 +132,7 @@ export default function App() {
           <button
             key={t.id}
             className={'nav-btn' + (tab === t.id ? ' active' : '')}
-            style={{ '--accent': t.accent } as CSSProperties}
+            style={{ '--accent': accent(t.id) } as CSSProperties}
             onClick={() => go(t.id)}
             aria-current={tab === t.id ? 'page' : undefined}
           >
@@ -138,7 +142,7 @@ export default function App() {
         ))}
         <button
           className={'nav-btn' + (onSecondary || moreOpen ? ' active' : '')}
-          style={{ '--accent': onSecondary ? def.accent : '#FF2E93' } as CSSProperties}
+          style={{ '--accent': onSecondary ? accent(def.id) : accent('today') } as CSSProperties}
           onClick={() => setMoreOpen((o) => !o)}
           aria-expanded={moreOpen}
         >

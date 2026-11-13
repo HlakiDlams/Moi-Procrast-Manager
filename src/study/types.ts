@@ -11,6 +11,8 @@ interface QBase {
   say?: string
   /** a code snippet shown in a monospace box above the prompt */
   code?: string
+  /** ear training: frequencies (Hz) played one after another with ▶ */
+  tones?: number[]
 }
 
 export interface MCQ extends QBase {
@@ -69,5 +71,11 @@ export interface Course {
   group: 'school' | 'extra'
   /** BCP-47 language for text-to-speech, e.g. 'af-ZA' */
   lang?: string
+  /** heading the course is listed under on the Study home */
+  section?: 'Languages' | 'Skills & knowledge'
+  /** short intro shown at the top of the course */
+  blurb?: string
+  /** daily practice prompts (e.g. sketch ideas): one is picked per day */
+  prompts?: string[]
   units: Unit[]
 }

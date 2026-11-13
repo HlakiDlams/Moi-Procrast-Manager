@@ -53,3 +53,12 @@ export function startAlarmSound(): () => void {
     navigator.vibrate?.(0)
   }
 }
+
+/** Play notes one after another (ear training). */
+export function playTones(freqs: number[], each = 0.7) {
+  try {
+    freqs.forEach((f, i) => tone(f, i * (each + 0.15), each, 0.3))
+  } catch {
+    /* audio not available */
+  }
+}

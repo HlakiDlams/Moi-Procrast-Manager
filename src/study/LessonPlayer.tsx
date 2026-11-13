@@ -10,6 +10,7 @@ interface Item {
   attempt: number
   /** review mode: the card key */
   key?: string
+  lang?: string
 }
 
 /**
@@ -27,12 +28,12 @@ export default function LessonPlayer({
   lang?: string
   courseId: string
   lesson?: Lesson
-  review?: { key: string; q: Question }[]
+  review?: { key: string; q: Question; lang?: string }[]
   color: string
   onClose: () => void
 }) {
   const hearts = useHearts()
-  const [queue, setQueue] = useState<Item[]>(() => (lesson ? lesson.questions.map((q) => ({ q, attempt: 0 })) : review!.map((r) => ({ q: r.q, attempt: 0, key: r.key }))))
+  const [queue, setQueue] = useState<Item[]>(() => (lesson ? lesson.questions.map((q) => ({ q, attempt: 0 })) : review!.map((r) => ({ q: r.q, attempt: 0, key: r.key, lang: r.lang }))))
   const [idx, setIdx] = useState(0)
   const [teach, setTeach] = useState(!!lesson)
   const [result, setResult] = useState<Answered | null>(null)
@@ -130,7 +131,7 @@ export default function LessonPlayer({
       {!teach && !done && item && (
         <div className="player-body">
           {item.attempt > 0 && <div className="pill retry-pill">🔁 Try this one again</div>}
-          <QuestionView key={`${idx}-${item.q.id}-${item.attempt}`} q={item.q} attempt={item.attempt} locked={!!result} lang={lang} onCheck={onCheck} />
+          <QuestionView key={`${idx}-${item.q.id}-${item.attempt}`} q={item.q} attempt={item.attempt} locked={!!result} lang={item.lang ?? lang} onCheck={onCheck} />
         </div>
       )}
 
