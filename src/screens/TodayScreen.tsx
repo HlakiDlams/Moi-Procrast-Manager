@@ -8,6 +8,7 @@ import { startStarter, useFocus } from '../lib/focus'
 import type { TabId } from '../tabs'
 import WeekChart from '../components/WeekChart'
 import StreakCard from '../components/StreakCard'
+import CycleMini from '../components/CycleMini'
 import { useDueCards } from '../study/progress'
 
 function useNow(ms: number) {
@@ -195,6 +196,7 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
       </section>
 
       <StreakCard stats={stats} />
+      <CycleMini go={go} />
 
       <div className="grid-2">
         <button className="card stat stat-btn" onClick={() => go('study')}>

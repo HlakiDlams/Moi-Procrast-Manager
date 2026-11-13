@@ -218,6 +218,9 @@ export default function SettingsScreen() {
           </button>
         </div>
       </section>
+      <p className="muted small center">
+        Un-procrast-inator ✨ · build {__BUILD__} · {__BUILT_AT__}
+      </p>
     </div>
   )
 }

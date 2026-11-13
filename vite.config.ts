@@ -4,6 +4,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __BUILD__: JSON.stringify(process.env.GITHUB_RUN_NUMBER ?? 'dev'),
+    __BUILT_AT__: JSON.stringify(new Date().toISOString().slice(0, 10)),
+  },
   // relative base so the build works from any sub-path (e.g. GitHub Pages)
   base: './',
   plugins: [
