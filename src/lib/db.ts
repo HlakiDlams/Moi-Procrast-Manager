@@ -228,6 +228,35 @@ export interface PlayLog {
   onTime: boolean
 }
 
+export type GoalSource = 'manual' | 'weight' | 'lessons' | 'workouts' | 'focusHours'
+
+/** A goal with a target date. Progress comes from a log you update, or from the app's own data. */
+export interface Goal {
+  id?: number
+  title: string
+  icon: string
+  category: 'body' | 'study' | 'language' | 'fitness' | 'money' | 'other'
+  source: GoalSource
+  /** for source 'lessons' */
+  courseId?: string
+  /** for nudging the Planner when you choose to increase your load */
+  subjectId?: number
+  unit: string
+  startValue: number
+  target: number
+  startDate: string
+  targetDate: string
+  done?: boolean
+  createdAt: string
+}
+
+export interface GoalLog {
+  id?: number
+  goalId: number
+  day: string
+  value: number
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -251,6 +280,8 @@ class PlannerDB extends Dexie {
   workouts!: Table<WorkoutLog, number>
   hobbies!: Table<Hobby, number>
   playLogs!: Table<PlayLog, number>
+  goals!: Table<Goal, number>
+  goalLogs!: Table<GoalLog, number>
 
   constructor() {
     super('hlakis-planner')
@@ -291,6 +322,10 @@ class PlannerDB extends Dexie {
     this.version(8).stores({
       hobbies: '++id',
       playLogs: '++id, day',
+    })
+    this.version(9).stores({
+      goals: '++id',
+      goalLogs: '++id, goalId, day',
     })
   }
 }

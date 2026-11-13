@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db, localDay, type WeightLog } from '../lib/db'
 import { ADULT_BMI_AGE, ageOn, bmi, bmiLabel, healthyRange, LIFE_STAGES, saveProfile, useProfile, type LifeStage, type Profile } from '../lib/profile'
 import { setSetting, useSettings } from '../lib/settings'
+import GoalsSection from '../components/GoalsSection'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
@@ -283,12 +284,7 @@ export default function ProfileScreen() {
         </Field>
       </section>
 
-      <section className="card">
-        <h2>🎯 Goals</h2>
-        <p className="muted small">
-          Coming in the Profile & Goals stage: goals with target dates (fitness, study, languages), progress tracking, and a "behind schedule?" planner that offers a realistic new date or a bigger weekly load, with healthy-rate limits for body goals (max ~0.5 kg/week).
-        </p>
-      </section>
+      <GoalsSection />
     </div>
   )
 }

@@ -39,6 +39,6 @@ Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen
 - [x] 5. Self-Care (mood, water, steps, sleep, meals, routines, period tracker)
 - [x] 6. Play (earned play time, hobby timers, back-on-time nudge, optional planner reward breaks)
 - [x] 7. Exercise (7 home workouts, low-impact mode, guided player, 12-week programme, PBs)
-- [~] 8. Profile & Goals (About me done; goals next)
+- [x] 8. Profile & Goals (pace tracking, re-plan options, healthy-rate safety)
 - [ ] 9. Homework Checker
 - [ ] 10. Windows app

@@ -2144,3 +2144,75 @@ textarea {
 .play-overlay {
   --accent: #c77dff;
 }
+
+/* ---------- goals ---------- */
+.goal-card {
+  background: var(--card-2);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--line);
+}
+.goal-card.tone-ok {
+  border-left-color: #6be3a4;
+}
+.goal-card.tone-warn {
+  border-left-color: #ffd166;
+}
+.goal-card.tone-info {
+  border-left-color: var(--accent);
+}
+.goal-head {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem;
+}
+.goal-icon {
+  font-size: 1.6rem;
+}
+.goal-chip {
+  font-size: 0.72rem;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  white-space: nowrap;
+  background: var(--card);
+}
+.goal-chip.warn {
+  color: #ffd166;
+}
+.goal-chip.ok {
+  color: #6be3a4;
+}
+.goal-body {
+  padding: 0 0.75rem 0.75rem;
+}
+.behind-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: color-mix(in srgb, #ffd166 8%, var(--card));
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+}
+.option-card {
+  appearance: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--line);
+  background: var(--card-2);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.option-card:active,
+.option-card:hover {
+  border-color: var(--accent);
+}
