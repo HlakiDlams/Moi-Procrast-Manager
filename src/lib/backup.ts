@@ -21,7 +21,7 @@ export async function downloadBackup(includeApiKey = false) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `hlakis-planner-${data.exportedAt.slice(0, 10)}.json`
+  a.download = `unprocrastinator-${data.exportedAt.slice(0, 10)}.json`
   a.click()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
@@ -30,7 +30,7 @@ export async function downloadBackup(includeApiKey = false) {
 export async function importData(json: unknown) {
   const data = json as { format?: string; tables?: Record<string, unknown[]> }
   if (data?.format !== FORMAT || typeof data.tables !== 'object') {
-    throw new Error("That file isn't a Hlaki's Planner backup.")
+    throw new Error("That file isn't an Un-procrast-inator backup.")
   }
   await db.transaction('rw', db.tables, async () => {
     for (const t of db.tables) {

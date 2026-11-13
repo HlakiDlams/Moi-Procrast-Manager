@@ -128,6 +128,71 @@ export interface ReviewCard {
   lapses: number
 }
 
+// ---------------- self-care ----------------
+
+export type MealKind = 'breakfast' | 'lunch' | 'supper' | 'snack'
+
+export interface MealLog {
+  id?: number
+  day: string
+  at: string
+  meal: MealKind
+  note?: string
+}
+
+/** Sleep for the night that ENDS on `day` (the morning you woke up). */
+export interface SleepLog {
+  day: string
+  bed: string // HH:MM
+  wake: string // HH:MM
+  hours: number
+  quality?: number // 1-5
+}
+
+export interface MoodLog {
+  day: string
+  mood: number // 1-5
+  energy: number // 1-5
+  note?: string
+}
+
+export interface StepsLog {
+  day: string
+  steps: number
+}
+
+export interface Routine {
+  id?: number
+  name: string
+  icon: string
+  items: { id: string; label: string }[]
+  /** 0=Sun..6=Sat; empty = every day */
+  days: number[]
+  /** optional reminder time HH:MM */
+  time?: string
+  active: boolean
+}
+
+export interface RoutineCheck {
+  key: string // day:routineId:itemId
+  day: string
+  routineId: number
+  itemId: string
+}
+
+export interface PeriodLog {
+  id?: number
+  start: string // YYYY-MM-DD
+  end?: string // YYYY-MM-DD (last day of bleeding)
+  flow?: 'light' | 'medium' | 'heavy'
+}
+
+export interface SymptomLog {
+  day: string
+  items: string[]
+  note?: string
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -140,6 +205,14 @@ class PlannerDB extends Dexie {
   commitments!: Table<Commitment, number>
   lessons!: Table<LessonDone, string>
   cards!: Table<ReviewCard, string>
+  meals!: Table<MealLog, number>
+  sleep!: Table<SleepLog, string>
+  moods!: Table<MoodLog, string>
+  steps!: Table<StepsLog, string>
+  routines!: Table<Routine, number>
+  routineChecks!: Table<RoutineCheck, string>
+  periods!: Table<PeriodLog, number>
+  symptoms!: Table<SymptomLog, string>
 
   constructor() {
     super('hlakis-planner')
@@ -163,6 +236,16 @@ class PlannerDB extends Dexie {
     this.version(5).stores({
       lessons: 'lessonId, courseId',
       cards: 'key, courseId, due',
+    })
+    this.version(6).stores({
+      meals: '++id, day',
+      sleep: 'day',
+      moods: 'day',
+      steps: 'day',
+      routines: '++id',
+      routineChecks: 'key, day',
+      periods: '++id, start',
+      symptoms: 'day',
     })
   }
 }

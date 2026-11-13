@@ -1,4 +1,4 @@
-# Hlaki's Planner (Moi-Procrast-Manager)
+# Un-procrast-inator ✨ (Moi-Procrast-Manager)
 Usually for me... Cause eish, the procrastination is real
 
 A mobile-first study + life planner PWA. React + Vite + TypeScript, all data stored
@@ -22,7 +22,7 @@ same key, `android/app/hlaki-planner.keystore` - personal use only, not for Play
 The Android app adds scheduled reminders that fire while the app is closed and
 alarms handed to the phone's Clock app (`ClockPlugin.java`).
 
-**Huawei:** Settings -> Battery -> App launch -> Hlaki's Planner -> Manage manually,
+**Huawei:** Settings -> Battery -> App launch -> Un-procrast-inator -> Manage manually,
 and turn on all three switches, or reminders may be blocked.
 
 Local Android build (needs Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`
@@ -36,7 +36,7 @@ Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen
 - [x] 2. Android app + Today (2-minute starter, Pomodoro, reminders, alarms)
 - [~] 3. Study: 16 courses (96 lessons, 484 questions): school subjects, 8 languages, art, chess, music, finance, hearts, review deck done; other subjects, own content + Mistral next
 - [x] 4. Planner (auto week, drag edit, planned vs done, auto-reschedule)
-- [ ] 5. Self-Care
+- [x] 5. Self-Care (mood, water, steps, sleep, meals, routines, period tracker)
 - [ ] 6. Play
 - [ ] 7. Exercise
 - [~] 8. Profile & Goals (About me done; goals next)

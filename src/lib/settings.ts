@@ -26,6 +26,11 @@ export interface Settings {
   autoReschedule: boolean
   /** colour theme id (see lib/themes.ts) */
   theme: string
+  /** finished the first-run welcome */
+  onboarded: boolean
+  /** period tracker: auto = shown when gender is Female */
+  trackPeriods: 'auto' | 'on' | 'off'
+  stepsGoal: number
   /** display size in %, like the phone's own display zoom */
   uiScale: number
   pomodoroWork: number // minutes
@@ -55,7 +60,7 @@ function saved(key: string): string | null {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  name: 'Hlaki',
+  name: '',
   mistralApiKey: '',
   mistralTextModel: 'mistral-medium-latest',
   mistralVisionModel: 'mistral-medium-latest',
@@ -65,6 +70,9 @@ export const DEFAULT_SETTINGS: Settings = {
   showCountdown: true,
   uiScale: Number(saved('hp-ui-scale')) || 80,
   theme: saved('hp-theme') || 'pink',
+  onboarded: false,
+  trackPeriods: 'auto',
+  stepsGoal: 8000,
   studyCapWeekday: 360,
   studyCapWeekend: 270,
   studyBlock: 50,
@@ -98,6 +106,14 @@ export async function getSettings(): Promise<Settings> {
 export async function setSetting<K extends keyof Settings>(key: K, value: Settings[K]) {
   await db.settings.put({ key, value })
 }
+
+/** Settings, or undefined while they are still loading from the database. */
+export function useSettingsLoaded(): Settings | undefined {
+  return useLiveQuery(getSettings, [])
+}
+
+/** Name to show: falls back to "friend" if none is set yet. */
+export const displayName = (s: Settings) => s.name.trim() || 'friend'
 
 /** Live settings: re-renders whenever any setting changes. */
 export function useSettings(): Settings {

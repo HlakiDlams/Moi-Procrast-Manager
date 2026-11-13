@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { App as CapApp } from '@capacitor/app'
-import { addDays, atTime, db, localDay, type Alarm, type Block } from './db'
+import { addDays, atTime, db, localDay, type Alarm, type Block, type Routine } from './db'
+import { cycleInfo } from './cycle'
+import { routineDueOn } from './selfcare'
 import { getSettings, type Settings } from './settings'
 import { replaceAll, type Reminder } from './notify'
 import { isNative } from './platform'
@@ -15,7 +17,13 @@ const fmtEnd = (b: Block) => {
 const HORIZON_DAYS = 3
 
 /** Pure function: everything that should ring in the next few days. */
-export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], now = new Date()): Reminder[] {
+export interface ReminderExtras {
+  routines?: Routine[]
+  /** predicted next period start (only when the tracker is on) */
+  nextPeriod?: string
+}
+
+export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], now = new Date(), extras: ReminderExtras = {}): Reminder[] {
   const out: Omit<Reminder, 'id'>[] = []
   const today = localDay(now)
   const days = Array.from({ length: HORIZON_DAYS }, (_, i) => addDays(today, i))
@@ -68,6 +76,19 @@ export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], no
       }
     }
 
+    for (const r of extras.routines ?? []) {
+      if (!r.time) continue
+      for (const day of days) {
+        if (!routineDueOn(r, day)) continue
+        out.push({ at: atTime(day, r.time), title: `${r.icon} ${r.name}`, body: r.items.map((i) => i.label).join(' · ') || 'Routine time ✨', channel: 'reminders', extra: { kind: 'routine' } })
+      }
+    }
+
+    if (extras.nextPeriod) {
+      const at = atTime(addDays(extras.nextPeriod, -2), '08:00')
+      out.push({ at, title: '🌸 Heads-up', body: 'Your period may start in about 2 days. Pack what you need 💕', channel: 'reminders', extra: { kind: 'period' } })
+    }
+
     if (s.remindBedtime) {
       for (const day of days) {
         const bed = atTime(day, s.bedtime)
@@ -90,7 +111,11 @@ async function resync() {
   const today = localDay()
   const blocks = await db.blocks.where('day').between(today, addDays(today, HORIZON_DAYS), true, false).toArray()
   const alarms = await db.alarms.toArray()
-  await replaceAll(buildReminders(s, blocks, alarms))
+  const routines = await db.routines.toArray()
+  const gender = ((await db.settings.get('profile'))?.value as { gender?: string } | undefined)?.gender
+  const tracking = s.trackPeriods === 'on' || (s.trackPeriods === 'auto' && gender === 'Female')
+  const next = tracking ? cycleInfo(await db.periods.toArray(), today).nextStart : undefined
+  await replaceAll(buildReminders(s, blocks, alarms, new Date(), { routines, nextPeriod: next }))
 }
 
 let timer: number | undefined
@@ -103,8 +128,14 @@ export function scheduleResync(delay = 400) {
 export function useReminderSync() {
   // Fingerprint of everything reminders depend on; changes trigger a resync.
   const fp = useLiveQuery(async () => {
-    const [settings, blocks, alarms] = await Promise.all([db.settings.toArray(), db.blocks.where('day').aboveOrEqual(localDay()).toArray(), db.alarms.toArray()])
-    return JSON.stringify([settings.filter((r) => r.key !== 'focus'), blocks, alarms])
+    const [settings, blocks, alarms, routines, periods] = await Promise.all([
+      db.settings.toArray(),
+      db.blocks.where('day').aboveOrEqual(localDay()).toArray(),
+      db.alarms.toArray(),
+      db.routines.toArray(),
+      db.periods.toArray(),
+    ])
+    return JSON.stringify([settings.filter((r) => r.key !== 'focus' && r.key !== 'hearts'), blocks, alarms, routines, periods])
   }, [])
 
   useEffect(() => {

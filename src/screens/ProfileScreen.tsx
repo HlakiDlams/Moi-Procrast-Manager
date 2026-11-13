@@ -89,7 +89,7 @@ export default function ProfileScreen() {
     <div className="stack">
       <section className="card hero">
         <div className="hero-icon">🎯</div>
-        <h1>{p.fullName || s.name}</h1>
+        <h1>{p.fullName || s.name || 'Your profile'}</h1>
         <p className="muted">
           {[age !== null ? `${age} years old` : null, ...stageBits].filter(Boolean).join(' · ') || 'Fill in your details below'}
         </p>

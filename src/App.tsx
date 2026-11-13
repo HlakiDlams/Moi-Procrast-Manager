@@ -2,7 +2,8 @@ import { useEffect, useState, type CSSProperties } from 'react'
 import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
-import { applyScale, useSettings } from './lib/settings'
+import { applyScale, useSettings, useSettingsLoaded, displayName } from './lib/settings'
+import Welcome from './components/Welcome'
 import { applyTheme, themeById } from './lib/themes'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
@@ -11,6 +12,7 @@ import AlarmsScreen from './screens/AlarmsScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import PlannerScreen from './screens/PlannerScreen'
 import StudyScreen from './screens/StudyScreen'
+import SelfCareScreen from './screens/SelfCareScreen'
 import { useAutoReschedule } from './lib/planner'
 import { ensurePlannerSeeded } from './lib/plannerSeed'
 import FocusOverlay from './components/FocusOverlay'
@@ -34,6 +36,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <PlannerScreen />
     case 'study':
       return <StudyScreen />
+    case 'selfcare':
+      return <SelfCareScreen />
     default:
       return <ComingSoon tab={tab} />
   }
@@ -48,6 +52,7 @@ export default function App() {
   }
   const stats = useXpStats()
   const settings = useSettings()
+  const loaded = useSettingsLoaded()
   const def = tabById(tab)!
   useReminderSync()
   useAutoReschedule()
@@ -83,9 +88,9 @@ export default function App() {
         <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
           <span className="brand-dot" />
           <span>
-            <span className="brand-name">{settings.name}'s Planner</span>
+            <span className="brand-name">Un-procrast-inator ✨</span>
             <span className="brand-tab">
-              {def.icon} {def.label}
+              {def.icon} {def.label} · {displayName(settings)}'s scheduler
             </span>
           </span>
         </button>
@@ -103,6 +108,7 @@ export default function App() {
         <Screen tab={tab} go={go} />
       </main>
 
+      {loaded && !loaded.onboarded && <Welcome s={loaded} />}
       <FocusOverlay />
       <Alerts />
 

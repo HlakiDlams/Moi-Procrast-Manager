@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useSettings } from '../lib/settings'
+import { displayName, useSettings } from '../lib/settings'
 import { addXp, useXpStats } from '../lib/xp'
 import { db, fmtTime, localDay, type Block, type BlockKind } from '../lib/db'
 import { blockEnd, blockState, kindInfo, KINDS, nextBlock, setBlockDone } from '../lib/blocks'
@@ -163,8 +163,9 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
           {now.toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long' })} · {fmtTime(now)}
         </p>
         <h1>
-          {greeting(now.getHours())}, {s.name} 💕
+          {greeting(now.getHours())}, {displayName(s)} 💕
         </h1>
+        <p className="small">Welcome to your scheduler ✨</p>
       </section>
 
       {/* ---- the anti-procrastination core ---- */}

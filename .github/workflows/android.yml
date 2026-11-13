@@ -55,6 +55,6 @@ jobs:
         run: |
           gh release delete apk-latest -y --cleanup-tag || true
           gh release create apk-latest hlakis-planner.apk \
-            --title "Hlaki's Planner (latest build)" \
+            --title "Un-procrast-inator (latest build)" \
             --notes "Built from ${GITHUB_REF_NAME} @ ${GITHUB_SHA::7}, build #${GITHUB_RUN_NUMBER}. Download hlakis-planner.apk on your phone and tap to install." \
             --target "${GITHUB_SHA}" --latest

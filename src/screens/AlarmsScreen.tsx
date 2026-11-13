@@ -19,7 +19,7 @@ async function sendToClock(a: Pick<Alarm, 'time' | 'label' | 'days'>) {
   const [hour, minute] = a.time.split(':').map(Number)
   // Android Clock wants 1=Sun..7=Sat
   const days = a.days.length && a.days.length < 7 ? a.days.map((d) => d + 1) : undefined
-  await Clock.setAlarm({ hour, minute, label: a.label || "Hlaki's Planner", days, skipUi: false })
+  await Clock.setAlarm({ hour, minute, label: a.label || 'Un-procrast-inator', days, skipUi: false })
 }
 
 function AlarmEditor({ onDone }: { onDone: () => void }) {
@@ -112,7 +112,7 @@ export default function AlarmsScreen() {
       const ok = await requestPermission()
       setPerm(await permissionState())
       if (!ok) {
-        setMsg(isNative ? 'Notifications are blocked. Allow them in Settings → Apps → Hlaki\'s Planner → Notifications.' : 'Notifications are blocked in your browser settings for this site.')
+        setMsg(isNative ? 'Notifications are blocked. Allow them in Settings → Apps → Un-procrast-inator → Notifications.' : 'Notifications are blocked in your browser settings for this site.')
         return
       }
     }
@@ -251,13 +251,13 @@ export default function AlarmsScreen() {
               Open <b>Settings → Battery → App launch</b>
             </li>
             <li>
-              Find <b>Hlaki's Planner</b> and switch it to <b>Manage manually</b>
+              Find <b>Un-procrast-inator</b> and switch it to <b>Manage manually</b>
             </li>
             <li>
               Turn <b>on</b> Auto-launch, Secondary launch and Run in background
             </li>
             <li>
-              In <b>Settings → Apps → Hlaki's Planner → Notifications</b>, allow notifications and banners
+              In <b>Settings → Apps → Un-procrast-inator → Notifications</b>, allow notifications and banners
             </li>
             <li>Tap "Test in 10 s" above and close the app to check it works</li>
           </ol>

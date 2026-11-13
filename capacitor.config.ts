@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'za.hlaki.planner',
-  appName: "Hlaki's Planner",
+  appName: 'Un-procrast-inator',
   webDir: 'dist',
   backgroundColor: '#0D0D0D',
   android: {
