@@ -8,7 +8,7 @@ import type { Course } from '../types'
 export const EGD: Course = {
   id: 'egd',
   name: 'EGD',
-  icon: '📏',
+  icon: '',
   color: '#FFD166',
   subjectName: 'EGD',
   group: 'school',
@@ -16,7 +16,7 @@ export const EGD: Course = {
     {
       id: 'e-basics',
       title: 'Drawing conventions',
-      icon: '📐',
+      icon: '',
       description: 'Line types, scales, dimensioning',
       lessons: [
         {
@@ -77,7 +77,7 @@ export const EGD: Course = {
     {
       id: 'e-ortho',
       title: 'Orthographic projection',
-      icon: '🧊',
+      icon: '',
       description: 'Views, first and third angle',
       lessons: [
         {
@@ -125,7 +125,7 @@ export const EGD: Course = {
     {
       id: 'e-pictorial',
       title: 'Pictorial drawing',
-      icon: '🏙️',
+      icon: '',
       description: 'Isometric and perspective',
       lessons: [
         {
@@ -184,7 +184,7 @@ export const EGD: Course = {
     {
       id: 'e-solid',
       title: 'Solid geometry',
-      icon: '🔺',
+      icon: '',
       description: 'Development, interpenetration, loci, cams, helix',
       lessons: [
         {
@@ -259,7 +259,7 @@ export const EGD: Course = {
     {
       id: 'e-apps',
       title: 'Applied drawings',
-      icon: '🏠',
+      icon: '',
       description: 'Civil, mechanical and electrical',
       lessons: [
         {

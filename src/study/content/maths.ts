@@ -7,7 +7,7 @@ import type { Course } from '../types'
 export const MATHS: Course = {
   id: 'maths',
   name: 'Mathematics',
-  icon: '📐',
+  icon: '',
   color: '#FF2E93',
   subjectName: 'Mathematics',
   group: 'school',
@@ -16,7 +16,7 @@ export const MATHS: Course = {
     {
       id: 'm-numbers',
       title: 'Number basics',
-      icon: '🔢',
+      icon: '',
       description: 'Negatives, order of operations, fractions',
       lessons: [
         {
@@ -89,7 +89,7 @@ export const MATHS: Course = {
     {
       id: 'm-algebra',
       title: 'Algebra basics',
-      icon: '🔤',
+      icon: '',
       description: 'Like terms, expanding, factorising',
       lessons: [
         {
@@ -129,7 +129,7 @@ export const MATHS: Course = {
     {
       id: 'm-equations',
       title: 'Equations',
-      icon: '⚖️',
+      icon: '',
       description: 'Linear and quadratic equations',
       lessons: [
         {
@@ -137,7 +137,7 @@ export const MATHS: Course = {
           title: 'Linear equations',
           teach: {
             text: ['An equation is a balance: whatever you do to one side, do to the other.', 'Goal: get x alone. Undo + and − first, then × and ÷.', 'Check your answer by putting it back in.'],
-            example: ['2x + 3 = 11', '2x = 8   (−3 both sides)', 'x = 4    (÷2 both sides)', 'Check: 2(4) + 3 = 11 ✓'],
+            example: ['2x + 3 = 11', '2x = 8 (−3 both sides)', 'x = 4 (÷2 both sides)', 'Check: 2(4) + 3 = 11'],
           },
           questions: [
             { id: 'li1', type: 'input', prompt: 'Solve: x + 7 = 12', answers: ['5'], numeric: true, placeholder: 'x = ?', explain: 'Subtract 7 from both sides: x = 5.' },
@@ -176,7 +176,7 @@ export const MATHS: Course = {
     {
       id: 'm-exponents',
       title: 'Exponents',
-      icon: '⚡',
+      icon: '',
       description: 'Exponent laws and exponential equations',
       lessons: [
         {
@@ -218,7 +218,7 @@ export const MATHS: Course = {
     {
       id: 'm-sequences',
       title: 'Sequences & series',
-      icon: '🔁',
+      icon: '',
       description: 'Gr 12: arithmetic, geometric, sigma',
       lessons: [
         {
@@ -231,7 +231,7 @@ export const MATHS: Course = {
           questions: [
             { id: 'ar1', type: 'input', prompt: 'Next term: 5; 9; 13; …', answers: ['17'], numeric: true, explain: 'd = 4, so 13 + 4 = 17.' },
             { id: 'ar2', type: 'input', prompt: 'Find d: 20; 17; 14; …', answers: ['-3'], numeric: true, explain: 'd = 17 − 20 = −3.' },
-            { id: 'ar3', type: 'mcq', prompt: 'Tₙ for 3; 7; 11; …', options: ['Tₙ = 4n − 1', 'Tₙ = 3n + 4', 'Tₙ = 4n + 3', 'Tₙ = n + 4'], answer: 0, explain: 'Tₙ = 3 + (n − 1)4 = 4n − 1. Check: T₁ = 3 ✓' },
+            { id: 'ar3', type: 'mcq', prompt: 'Tₙ for 3; 7; 11; …', options: ['Tₙ = 4n − 1', 'Tₙ = 3n + 4', 'Tₙ = 4n + 3', 'Tₙ = n + 4'], answer: 0, explain: 'Tₙ = 3 + (n − 1)4 = 4n − 1. Check: T₁ = 3 ' },
             { id: 'ar4', type: 'input', prompt: 'Find T₂₀ of 2; 5; 8; …', answers: ['59'], numeric: true, explain: 'T₂₀ = 2 + 19 × 3 = 59.' },
             { id: 'ar5', type: 'input', prompt: 'Which term of 3; 7; 11; … is 83?', answers: ['21'], numeric: true, placeholder: 'n = ?', explain: '4n − 1 = 83 → 4n = 84 → n = 21.' },
             {
@@ -256,7 +256,7 @@ export const MATHS: Course = {
             { id: 'ge3', type: 'mcq', prompt: '4; 12; 36; … is…', options: ['Geometric (r = 3)', 'Arithmetic (d = 8)', 'Neither'], answer: 0, explain: '12 − 4 = 8 but 36 − 12 = 24, so not arithmetic. 12 ÷ 4 = 36 ÷ 12 = 3: geometric.' },
             { id: 'ge4', type: 'input', prompt: 'Find T₇ of 3; 6; 12; …', answers: ['192'], numeric: true, explain: 'T₇ = 3 × 2⁶ = 3 × 64 = 192.' },
             { id: 'ge5', type: 'input', prompt: 'Find r: 64; 32; 16; …', answers: ['1/2'], numeric: true, explain: 'r = 32 ÷ 64 = 1/2.' },
-            { id: 'ge6', type: 'mcq', prompt: 'Tₙ for 1; 3; 9; …', options: ['Tₙ = 3ⁿ⁻¹', 'Tₙ = 3ⁿ', 'Tₙ = 3n − 2', 'Tₙ = n³'], answer: 0, explain: 'a = 1, r = 3: Tₙ = 1 · 3ⁿ⁻¹. Check: T₁ = 3⁰ = 1 ✓' },
+            { id: 'ge6', type: 'mcq', prompt: 'Tₙ for 1; 3; 9; …', options: ['Tₙ = 3ⁿ⁻¹', 'Tₙ = 3ⁿ', 'Tₙ = 3n − 2', 'Tₙ = n³'], answer: 0, explain: 'a = 1, r = 3: Tₙ = 1 · 3ⁿ⁻¹. Check: T₁ = 3⁰ = 1 ' },
           ],
         },
         {
@@ -280,7 +280,7 @@ export const MATHS: Course = {
     {
       id: 'm-finance',
       title: 'Finance',
-      icon: '💰',
+      icon: '',
       description: 'Gr 12: interest (annuities next)',
       lessons: [
         {

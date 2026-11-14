@@ -1,3 +1,4 @@
+import { Check, Play } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { completePhase, msLeft, pause, resume, startBreak, startWork, stop, useFocus, type FocusState } from '../lib/focus'
 import { setBlockDone } from '../lib/blocks'
@@ -95,10 +96,10 @@ export default function FocusOverlay() {
       <div className="focus-top">
         <span className="pill">
           {LABEL[f.phase]}
-          {f.rounds > 0 && ` · 🍅×${f.rounds}`}
+          {f.rounds > 0 && ` · ${f.rounds} done`}
         </span>
         <button className="btn btn-ghost" onClick={() => stop()}>
-          ✕ Stop
+          Stop
         </button>
       </div>
 
@@ -106,7 +107,9 @@ export default function FocusOverlay() {
 
       <Ring pct={pct}>
         {f.finished ? (
-          <div className="focus-done">🎉</div>
+          <div className="focus-done">
+            <Check size={64} strokeWidth={1.75} />
+          </div>
         ) : (
           <div className="focus-time">
             {String(mm).padStart(2, '0')}:{String(ss).padStart(2, '0')}
@@ -119,15 +122,15 @@ export default function FocusOverlay() {
         <div className="focus-actions">
           {f.pausedLeft !== undefined ? (
             <button className="btn btn-primary btn-xl" onClick={() => resume()}>
-              ▶ Resume
+              <Play size={16} fill="currentColor" /> Resume
             </button>
           ) : (
             <button className="btn btn-xl" onClick={() => pause()}>
-              ⏸ Pause
+              Pause
             </button>
           )}
           {f.phase === 'starter' && <p className="muted small center">Only 2 minutes. You can stop after that, promise.</p>}
-          {f.phase === 'break' && <p className="muted small center">Stand up, stretch, drink water 💧</p>}
+          {f.phase === 'break' && <p className="muted small center">Stand up, stretch, drink water</p>}
         </div>
       ) : (
         <div className="focus-actions">
@@ -136,25 +139,25 @@ export default function FocusOverlay() {
             <>
               <p className="center">You started! Keep the momentum?</p>
               <button className="btn btn-primary btn-xl" onClick={() => startWork()}>
-                🍅 Keep going ({s.pomodoroWork} min)
+                Keep going ({s.pomodoroWork} min)
               </button>
             </>
           )}
-          {f.phase === 'work' && <p className="center small muted">🎮 That Pomodoro earned you play time. Check the Play tab.</p>}
+          {f.phase === 'work' && <p className="center small muted">That Pomodoro earned you play time. Check the Play tab.</p>}
           {f.phase === 'work' && (
             <button className="btn btn-primary btn-xl" onClick={() => startBreak()}>
-              ☕ Take a {s.pomodoroBreak}-min break
+              Take a {s.pomodoroBreak}-min break
             </button>
           )}
           {f.phase === 'break' && (
             <button className="btn btn-primary btn-xl" onClick={() => startWork()}>
-              🍅 Another round
+              Another round
             </button>
           )}
           <div className="btn-row center-row">
             {f.blockId !== undefined && (
               <button className="btn" onClick={() => markDone(f)}>
-                ✅ Task done
+                Task done
               </button>
             )}
             <button className="btn btn-ghost" onClick={() => stop()}>

@@ -50,7 +50,10 @@ const isWeekend = (day: string) => {
 const dow = (day: string) => new Date(day + 'T12:00:00').getDay()
 
 /** Busy interval for a block (sleep is ignored: it sits outside the day window). */
-const blockInterval = (b: Block): Interval => ({ s: toMin(b.start), e: toMin(b.start) + b.minutes })
+const blockInterval = (b: Block): Interval => ({
+  s: toMin(b.start),
+  e: toMin(b.start) + b.minutes,
+})
 
 /**
  * How much of the study time a subject deserves.
@@ -74,7 +77,8 @@ export interface GenerateInput {
   days: string[] // the week
   today: string
   nowMin: number
-  settings: Pick<Settings, 'wakeTime' | 'bedtime' | 'studyCapWeekday' | 'studyCapWeekend' | 'studyBlock' | 'breakMin' | 'exerciseDays' | 'exerciseMin' | 'exerciseWhen' | 'focusFrom'> & Partial<Pick<Settings, 'playEvery' | 'playBreakMin'>>
+  settings: Pick<Settings, 'wakeTime' | 'bedtime' | 'studyCapWeekday' | 'studyCapWeekend' | 'studyBlock' | 'breakMin' | 'exerciseDays' | 'exerciseMin' | 'exerciseWhen' | 'focusFrom'> &
+    Partial<Pick<Settings, 'playEvery' | 'playBreakMin'>>
   subjects: Subject[]
   commitments: Commitment[]
   existing: Block[] // blocks already on these days
@@ -130,7 +134,16 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
       busy.push({ s: cs - c.travelMin, e: ce + c.travelMin })
       const already = kept.some((b) => b.fixed && b.start === c.start && b.title === c.title)
       if (!already && (!isToday || cs >= startFrom)) {
-        add.push({ day, start: c.start, minutes: ce - cs, title: c.title, kind: c.kind, status: 'planned', generated: true, fixed: true })
+        add.push({
+          day,
+          start: c.start,
+          minutes: ce - cs,
+          title: c.title,
+          kind: c.kind,
+          status: 'planned',
+          generated: true,
+          fixed: true,
+        })
       }
     }
 
@@ -143,7 +156,15 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
       const slot = s.exerciseWhen === 'morning' ? fits[0] : fits[fits.length - 1]
       if (slot) {
         const st = s.exerciseWhen === 'morning' ? slot.s : slot.e - s.exerciseMin
-        add.push({ day, start: fromMin(st), minutes: s.exerciseMin, title: 'Workout', kind: 'exercise', status: 'planned', generated: true })
+        add.push({
+          day,
+          start: fromMin(st),
+          minutes: s.exerciseMin,
+          title: 'Workout',
+          kind: 'exercise',
+          status: 'planned',
+          generated: true,
+        })
         busy.push({ s: st, e: st + s.exerciseMin + 5 })
       }
     }
@@ -193,7 +214,16 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
       capLeft -= len
     }
     for (const pl of plays) {
-      if (pl.deps.every((i) => chosenIdx.has(i))) add.push({ day, start: fromMin(pl.s), minutes: pl.e - pl.s, title: 'Reward break 🎮', kind: 'play', status: 'planned', generated: true })
+      if (pl.deps.every((i) => chosenIdx.has(i)))
+        add.push({
+          day,
+          start: fromMin(pl.s),
+          minutes: pl.e - pl.s,
+          title: 'Reward break',
+          kind: 'play',
+          status: 'planned',
+          generated: true,
+        })
     }
     chosen.sort((x, y) => x.s - y.s)
 
@@ -219,7 +249,16 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
         }
       }
       if (!best) break
-      add.push({ day, start: fromMin(sl.s), minutes: len, title: best.name, kind: 'study', subjectId: best.id, status: 'planned', generated: true })
+      add.push({
+        day,
+        start: fromMin(sl.s),
+        minutes: len,
+        title: best.name,
+        kind: 'study',
+        subjectId: best.id,
+        status: 'planned',
+        generated: true,
+      })
       allocated.set(best.id!, (allocated.get(best.id!) ?? 0) + len)
       usedToday.set(best.id!, (usedToday.get(best.id!) ?? 0) + 1)
       prev = best.id
@@ -227,30 +266,29 @@ export function generateWeek(inp: GenerateInput): GenerateResult {
 
     // 4. sleep
     if (!kept.some((b) => b.kind === 'sleep')) {
-      add.push({ day, start: fromMin(bed), minutes: wake + 1440 - bed, title: 'Sleep', kind: 'sleep', status: 'planned', generated: true })
+      add.push({
+        day,
+        start: fromMin(bed),
+        minutes: wake + 1440 - bed,
+        title: 'Sleep',
+        kind: 'sleep',
+        status: 'planned',
+        generated: true,
+      })
     }
   }
   return { remove, add }
 }
 
 /** Earliest free slot of `minutes` from `fromDay`/`fromMin` within the next `daysAhead` days. */
-export function findFreeSlot(
-  minutes: number,
-  fromDay: string,
-  fromMinute: number,
-  blocks: Block[],
-  s: Pick<Settings, 'wakeTime' | 'bedtime'>,
-  daysAhead = 6,
-): { day: string; start: string } | null {
+export function findFreeSlot(minutes: number, fromDay: string, fromMinute: number, blocks: Block[], s: Pick<Settings, 'wakeTime' | 'bedtime'>, daysAhead = 6): { day: string; start: string } | null {
   const wake = toMin(s.wakeTime)
   let bed = toMin(s.bedtime)
   if (bed <= wake) bed += 1440
   for (let i = 0; i <= daysAhead; i++) {
     const day = addDays(fromDay, i)
     const startFrom = i === 0 ? Math.max(wake, Math.ceil(fromMinute / 5) * 5) : wake
-    const busy = blocks
-      .filter((b) => b.day === day && b.kind !== 'sleep' && b.status !== 'skipped')
-      .map((b) => ({ s: blockInterval(b).s - 5, e: blockInterval(b).e + 5 }))
+    const busy = blocks.filter((b) => b.day === day && b.kind !== 'sleep' && b.status !== 'skipped').map((b) => ({ s: blockInterval(b).s - 5, e: blockInterval(b).e + 5 }))
     const slot = subtract([{ s: startFrom, e: bed - 15 }], busy).find((f) => f.e - f.s >= minutes)
     if (slot) return { day, start: fromMin(slot.s) }
   }
@@ -266,7 +304,12 @@ export function planReschedules(blocks: Block[], now: Date, s: Pick<Settings, 'w
   const nowMin = now.getHours() * 60 + now.getMinutes()
   const weekAgo = addDays(today, -7)
   const working = blocks.map((b) => ({ ...b }))
-  const moves: { id: number; title: string; from: string; to: { day: string; start: string } | null }[] = []
+  const moves: {
+    id: number
+    title: string
+    from: string
+    to: { day: string; start: string } | null
+  }[] = []
   const missed = working
     .filter((b) => b.status === 'planned' && RESCHEDULABLE.has(b.kind) && b.day >= weekAgo)
     .filter((b) => b.day < today || (b.day === today && toMin(b.start) + b.minutes <= nowMin))

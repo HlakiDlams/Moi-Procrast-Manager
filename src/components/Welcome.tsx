@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { setSetting, type Settings } from '../lib/settings'
@@ -46,13 +47,7 @@ export default function Welcome({ s }: { s: Settings }) {
   const [custom, setCustom] = useState('')
 
   const subjectNames = new Set((subjects ?? []).map((x) => x.name))
-  const coursePick =
-    picked ??
-    new Set(
-      s.myCourses
-        ? s.myCourses
-        : COURSES.filter((c) => subjectNames.has(subjectNameOf(c.id))).map((c) => c.id),
-    )
+  const coursePick = picked ?? new Set(s.myCourses ? s.myCourses : COURSES.filter((c) => subjectNames.has(subjectNameOf(c.id))).map((c) => c.id))
   const courseSubjectNames = new Set(COURSES.map((c) => subjectNameOf(c.id)))
   const extraPick = extras ?? new Set([...subjectNames].filter((n) => !courseSubjectNames.has(n)))
 
@@ -80,7 +75,11 @@ export default function Welcome({ s }: { s: Settings }) {
       await setSetting('name', name.trim())
       await setSetting('theme', theme)
       await setSetting('mode', mode)
-      await saveProfile({ gender: g, lifeStage: st, ...(st === 'school' ? { school: school ?? p.school, grade: grade ?? p.grade } : {}) })
+      await saveProfile({
+        gender: g,
+        lifeStage: st,
+        ...(st === 'school' ? { school: school ?? p.school, grade: grade ?? p.grade } : {}),
+      })
       await setSetting('showCountdown', showCd)
       if (showCd) {
         await setSetting('countdownLabel', cdLabel.trim() || 'The big day')
@@ -117,7 +116,6 @@ export default function Welcome({ s }: { s: Settings }) {
               if (name.trim()) setStep(2)
             }}
           >
-            <div className="welcome-logo">⏰✨</div>
             <h1>Welcome to the Un-procrast-inator</h1>
             <p className="muted center">Your own scheduler: plans, study, self-care and gentle nudges to just start. Everything stays on this phone.</p>
             <label className="field">
@@ -147,7 +145,7 @@ export default function Welcome({ s }: { s: Settings }) {
               }}
             />
             <button className="btn btn-primary btn-xl" type="submit" disabled={!name.trim()}>
-              Next ›
+              Next <ChevronRight size={16} />
             </button>
           </form>
         )}
@@ -158,7 +156,9 @@ export default function Welcome({ s }: { s: Settings }) {
             <div className="stage-grid">
               {LIFE_STAGES.map((x) => (
                 <button key={x.id} type="button" className={'stage-chip' + (st === x.id ? ' on' : '')} onClick={() => setStage(x.id)} aria-pressed={st === x.id}>
-                  <span className="stage-icon">{x.icon}</span>
+                  <span className="stage-icon">
+                    <x.Icon size={18} />
+                  </span>
                   {x.label}
                 </button>
               ))}
@@ -178,27 +178,27 @@ export default function Welcome({ s }: { s: Settings }) {
 
             <h2>What do you want to learn?</h2>
             <p className="field-hint">These get lessons in Study and time in your Planner. Pick as many as you like. You can change them any time.</p>
-            <span className="field-label">📚 School subjects with lessons</span>
+            <span className="field-label">School subjects with lessons</span>
             <div className="chip-wrap">
               {COURSES.filter((c) => c.group === 'school').map((c) => (
                 <Chip key={c.id} on={coursePick.has(c.id)} onClick={() => toggle(coursePick, c.id, setPicked)}>
-                  {c.icon} {c.name}
+                  {c.name}
                 </Chip>
               ))}
             </div>
-            <span className="field-label">🌍 Languages</span>
+            <span className="field-label">Languages</span>
             <div className="chip-wrap">
               {COURSES.filter((c) => c.section === 'Languages').map((c) => (
                 <Chip key={c.id} on={coursePick.has(c.id)} onClick={() => toggle(coursePick, c.id, setPicked)}>
-                  {c.icon} {c.name}
+                  {c.name}
                 </Chip>
               ))}
             </div>
-            <span className="field-label">✨ Skills</span>
+            <span className="field-label">Skills</span>
             <div className="chip-wrap">
               {COURSES.filter((c) => c.group === 'extra' && c.section !== 'Languages').map((c) => (
                 <Chip key={c.id} on={coursePick.has(c.id)} onClick={() => toggle(coursePick, c.id, setPicked)}>
-                  {c.icon} {c.name}
+                  {c.name}
                 </Chip>
               ))}
             </div>
@@ -227,10 +227,10 @@ export default function Welcome({ s }: { s: Settings }) {
             </form>
             <div className="btn-row">
               <button className="btn btn-ghost" onClick={() => setStep(1)}>
-                ‹ Back
+                <ChevronLeft size={16} /> Back
               </button>
               <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => setStep(3)}>
-                Next ›
+                Next <ChevronRight size={16} />
               </button>
             </div>
           </div>
@@ -251,11 +251,11 @@ export default function Welcome({ s }: { s: Settings }) {
             </div>
             <label className="toggle">
               <input type="checkbox" checked={pray} onChange={(e) => setPrayers(e.target.checked)} />
-              <span>🙏 Add prayer times (morning, noon, night)</span>
+              <span>Add prayer times (morning, noon, night)</span>
             </label>
             <label className="toggle">
               <input type="checkbox" checked={showCd} onChange={(e) => setCountdown(e.target.checked)} />
-              <span>⏳ Count down to something (exams, a trip…)</span>
+              <span>Count down to something (exams, a trip…)</span>
             </label>
             {showCd && (
               <div className="grid-2">
@@ -288,10 +288,10 @@ export default function Welcome({ s }: { s: Settings }) {
             <p className="field-hint">Meals are added for you. Add work, church, sport or anything else later in Planner → Fixed commitments.</p>
             <div className="btn-row">
               <button className="btn btn-ghost" onClick={() => setStep(2)}>
-                ‹ Back
+                <ChevronLeft size={16} /> Back
               </button>
               <button className="btn btn-primary btn-xl" style={{ flex: 1 }} onClick={finish} disabled={busy}>
-                {busy ? 'Setting up…' : `Let's go, ${name.trim()} ✨`}
+                {busy ? 'Setting up…' : `Let's go, ${name.trim()}`}
               </button>
             </div>
           </div>

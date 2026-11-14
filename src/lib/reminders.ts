@@ -7,7 +7,7 @@ import { routineDueOn } from './selfcare'
 import { getSettings, type Settings } from './settings'
 import { replaceAll, type Reminder } from './notify'
 import { isNative } from './platform'
-import { blockEnd, kindInfo } from './blocks'
+import { blockEnd } from './blocks'
 
 const fmtEnd = (b: Block) => {
   const e = blockEnd(b)
@@ -33,7 +33,13 @@ export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], no
     for (const day of days) {
       const at = atTime(day, a.time)
       if (a.days.length && !a.days.includes(at.getDay())) continue
-      out.push({ at, title: `⏰ ${a.label || 'Alarm'}`, body: `It's ${a.time}. Tap to start.`, channel: 'alarms', extra: { kind: 'alarm', label: a.label } })
+      out.push({
+        at,
+        title: `${a.label || 'Alarm'}`,
+        body: `It's ${a.time}. Tap to start.`,
+        channel: 'alarms',
+        extra: { kind: 'alarm', label: a.label },
+      })
     }
   }
 
@@ -42,22 +48,27 @@ export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], no
       for (const b of blocks) {
         if (b.status !== 'planned' || b.kind === 'sleep') continue
         const start = atTime(b.day, b.start)
-        const k = kindInfo(b.kind)
         if (b.kind === 'prayer') {
-          out.push({ at: start, title: `🙏 ${b.title}`, body: 'Time to pray. Take a quiet moment with God.', channel: 'reminders', extra: { kind: 'prayer' } })
+          out.push({
+            at: start,
+            title: `${b.title}`,
+            body: 'Time to pray. Take a quiet moment with God.',
+            channel: 'reminders',
+            extra: { kind: 'prayer' },
+          })
           continue
         }
         const actionable = !b.fixed && b.kind !== 'meal'
         out.push({
           at: new Date(start.getTime() - 5 * 60_000),
-          title: `${k.icon} Starting in 5 min: ${b.title}`,
-          body: actionable ? `At ${b.start} for ${b.minutes} min. Get your stuff ready 💕` : `At ${b.start}.`,
+          title: `In 5 min: ${b.title}`,
+          body: actionable ? `At ${b.start} for ${b.minutes} min. Get your stuff ready` : `At ${b.start}.`,
           channel: 'reminders',
           extra: { kind: 'block', blockId: b.id },
         })
         out.push({
           at: start,
-          title: `${k.icon} Time for ${b.title}`,
+          title: b.title,
           body: actionable ? 'Just 2 minutes. Tap to start the timer.' : `Until ${fmtEnd(b)}.`,
           channel: 'reminders',
           extra: { kind: 'block', blockId: b.id, start: actionable },
@@ -71,7 +82,13 @@ export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], no
         const bed = atTime(day, s.bedtime)
         if (bed <= wake) bed.setDate(bed.getDate() + 1)
         for (let t = wake.getTime() + s.waterEvery * 60_000; t < bed.getTime() - 30 * 60_000; t += s.waterEvery * 60_000) {
-          out.push({ at: new Date(t), title: '💧 Water break', body: 'Drink a glass of water, then tap +1 in the app.', channel: 'reminders', extra: { kind: 'water' } })
+          out.push({
+            at: new Date(t),
+            title: 'Water break',
+            body: 'Drink a glass of water, then tap +1 in the app.',
+            channel: 'reminders',
+            extra: { kind: 'water' },
+          })
         }
       }
     }
@@ -80,21 +97,45 @@ export function buildReminders(s: Settings, blocks: Block[], alarms: Alarm[], no
       if (!r.time) continue
       for (const day of days) {
         if (!routineDueOn(r, day)) continue
-        out.push({ at: atTime(day, r.time), title: `${r.icon} ${r.name}`, body: r.items.map((i) => i.label).join(' · ') || 'Routine time ✨', channel: 'reminders', extra: { kind: 'routine' } })
+        out.push({
+          at: atTime(day, r.time),
+          title: r.name,
+          body: r.items.map((i) => i.label).join(' · ') || 'Routine time',
+          channel: 'reminders',
+          extra: { kind: 'routine' },
+        })
       }
     }
 
     if (extras.nextPeriod) {
       const at = atTime(addDays(extras.nextPeriod, -2), '08:00')
-      out.push({ at, title: '🌸 Heads-up', body: 'Your period may start in about 2 days. Pack what you need 💕', channel: 'reminders', extra: { kind: 'period' } })
+      out.push({
+        at,
+        title: 'Heads-up',
+        body: 'Your period may start in about 2 days. Pack what you need',
+        channel: 'reminders',
+        extra: { kind: 'period' },
+      })
     }
 
     if (s.remindBedtime) {
       for (const day of days) {
         const bed = atTime(day, s.bedtime)
         if (bed.getHours() < 12) bed.setDate(bed.getDate() + 1) // bedtime after midnight
-        out.push({ at: new Date(bed.getTime() - 30 * 60_000), title: '🌙 Wind down', body: `Bedtime in 30 min (${s.bedtime}). Screens down soon, skincare time.`, channel: 'reminders', extra: { kind: 'bedtime' } })
-        out.push({ at: bed, title: '😴 Bedtime', body: `Sleep now to wake at ${s.wakeTime} feeling good.`, channel: 'reminders', extra: { kind: 'bedtime' } })
+        out.push({
+          at: new Date(bed.getTime() - 30 * 60_000),
+          title: 'Wind down',
+          body: `Bedtime in 30 min (${s.bedtime}). Screens down soon, skincare time.`,
+          channel: 'reminders',
+          extra: { kind: 'bedtime' },
+        })
+        out.push({
+          at: bed,
+          title: 'Bedtime',
+          body: `Sleep now to wake at ${s.wakeTime} feeling good.`,
+          channel: 'reminders',
+          extra: { kind: 'bedtime' },
+        })
       }
     }
   }
@@ -115,7 +156,12 @@ async function resync() {
   const gender = ((await db.settings.get('profile'))?.value as { gender?: string } | undefined)?.gender
   const tracking = s.trackPeriods === 'on' || (s.trackPeriods === 'auto' && gender === 'Female')
   const next = tracking ? cycleInfo(await db.periods.toArray(), today).nextStart : undefined
-  await replaceAll(buildReminders(s, blocks, alarms, new Date(), { routines, nextPeriod: next }))
+  await replaceAll(
+    buildReminders(s, blocks, alarms, new Date(), {
+      routines,
+      nextPeriod: next,
+    }),
+  )
 }
 
 let timer: number | undefined

@@ -53,10 +53,20 @@ export async function applySetup(ch: SetupChoices) {
   for (const id of ch.courseIds) {
     const c = COURSES.find((x) => x.id === id)
     if (!c) continue
-    wanted.set(subjectNameOf(id), { name: subjectNameOf(id), icon: c.icon, color: c.color, priority: c.group === 'school' ? 2 : 1, examDate: '', currentMark: null, targetMark: 50, active: true, group: c.group })
+    wanted.set(subjectNameOf(id), {
+      name: subjectNameOf(id),
+      icon: c.icon,
+      color: c.color,
+      priority: c.group === 'school' ? 2 : 1,
+      examDate: '',
+      currentMark: null,
+      targetMark: 50,
+      active: true,
+      group: c.group,
+    })
   }
   for (const name of ch.extraSubjects) {
-    if (!wanted.has(name)) wanted.set(name, { name, icon: '📘', color: '#FF8AC8', priority: 2, examDate: '', currentMark: null, targetMark: 50, active: true, group: 'school' })
+    if (!wanted.has(name)) wanted.set(name, { name, icon: '', color: '#FF8AC8', priority: 2, examDate: '', currentMark: null, targetMark: 50, active: true, group: 'school' })
   }
 
   await db.transaction('rw', [db.subjects, db.commitments, db.settings], async () => {

@@ -1,3 +1,4 @@
+import { CloudFog, Moon, Sun, type LucideIcon } from 'lucide-react'
 import { createContext, useContext, type CSSProperties } from 'react'
 import type { TabId } from '../tabs'
 import { buttonSafe, contrast, ensureContrast, mix } from './color'
@@ -29,10 +30,10 @@ export const THEMES: Theme[] = [
   { id: 'dreamy', name: 'Dreamy Hues', palette: ['#A06A72', '#2E3A6A', '#8A5A6E', '#545060', '#333333'] },
 ]
 
-export const MODES: { id: Mode; label: string; icon: string }[] = [
-  { id: 'dark', label: 'Dark', icon: '🌑' },
-  { id: 'gray', label: 'Gray', icon: '🌫️' },
-  { id: 'light', label: 'Light', icon: '☀️' },
+export const MODES: { id: Mode; label: string; Icon: LucideIcon }[] = [
+  { id: 'dark', label: 'Dark', Icon: Moon },
+  { id: 'gray', label: 'Gray', Icon: CloudFog },
+  { id: 'light', label: 'Light', Icon: Sun },
 ]
 
 /** Old theme ids (before palettes) → closest new theme. */

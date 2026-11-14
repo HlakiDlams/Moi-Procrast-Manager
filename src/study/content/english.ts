@@ -7,7 +7,7 @@ const PASSAGE = `Every morning before sunrise, Naledi sits at the kitchen table 
 export const ENGLISH: Course = {
   id: 'english',
   name: 'English',
-  icon: '📖',
+  icon: '',
   color: '#FFB3C7',
   subjectName: 'English',
   group: 'extra',
@@ -17,7 +17,7 @@ export const ENGLISH: Course = {
     {
       id: 'en-lang',
       title: 'Language',
-      icon: '🔤',
+      icon: '',
       description: 'Parts of speech, tenses, concord, confusing words',
       lessons: [
         {
@@ -99,7 +99,7 @@ export const ENGLISH: Course = {
     {
       id: 'en-read',
       title: 'Reading and writing',
-      icon: '✍️',
+      icon: '',
       description: 'Comprehension, figures of speech, formats',
       lessons: [
         {
@@ -115,7 +115,7 @@ export const ENGLISH: Course = {
             { id: 'cp2', type: 'mcq', context: PASSAGE, prompt: 'What does she call this hour?', options: ['"quiet gold"', '"golden hour"', '"study time"', '"rooibos hour"'], answer: 0, explain: 'Quote: "quiet gold".' },
             { id: 'cp3', type: 'mcq', context: PASSAGE, prompt: 'How do her friends react?', options: ['They laugh and say she is crazy', 'They join her', 'They ignore her', 'They are jealous'], answer: 0, explain: '"Her friends laugh and say she is crazy…"' },
             { id: 'cp4', type: 'mcq', context: PASSAGE, prompt: '"quiet gold" is an example of a…', options: ['metaphor', 'simile', 'onomatopoeia', 'pun'], answer: 0, explain: 'It calls the hour gold without "like/as" → metaphor.' },
-            { id: 'cp5', type: 'mcq', context: PASSAGE, prompt: 'What does Naledi believe is the hardest part of studying?', options: ['Simply starting', 'Waking up early', 'Remembering facts', 'Writing exams'], answer: 0, explain: '"…the hardest part of studying is simply starting." (That\'s why "Just 2 minutes" works 💕)' },
+            { id: 'cp5', type: 'mcq', context: PASSAGE, prompt: 'What does Naledi believe is the hardest part of studying?', options: ['Simply starting', 'Waking up early', 'Remembering facts', 'Writing exams'], answer: 0, explain: '"…the hardest part of studying is simply starting." (That\'s why starting with 2 minutes works.)' },
           ],
         },
         {

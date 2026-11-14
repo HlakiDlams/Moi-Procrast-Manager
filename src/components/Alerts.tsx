@@ -1,7 +1,9 @@
+import { AlarmClock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { onFired, scheduleOne, SNOOZE_ID, type FiredDetail } from '../lib/notify'
 import { chime, startAlarmSound } from '../lib/sound'
 import { startStarter } from '../lib/focus'
+import { stripEmoji } from '../lib/text'
 
 interface Toast extends FiredDetail {
   key: number
@@ -16,7 +18,13 @@ export default function Alerts() {
     () =>
       onFired((d) => {
         if (d.channel === 'alarms') {
-          setAlarm({ ...d, time: new Date().toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' }) })
+          setAlarm({
+            ...d,
+            time: new Date().toLocaleTimeString('en-ZA', {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          })
         } else if (d.channel === 'reminders') {
           chime()
           const key = Date.now() + Math.random()
@@ -49,23 +57,25 @@ export default function Alerts() {
     <>
       {alarm && (
         <div className="alarm-overlay" role="alertdialog" aria-label="Alarm">
-          <div className="alarm-bell">⏰</div>
-          <h1 className="center">{alarm.title.replace(/^⏰\s*/, '')}</h1>
+          <div className="alarm-bell">
+            <AlarmClock size={64} strokeWidth={1.5} />
+          </div>
+          <h1 className="center">{stripEmoji(alarm.title)}</h1>
           <p className="muted center">{alarm.time}</p>
           <div className="alarm-actions">
             <button
               className="btn btn-primary btn-xl"
               onClick={() => {
-                const label = String(alarm.extra?.label || alarm.title.replace(/^⏰\s*/, ''))
+                const label = String(alarm.extra?.label || stripEmoji(alarm.title))
                 setAlarm(null)
                 startStarter(label)
               }}
             >
-              ⏱️ Start 2 minutes
+              Start 2 minutes
             </button>
             <div className="btn-row center-row">
               <button className="btn" onClick={snooze}>
-                😴 Snooze 5
+                Snooze 5
               </button>
               <button className="btn btn-ghost" onClick={() => setAlarm(null)}>
                 Dismiss

@@ -1,3 +1,4 @@
+import { Check, GripVertical } from 'lucide-react'
 import { useRef, useState, type CSSProperties } from 'react'
 import { db, type Block } from '../lib/db'
 import { blockState, kindInfo } from '../lib/blocks'
@@ -19,22 +20,10 @@ interface Drag {
 }
 
 /**
- * Vertical day timeline. Drag ⠿ to move a block, drag the bottom edge to resize,
+ * Vertical day timeline. Drag the handle to move a block, drag the bottom edge to resize,
  * tap a block to edit it.
  */
-export default function Timeline({
-  blocks,
-  fromHour,
-  toHour,
-  now,
-  onEdit,
-}: {
-  blocks: Block[]
-  fromHour: number
-  toHour: number
-  now: Date | null
-  onEdit: (b: Block) => void
-}) {
+export default function Timeline({ blocks, fromHour, toHour, now, onEdit }: { blocks: Block[]; fromHour: number; toHour: number; now: Date | null; onEdit: (b: Block) => void }) {
   const [drag, setDrag] = useState<Drag | null>(null)
   const [preview, setPreview] = useState<{ start: number; len: number } | null>(null)
   const moved = useRef(false)
@@ -46,7 +35,13 @@ export default function Timeline({
     e.stopPropagation()
     ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
     moved.current = false
-    setDrag({ id: b.id!, mode, y0: e.clientY, start0: toMin(b.start), len0: b.minutes })
+    setDrag({
+      id: b.id!,
+      mode,
+      y0: e.clientY,
+      start0: toMin(b.start),
+      len0: b.minutes,
+    })
     setPreview({ start: toMin(b.start), len: b.minutes })
   }
 
@@ -58,14 +53,21 @@ export default function Timeline({
       const st = Math.min(toHour * 60 - drag.len0, Math.max(top0, drag.start0 + dMin))
       setPreview({ start: st, len: drag.len0 })
     } else {
-      setPreview({ start: drag.start0, len: Math.max(10, Math.min(toHour * 60 - drag.start0, drag.len0 + dMin)) })
+      setPreview({
+        start: drag.start0,
+        len: Math.max(10, Math.min(toHour * 60 - drag.start0, drag.len0 + dMin)),
+      })
     }
   }
 
   async function onUp() {
     if (drag && preview && moved.current) {
       // Moving a block by hand makes it "yours", so re-generating the week keeps it.
-      await db.blocks.update(drag.id, { start: fromMin(preview.start), minutes: preview.len, generated: false })
+      await db.blocks.update(drag.id, {
+        start: fromMin(preview.start),
+        minutes: preview.len,
+        generated: false,
+      })
       navigator.vibrate?.(15)
     }
     setDrag(null)
@@ -77,7 +79,17 @@ export default function Timeline({
   const nowMin = now ? now.getHours() * 60 + now.getMinutes() : null
 
   return (
-    <div className="timeline" style={{ height: `${(toHour - fromHour) * REM_PER_HOUR + 1}rem` } as CSSProperties} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
+    <div
+      className="timeline"
+      style={
+        {
+          height: `${(toHour - fromHour) * REM_PER_HOUR + 1}rem`,
+        } as CSSProperties
+      }
+      onPointerMove={onMove}
+      onPointerUp={onUp}
+      onPointerCancel={onUp}
+    >
       {hours.map((h) => (
         <div key={h} className="tl-hour" style={{ top: `${(h - fromHour) * REM_PER_HOUR}rem` }}>
           <span>{String(h % 24).padStart(2, '0')}:00</span>
@@ -96,17 +108,23 @@ export default function Timeline({
             <div
               key={b.id}
               className={`tl-block st-${state}${b.fixed ? ' fixed' : ''}${isDrag ? ' dragging' : ''}`}
-              style={{ top: `${((st - top0) / 60) * REM_PER_HOUR}rem`, height: `${Math.max(1.4, (len / 60) * REM_PER_HOUR - 0.15)}rem`, '--k': k.color } as CSSProperties}
+              style={
+                {
+                  top: `${((st - top0) / 60) * REM_PER_HOUR}rem`,
+                  height: `${Math.max(1.4, (len / 60) * REM_PER_HOUR - 0.15)}rem`,
+                  '--k': k.color,
+                } as CSSProperties
+              }
               onClick={() => !moved.current && onEdit(b)}
             >
               <span className="tl-handle" onPointerDown={(e) => onDown(e, b, 'move')} aria-label="Drag to move">
-                ⠿
+                <GripVertical size={16} />
               </span>
               <div className="tl-text">
                 <span className="tl-title">
-                  {b.status === 'done' ? '✓ ' : ''}
-                  {k.icon} {b.title}
-                  {b.reschedules ? ' 🔁' : ''}
+                  {b.status === 'done' ? <Check size={14} className="kind-icon" /> : null}
+                  <k.Icon size={14} className="kind-icon" /> {b.title}
+                  {b.reschedules ? '' : ''}
                 </span>
                 <span className="tl-time">
                   {fromMin(st)}–{fromMin(st + len)}

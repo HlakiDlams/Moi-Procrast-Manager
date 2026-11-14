@@ -44,9 +44,9 @@ async function load(): Promise<FocusState | null> {
 }
 
 const MESSAGES: Record<Phase, [string, string]> = {
-  starter: ['✨ 2 minutes done!', "You started, that's the hardest part. Keep going?"],
-  work: ['🍅 Pomodoro done!', 'Amazing focus. Take your break now.'],
-  break: ['⏰ Break over', 'Ready for another round?'],
+  starter: ['2 minutes done!', "You started, that's the hardest part. Keep going?"],
+  work: ['Pomodoro done!', 'Amazing focus. Take your break now.'],
+  break: ['Break over', 'Ready for another round?'],
 }
 
 async function startPhase(base: Omit<FocusState, 'phase' | 'length' | 'endAt' | 'finished' | 'pausedLeft'>, phase: Phase, length: number) {
@@ -54,7 +54,14 @@ async function startPhase(base: Omit<FocusState, 'phase' | 'length' | 'endAt' | 
   const st: FocusState = { ...base, phase, length, endAt, finished: false }
   await save(st)
   const [title, body] = MESSAGES[phase]
-  await scheduleOne({ id: FOCUS_TIMER_ID, at: new Date(endAt), title, body, channel: 'timer', extra: { kind: 'focus' } }).catch(() => {})
+  await scheduleOne({
+    id: FOCUS_TIMER_ID,
+    at: new Date(endAt),
+    title,
+    body,
+    channel: 'timer',
+    extra: { kind: 'focus' },
+  }).catch(() => {})
 }
 
 export async function startStarter(title: string, blockId?: number) {
@@ -94,13 +101,27 @@ export async function resume() {
   const endAt = Date.now() + s.pausedLeft
   await save({ ...s, endAt, pausedLeft: undefined })
   const [title, body] = MESSAGES[s.phase]
-  await scheduleOne({ id: FOCUS_TIMER_ID, at: new Date(endAt), title, body, channel: 'timer', extra: { kind: 'focus' } })
+  await scheduleOne({
+    id: FOCUS_TIMER_ID,
+    at: new Date(endAt),
+    title,
+    body,
+    channel: 'timer',
+    extra: { kind: 'focus' },
+  })
 }
 
 async function logFocus(s: FocusState, minutes: number) {
   if (minutes <= 0 || s.phase === 'break') return
   const now = new Date()
-  await db.focus.add({ day: localDay(now), at: now.toISOString(), minutes, kind: s.phase === 'starter' ? 'starter' : 'work', title: s.title, blockId: s.blockId })
+  await db.focus.add({
+    day: localDay(now),
+    at: now.toISOString(),
+    minutes,
+    kind: s.phase === 'starter' ? 'starter' : 'work',
+    title: s.title,
+    blockId: s.blockId,
+  })
 }
 
 /** Called by the timer UI when time runs out. Idempotent. Returns XP earned. */
@@ -112,7 +133,11 @@ export async function completePhase(): Promise<number> {
   if (s.phase === 'work') xp = s.length + 5
   await logFocus(s, s.phase === 'break' ? 0 : s.length)
   if (xp) await addXp(xp, 'today', `${s.phase === 'starter' ? '2-min start' : 'Pomodoro'}: ${s.title}`)
-  await save({ ...s, finished: true, rounds: s.phase === 'work' ? s.rounds + 1 : s.rounds })
+  await save({
+    ...s,
+    finished: true,
+    rounds: s.phase === 'work' ? s.rounds + 1 : s.rounds,
+  })
   return xp
 }
 

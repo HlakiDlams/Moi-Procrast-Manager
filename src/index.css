@@ -25,7 +25,14 @@
   --nav-h: 4.25rem;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
-  font-family: 'Nunito', ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    'Figtree Variable',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  --display: 'Bricolage Grotesque Variable', 'Figtree Variable', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -115,7 +122,9 @@ p {
   background: var(--accent);
   box-shadow: 0 0 0.75rem var(--accent);
   flex-shrink: 0;
-  transition: background 0.3s, box-shadow 0.3s;
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
 }
 .brand-name {
   display: block;
@@ -190,7 +199,10 @@ p {
   color: var(--muted);
   font-size: 0.7rem;
   font-weight: 700;
-  transition: background 0.2s, color 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.15s;
 }
 .nav-btn:active {
   transform: scale(0.92);
@@ -201,7 +213,9 @@ p {
 .nav-icon {
   font-size: 1.35rem;
   filter: grayscale(0.7) opacity(0.75);
-  transition: filter 0.2s, transform 0.2s;
+  transition:
+    filter 0.2s,
+    transform 0.2s;
 }
 .nav-btn.active {
   color: var(--accent-ink);
@@ -382,10 +396,13 @@ p {
   gap: 0.625rem;
 }
 .checklist li::before {
-  content: '♡';
-  color: var(--accent-ink);
-  margin-right: 0.625rem;
-  font-weight: 900;
+  content: '';
+  flex: 0 0 auto;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin: 0.55rem 0.75rem 0 0.1rem;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 /* ---------- week chart ---------- */
@@ -447,7 +464,10 @@ p {
   padding: 0.625rem 1.125rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: transform 0.12s, background 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.12s,
+    background 0.2s,
+    box-shadow 0.2s;
 }
 .btn:active {
   transform: scale(0.96);
@@ -670,7 +690,9 @@ a.btn {
   border-left: 0.25rem solid var(--k, var(--accent));
 }
 .block-row.st-now {
-  box-shadow: 0 0 0 1px var(--accent), 0 0 1.125rem color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 1.125rem color-mix(in srgb, var(--accent) 30%, transparent);
 }
 .block-row.st-done .block-title {
   text-decoration: line-through;
@@ -705,7 +727,9 @@ a.btn {
   color: var(--bg);
   font-weight: 900;
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    transform 0.15s;
 }
 .tick.on {
   background: var(--k, var(--accent));
@@ -1032,7 +1056,11 @@ textarea {
   padding: 2px 0;
   border-bottom: 1px solid var(--line);
 }
-.range { padding: 0; min-height: 2.5rem; accent-color: var(--accent); }
+.range {
+  padding: 0;
+  min-height: 2.5rem;
+  accent-color: var(--accent);
+}
 .stage-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1211,11 +1239,15 @@ textarea {
   border-left-color: var(--danger);
 }
 .tl-block.st-now {
-  box-shadow: 0 0 0 1px var(--accent), 0 0 14px color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 0 14px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 .tl-block.dragging {
   z-index: 5;
-  box-shadow: 0 8px 24px var(--shadow), 0 0 0 2px var(--k);
+  box-shadow:
+    0 8px 24px var(--shadow),
+    0 0 0 2px var(--k);
   transition: none;
 }
 .tl-handle {
@@ -1351,9 +1383,6 @@ textarea {
   text-align: center;
   opacity: 0.7;
 }
-.soon > span:first-child {
-  font-size: 1.4rem;
-}
 .unit-head {
   display: flex;
   gap: 0.75rem;
@@ -1363,7 +1392,12 @@ textarea {
   margin: 0;
 }
 .unit-icon {
-  font-size: 1.8rem;
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent-ink);
+  line-height: 1;
+  min-width: 2.2ch;
 }
 .path {
   display: flex;
@@ -1413,7 +1447,9 @@ textarea {
 }
 @keyframes glow {
   50% {
-    box-shadow: 0 0.35rem 0 color-mix(in srgb, var(--k) 55%, #000), 0 0 0 0.5rem color-mix(in srgb, var(--k) 25%, transparent);
+    box-shadow:
+      0 0.35rem 0 color-mix(in srgb, var(--k) 55%, #000),
+      0 0 0 0.5rem color-mix(in srgb, var(--k) 25%, transparent);
   }
 }
 .path-label {
@@ -1732,10 +1768,10 @@ textarea {
   outline: 2px solid var(--accent);
 }
 .fire-icon {
-  font-size: 1.35rem;
+  display: flex;
+  align-items: center;
   height: 1.7rem;
-  line-height: 1.7rem;
-  color: var(--muted);
+  color: var(--accent-ink);
 }
 .fire-day.mercy .fire-icon {
   /* half fire: only the bottom half shows */
@@ -1828,7 +1864,9 @@ textarea {
   background: var(--card-2);
   cursor: pointer;
   filter: grayscale(0.6);
-  transition: transform 0.15s, filter 0.15s;
+  transition:
+    transform 0.15s,
+    filter 0.15s;
 }
 .mood-btn.on {
   border-color: var(--accent);
@@ -2222,8 +2260,14 @@ textarea {
 .option-card:hover {
   border-color: var(--accent);
 }
-.auto-steps { margin: 0.4rem 0; }
-.q-recall { display: flex; flex-direction: column; gap: 0.75rem; }
+.auto-steps {
+  margin: 0.4rem 0;
+}
+.q-recall {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
 
 /* ---------- homework ---------- */
 .hw-photos {
@@ -2381,4 +2425,380 @@ textarea {
   font-size: 0.8rem;
   font-weight: 800;
   padding: 0 0.25rem 0.1rem;
+}
+
+/* =====================================================================
+   Design system v2: calmer, flatter, typographic. Overrides the above.
+   ===================================================================== */
+:root {
+  --radius: 1rem;
+  --radius-sm: 0.75rem;
+  font-size-adjust: none;
+  line-height: 1.45;
+}
+h1,
+h2,
+h3,
+.big-num,
+.stat-num,
+.focus-time,
+.wk-timer,
+.page-title,
+.week-title,
+.xp-pop {
+  font-family: var(--display);
+  letter-spacing: -0.015em;
+}
+h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+h2 {
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: var(--text);
+}
+/* section label that sits OUTSIDE cards */
+.label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0.6rem 0.15rem -0.35rem;
+}
+.section-title {
+  font-family: 'Figtree Variable', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0.75rem 0.15rem 0;
+}
+
+/* header: page title, no glow, no coloured rule */
+.topbar {
+  border-bottom: 1px solid transparent;
+  padding: 0.9rem 1.1rem 0.6rem;
+  align-items: flex-end;
+}
+.brand {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+.brand-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.page-title {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 0.3rem 0.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.chip svg {
+  color: var(--accent-ink);
+}
+
+/* cards: flat, no borders, no glows */
+.card {
+  border: none;
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+:root[data-mode='light'] .card {
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 0 0 1px color-mix(in srgb, var(--line) 60%, transparent);
+}
+.hero {
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.15rem 0;
+  box-shadow: none !important;
+}
+.stack {
+  gap: 1rem;
+}
+.screen {
+  padding-top: 0.5rem;
+}
+
+/* buttons: solid, no glow */
+.btn {
+  border-radius: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+.btn-primary {
+  box-shadow: none;
+}
+.btn-xl {
+  min-height: 3.6rem;
+  font-size: 1.1rem;
+  border-radius: 0.9rem;
+}
+.btn-xl.stacked {
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.btn-sub {
+  font-weight: 600;
+  opacity: 0.8;
+}
+.next-card {
+  border: none;
+  background: color-mix(in srgb, var(--accent) 12%, var(--card));
+}
+
+/* bottom nav: icon + label, accent only when active */
+.bottomnav {
+  border-top: 1px solid var(--line);
+}
+.nav-btn {
+  gap: 0.2rem;
+  border-radius: 0.75rem;
+}
+.nav-btn .nav-icon {
+  filter: none;
+  display: flex;
+}
+.nav-btn.active {
+  background: transparent;
+  color: var(--accent-ink);
+}
+.nav-btn.active .nav-icon {
+  transform: none;
+}
+.more-item {
+  border: none;
+  color: var(--text);
+}
+.more-icon {
+  color: var(--accent-ink);
+  display: flex;
+}
+
+/* grouped list (settings-style rows) */
+.list {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+:root[data-mode='light'] .list {
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 0 0 1px color-mix(in srgb, var(--line) 60%, transparent);
+}
+.list-row {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+.list-row + .list-row {
+  border-top: 1px solid var(--line);
+}
+.list-row .row-icon {
+  display: flex;
+  color: var(--accent-ink);
+}
+.list-row .row-main {
+  flex: 1;
+  min-width: 0;
+}
+.list-row .row-value {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.list-row:active {
+  background: var(--card-2);
+}
+
+/* stats strip: one surface, columns divided by lines */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+:root[data-mode='light'] .stat-strip {
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 0 0 1px color-mix(in srgb, var(--line) 60%, transparent);
+}
+.stat-cell {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.85rem 0.75rem;
+  cursor: pointer;
+}
+.stat-cell + .stat-cell {
+  border-left: 1px solid var(--line);
+}
+.stat-cell .v {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.stat-cell .k {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.stat-cell svg {
+  color: var(--accent-ink);
+}
+
+/* icon tiles (courses, workouts) */
+.tile-icon {
+  width: 2.6rem;
+  height: 2.6rem;
+  flex-shrink: 0;
+  border-radius: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--k, var(--accent)) 18%, transparent);
+  color: var(--k, var(--accent));
+  font-size: 1.3rem;
+}
+.course-card {
+  border: none;
+  border-left: none;
+}
+.course-card .course-icon {
+  display: none;
+}
+.today-head {
+  padding: 0.25rem 0.15rem 0;
+}
+.today-head h1 {
+  font-size: 2rem;
+  line-height: 1.1;
+  margin: 0.1rem 0 0.2rem;
+}
+.label.in {
+  margin: 0;
+}
+.row-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.next-title {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+.streak-top {
+  align-items: center;
+}
+.streak-num {
+  display: flex;
+  flex-direction: column;
+}
+.streak-goal {
+  margin-left: auto;
+  width: 42%;
+  text-align: right;
+}
+.streak-fire {
+  display: flex;
+  color: var(--accent-ink);
+  filter: none;
+}
+.streak-fire.dim {
+  color: var(--muted);
+  filter: none;
+}
+.fire-day {
+  background: transparent;
+  border: 1px solid var(--line);
+}
+.kind-icon {
+  vertical-align: -2px;
+  color: var(--k, var(--accent-ink));
+  margin-right: 0.15rem;
+}
+.block-row {
+  background: transparent;
+  border-left-width: 3px;
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.5rem;
+}
+.blocks {
+  gap: 0.35rem;
+}
+
+/* inline line icons sit on the text baseline */
+.btn svg,
+.link-btn svg,
+.pill svg,
+.hearts svg,
+.seg svg,
+h1 svg,
+h2 svg {
+  vertical-align: -0.2em;
+  flex-shrink: 0;
+}
+.mood-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* section = small label outside, content card below */
+.sec {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sec > .section-title,
+.sec-head {
+  margin: 0.75rem 0.15rem 0;
+}
+.sec-head h2 {
+  font-family: 'Figtree Variable', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+.sec-head .btn {
+  min-height: 2.25rem;
+  padding: 0.3rem 0.8rem;
 }

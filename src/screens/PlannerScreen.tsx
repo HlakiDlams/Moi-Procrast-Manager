@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, localDay, type Block, type BlockKind, type Commitment, type Subject } from '../lib/db'
@@ -30,7 +31,7 @@ function Sheet({ title, onClose, children }: { title: string; onClose: () => voi
         <div className="row-between">
           <h2>{title}</h2>
           <button className="icon-btn subtle" onClick={onClose} aria-label="Close">
-            ✕
+            <X size={18} />
           </button>
         </div>
         {children}
@@ -76,7 +77,11 @@ function BlockEditor({ block, week, subjects, onClose }: { block: Block | Omit<B
 
   async function save() {
     // anything you edit by hand is kept when the week is regenerated
-    const row = { ...b, generated: false, title: b.title.trim() || kindInfo(b.kind).label }
+    const row = {
+      ...b,
+      generated: false,
+      title: b.title.trim() || kindInfo(b.kind).label,
+    }
     if (isNew) await db.blocks.add(row as Block)
     else await db.blocks.put(row as Block)
     onClose()
@@ -89,7 +94,7 @@ function BlockEditor({ block, week, subjects, onClose }: { block: Block | Omit<B
           <select value={b.kind} onChange={(e) => set({ kind: e.target.value as BlockKind })}>
             {KINDS.map((k) => (
               <option key={k.id} value={k.id}>
-                {k.icon} {k.label}
+                {k.label}
               </option>
             ))}
           </select>
@@ -106,7 +111,7 @@ function BlockEditor({ block, week, subjects, onClose }: { block: Block | Omit<B
               <option value="">—</option>
               {subjects.map((x) => (
                 <option key={x.id} value={x.id}>
-                  {x.icon} {x.name}
+                  {x.name}
                 </option>
               ))}
             </select>
@@ -136,14 +141,14 @@ function BlockEditor({ block, week, subjects, onClose }: { block: Block | Omit<B
           <div className="seg seg-3">
             {(['planned', 'done', 'skipped'] as const).map((st) => (
               <button key={st} type="button" className={b.status === st ? 'on' : ''} onClick={() => set({ status: st })}>
-                {st === 'planned' ? '🗓️ Planned' : st === 'done' ? '✅ Done' : '⏭️ Skipped'}
+                {st === 'planned' ? 'Planned' : st === 'done' ? 'Done' : 'Skipped'}
               </button>
             ))}
           </div>
         )}
         {b.origDay && (
           <p className="muted small">
-            🔁 Auto-moved from {b.origDay} {b.origStart}
+            Auto-moved from {b.origDay} {b.origStart}
           </p>
         )}
         <div className="btn-row">
@@ -158,7 +163,7 @@ function BlockEditor({ block, week, subjects, onClose }: { block: Block | Omit<B
                 onClose()
               }}
             >
-              ⏱️ Start 2 min
+              Start 2 min
             </button>
           )}
           {!isNew && (
@@ -190,12 +195,10 @@ function SubjectsEditor({ subjects }: { subjects: Subject[] }) {
       {subjects.map((s, si) => (
         <div key={s.id} className={'subject-row' + (s.active ? '' : ' off')} style={{ '--k': paletteVar(si) } as CSSProperties}>
           <button className="subject-head" onClick={() => setOpen(open === s.id ? null : s.id!)}>
-            <span>
-              {s.icon} {s.name}
-            </span>
+            <span>{s.name}</span>
             <span className="muted small">
               {['', 'Keep ticking', 'Needs work', 'Top priority'][s.priority]}
-              {s.currentMark !== null ? ` · ${s.currentMark}%→${s.targetMark}%` : ''} ›
+              {s.currentMark !== null ? ` · ${s.currentMark}%→${s.targetMark}%` : ''}
             </span>
           </button>
           {open === s.id && (
@@ -209,7 +212,16 @@ function SubjectsEditor({ subjects }: { subjects: Subject[] }) {
               </div>
               <div className="grid-3">
                 <Field label="My mark %">
-                  <input type="number" inputMode="numeric" value={s.currentMark ?? ''} onChange={(e) => upd(s.id!, { currentMark: e.target.value === '' ? null : Number(e.target.value) })} />
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={s.currentMark ?? ''}
+                    onChange={(e) =>
+                      upd(s.id!, {
+                        currentMark: e.target.value === '' ? null : Number(e.target.value),
+                      })
+                    }
+                  />
                 </Field>
                 <Field label="Target %">
                   <input type="number" inputMode="numeric" value={s.targetMark} onChange={(e) => upd(s.id!, { targetMark: Number(e.target.value) || 0 })} />
@@ -218,14 +230,9 @@ function SubjectsEditor({ subjects }: { subjects: Subject[] }) {
                   <input type="date" value={s.examDate} onChange={(e) => upd(s.id!, { examDate: e.target.value })} />
                 </Field>
               </div>
-              <div className="grid-2">
-                <Field label="Name">
-                  <input value={s.name} onChange={(e) => upd(s.id!, { name: e.target.value })} maxLength={40} />
-                </Field>
-                <Field label="Icon">
-                  <input value={s.icon} onChange={(e) => upd(s.id!, { icon: e.target.value })} maxLength={4} />
-                </Field>
-              </div>
+              <Field label="Name">
+                <input value={s.name} onChange={(e) => upd(s.id!, { name: e.target.value })} maxLength={40} />
+              </Field>
               <div className="btn-row">
                 <label className="toggle">
                   <input type="checkbox" checked={s.active} onChange={(e) => upd(s.id!, { active: e.target.checked })} />
@@ -242,7 +249,17 @@ function SubjectsEditor({ subjects }: { subjects: Subject[] }) {
       <button
         className="btn btn-ghost full"
         onClick={async () => {
-          const id = await db.subjects.add({ name: 'New subject', icon: '📘', color: '#FF8AC8', priority: 2, examDate: '', currentMark: null, targetMark: 50, active: true, group: 'extra' })
+          const id = await db.subjects.add({
+            name: 'New subject',
+            icon: '',
+            color: '#FF8AC8',
+            priority: 2,
+            examDate: '',
+            currentMark: null,
+            targetMark: 50,
+            active: true,
+            group: 'extra',
+          })
           setOpen(id)
         }}
       >
@@ -262,19 +279,30 @@ function CommitmentsEditor({ items }: { items: Commitment[] }) {
         {items.map((c) => (
           <li key={c.id} className={'block-row' + (c.active ? '' : ' st-skipped')} style={{ '--k': kindInfo(c.kind).color } as CSSProperties} onClick={() => setEdit(c)}>
             <div className="block-main">
-              <div className="block-title">
-                {kindInfo(c.kind).icon} {c.title}
-              </div>
+              <div className="block-title">{c.title}</div>
               <div className="muted small">
                 {c.days.length === 7 ? 'Every day' : c.days.map((d) => DOW[d]).join(', ')} · {c.start}–{c.end}
                 {c.travelMin ? ` · +${c.travelMin} min travel` : ''}
               </div>
             </div>
-            <span className="muted">›</span>
+            <ChevronRight size={18} className="muted" />
           </li>
         ))}
       </ul>
-      <button className="btn btn-ghost full" onClick={() => setEdit({ title: '', days: [1, 2, 3, 4, 5], start: '08:00', end: '09:00', travelMin: 0, kind: 'other', active: true })}>
+      <button
+        className="btn btn-ghost full"
+        onClick={() =>
+          setEdit({
+            title: '',
+            days: [1, 2, 3, 4, 5],
+            start: '08:00',
+            end: '09:00',
+            travelMin: 0,
+            kind: 'other',
+            active: true,
+          })
+        }
+      >
         + Add a fixed commitment
       </button>
       {edit && (
@@ -292,14 +320,24 @@ function CommitmentsEditor({ items }: { items: Commitment[] }) {
                 <input type="time" value={edit.end} onChange={(e) => setEdit({ ...edit, end: e.target.value })} />
               </Field>
               <Field label="Travel (min)">
-                <input type="number" inputMode="numeric" value={edit.travelMin} onChange={(e) => setEdit({ ...edit, travelMin: Math.max(0, Number(e.target.value) || 0) })} />
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  value={edit.travelMin}
+                  onChange={(e) =>
+                    setEdit({
+                      ...edit,
+                      travelMin: Math.max(0, Number(e.target.value) || 0),
+                    })
+                  }
+                />
               </Field>
             </div>
             <Field label="Type">
               <select value={edit.kind} onChange={(e) => setEdit({ ...edit, kind: e.target.value as BlockKind })}>
                 {KINDS.map((k) => (
                   <option key={k.id} value={k.id}>
-                    {k.icon} {k.label}
+                    {k.label}
                   </option>
                 ))}
               </select>
@@ -313,7 +351,10 @@ function CommitmentsEditor({ items }: { items: Commitment[] }) {
                 className="btn btn-primary"
                 onClick={async () => {
                   if (!edit.title.trim() || !edit.days.length) return
-                  await db.commitments.put({ ...edit, title: edit.title.trim() })
+                  await db.commitments.put({
+                    ...edit,
+                    title: edit.title.trim(),
+                  })
                   setEdit(null)
                 }}
               >
@@ -406,7 +447,7 @@ function PlannerSettings({ s }: { s: Settings }) {
       <div className="seg">
         {(['morning', 'evening'] as const).map((w) => (
           <button key={w} type="button" className={s.exerciseWhen === w ? 'on' : ''} onClick={() => setSetting('exerciseWhen', w)}>
-            {w === 'morning' ? '🌅 Early morning' : '🌙 Evening'}
+            {w === 'morning' ? 'Early morning' : 'Evening'}
           </button>
         ))}
       </div>
@@ -426,7 +467,7 @@ function Collapsible({ title, children, defaultOpen = false }: { title: string; 
     <section className="card">
       <button className="collapse-head" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <h2>{title}</h2>
-        <span className="muted">{open ? '▾' : '▸'}</span>
+        {open ? <ChevronDown size={18} className="muted" /> : <ChevronRight size={18} className="muted" />}
       </button>
       {open && children}
     </section>
@@ -462,7 +503,11 @@ export default function PlannerScreen() {
   const bySubject = subjects
     .map((sub) => {
       const bs = blocks.filter((b) => b.kind === 'study' && b.subjectId === sub.id)
-      return { sub, planned: minutes(bs.filter((b) => b.status !== 'skipped')), done: minutes(bs.filter((b) => b.status === 'done')) }
+      return {
+        sub,
+        planned: minutes(bs.filter((b) => b.status !== 'skipped')),
+        done: minutes(bs.filter((b) => b.status === 'done')),
+      }
     })
     .filter((x) => x.planned > 0)
 
@@ -470,7 +515,7 @@ export default function PlannerScreen() {
     const hasPlan = blocks.some((b) => b.generated && b.status === 'planned' && b.day >= today)
     if (hasPlan && !confirm('Rebuild the rest of this week? Blocks you made or moved yourself, and finished ones, are kept.')) return
     const n = await generateAndSave(monday)
-    setMsg(`✨ Planned ${n} blocks. Drag ⠿ to move, tap to edit.`)
+    setMsg(`Planned ${n} blocks. Drag a block to move it, tap to edit.`)
   }
 
   const h = (m: number) => `${Math.floor(m / 60)}h${m % 60 ? String(m % 60).padStart(2, '0') : ''}`
@@ -480,7 +525,7 @@ export default function PlannerScreen() {
       <section className="card">
         <div className="row-between">
           <button className="icon-btn subtle" onClick={() => setMonday(addDays(monday, -7))} aria-label="Previous week">
-            ‹
+            <ChevronLeft size={20} />
           </button>
           <div className="center">
             <div className="week-title">{monday === mondayOf(today) ? 'This week' : `Week of ${monday.slice(5).replace('-', '/')}`}</div>
@@ -489,28 +534,43 @@ export default function PlannerScreen() {
             </div>
           </div>
           <button className="icon-btn subtle" onClick={() => setMonday(addDays(monday, 7))} aria-label="Next week">
-            ›
+            <ChevronRight size={20} />
           </button>
         </div>
         <div className="bar thick">
-          <div className="bar-fill" style={{ width: `${weekPlanned ? Math.round((weekDone / weekPlanned) * 100) : 0}%` }} />
+          <div
+            className="bar-fill"
+            style={{
+              width: `${weekPlanned ? Math.round((weekDone / weekPlanned) * 100) : 0}%`,
+            }}
+          />
         </div>
         <div className="btn-row">
           <button className="btn btn-primary" onClick={generate}>
-            ✨ Generate week
+            Generate week
           </button>
-          <button className="btn" onClick={() => setEditing({ day, start: '14:00', minutes: s.studyBlock, title: '', kind: 'study', status: 'planned' })}>
+          <button
+            className="btn"
+            onClick={() =>
+              setEditing({
+                day,
+                start: '14:00',
+                minutes: s.studyBlock,
+                title: '',
+                kind: 'study',
+                status: 'planned',
+              })
+            }
+          >
             + Block
           </button>
           <button
             className="btn btn-ghost"
             onClick={async () => {
               const n = await rescheduleMissed()
-              setMsg(n ? `🔁 Moved ${n} missed block${n === 1 ? '' : 's'}.` : 'Nothing missed. Lekker! 🌸')
+              setMsg(n ? `Moved ${n} missed block${n === 1 ? '' : 's'}.` : 'Nothing missed. Lekker!')
             }}
-          >
-            🔁
-          </button>
+          ></button>
         </div>
         {msg && <p className="small">{msg}</p>}
       </section>
@@ -532,48 +592,52 @@ export default function PlannerScreen() {
 
       <section className="card tl-card">
         {dayBlocks.length === 0 ? (
-          <p className="muted small center">Nothing planned for this day. Tap ✨ Generate week.</p>
+          <p className="muted small center">Nothing planned for this day. Tap Generate week.</p>
         ) : (
           <Timeline blocks={dayBlocks} fromHour={firstH} toHour={lastH} now={day === today ? now : null} onEdit={setEditing} />
         )}
-        {dayBlocks.some((b) => b.kind === 'study' && b.status === 'planned' && day === today) && (
-          <p className="muted small center">Tap a block → ⏱️ Start 2 min. Tick it done when finished.</p>
-        )}
+        {dayBlocks.some((b) => b.kind === 'study' && b.status === 'planned' && day === today) && <p className="muted small center">Tap a block to start it. Tick it off when done.</p>}
       </section>
 
       {bySubject.length > 0 && (
-        <section className="card">
-          <h2>Planned vs done</h2>
-          <div className="stack-sm">
-            {bySubject.map(({ sub, planned, done }) => (
-              <div key={sub.id}>
-                <div className="row-between small">
-                  <span>
-                    {sub.icon} {sub.name}
-                  </span>
-                  <span className="muted">
-                    {h(done)} / {h(planned)}
-                  </span>
+        <section className="sec">
+          <h2 className="section-title">Planned vs done</h2>
+          <div className="card">
+            <div className="stack-sm">
+              {bySubject.map(({ sub, planned, done }) => (
+                <div key={sub.id}>
+                  <div className="row-between small">
+                    <span>{sub.name}</span>
+                    <span className="muted">
+                      {h(done)} / {h(planned)}
+                    </span>
+                  </div>
+                  <div className="bar">
+                    <div
+                      className="bar-fill"
+                      style={{
+                        width: `${Math.round((done / planned) * 100)}%`,
+                        background: paletteVar(subjects.indexOf(sub)),
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="bar">
-                  <div className="bar-fill" style={{ width: `${Math.round((done / planned) * 100)}%`, background: paletteVar(subjects.indexOf(sub)) }} />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      <Collapsible title="📚 Subjects & priorities">
+      <Collapsible title="Subjects & priorities">
         <p className="muted small">The planner gives more time to high-priority subjects, big gaps between your mark and target, and close exam dates. Hard subjects go in your best-focus hours.</p>
         <SubjectsEditor subjects={subjects} />
       </Collapsible>
 
-      <Collapsible title="📌 Fixed commitments">
+      <Collapsible title="Fixed commitments">
         <CommitmentsEditor items={commitments} />
       </Collapsible>
 
-      <Collapsible title="⚙️ Planner settings">
+      <Collapsible title="Planner settings">
         <PlannerSettings s={s} />
       </Collapsible>
 
@@ -581,4 +645,3 @@ export default function PlannerScreen() {
     </div>
   )
 }
-

@@ -1,3 +1,4 @@
+import { BookOpen, ChevronLeft, Dumbbell, Languages, Scale, Target, Timer, Wallet, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, localDay, type Goal, type GoalSource } from '../lib/db'
@@ -5,7 +6,12 @@ import { MAX_KG_PER_WEEK, checkWeightGoal, pace, type Pace } from '../lib/goals'
 import { ageOn, useProfile } from '../lib/profile'
 import { COURSES, allLessons } from '../study/courses'
 
-const fmt = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' })
+const fmt = (d: string) =>
+  new Date(d + 'T12:00:00').toLocaleDateString('en-ZA', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 const r1 = (n: number) => Math.round(n * 10) / 10
 const nowIso = () => new Date().toISOString()
 
@@ -17,9 +23,19 @@ async function currentValue(g: Goal): Promise<number> {
       return last?.kg ?? g.startValue
     }
     case 'lessons':
-      return db.lessons.where('courseId').equals(g.courseId ?? '').count()
+      return db.lessons
+        .where('courseId')
+        .equals(g.courseId ?? '')
+        .count()
     case 'workouts':
-      return g.startValue + (await db.workouts.where('day').aboveOrEqual(g.startDate).filter((w) => w.completed).count())
+      return (
+        g.startValue +
+        (await db.workouts
+          .where('day')
+          .aboveOrEqual(g.startDate)
+          .filter((w) => w.completed)
+          .count())
+      )
     case 'focusHours': {
       const f = await db.focus.where('day').aboveOrEqual(g.startDate).toArray()
       return r1(g.startValue + f.reduce((n, x) => n + x.minutes, 0) / 60)
@@ -31,13 +47,28 @@ async function currentValue(g: Goal): Promise<number> {
   }
 }
 
+/** Line icon for a goal (older goals stored an emoji; we use the category instead). */
+const GOAL_ICON: Record<string, LucideIcon> = {
+  body: Scale,
+  study: BookOpen,
+  focus: Timer,
+  fitness: Dumbbell,
+  money: Wallet,
+  language: Languages,
+  other: Target,
+}
+function GoalIcon({ g }: { g: { icon: string; category: string } }) {
+  const I = GOAL_ICON[g.icon] ?? GOAL_ICON[g.category] ?? Target
+  return <I size={22} />
+}
+
 const STATUS: Record<Pace['status'], [string, string]> = {
-  done: ['🏆 Done!', 'ok'],
-  early: ['🌱 Fresh start', 'info'],
-  ahead: ['🚀 Ahead', 'ok'],
-  'on-track': ['✅ On track', 'ok'],
-  behind: ['⚠️ Behind', 'warn'],
-  overdue: ['⏰ Date passed', 'warn'],
+  done: ['Done', 'ok'],
+  early: ['Fresh start', 'info'],
+  ahead: ['Ahead', 'ok'],
+  'on-track': ['On track', 'ok'],
+  behind: ['Behind', 'warn'],
+  overdue: ['Date passed', 'warn'],
 }
 
 interface Template {
@@ -50,13 +81,62 @@ interface Template {
 }
 
 const TEMPLATES: Template[] = [
-  { label: 'Body weight', icon: '⚖️', category: 'body', source: 'weight', unit: 'kg', title: 'Reach a healthy weight' },
-  { label: 'Finish lessons', icon: '📚', category: 'study', source: 'lessons', unit: 'lessons', title: 'Finish lessons' },
-  { label: 'Focus hours', icon: '⏱️', category: 'study', source: 'focusHours', unit: 'hours', title: 'Focus hours' },
-  { label: 'Workouts', icon: '💪', category: 'fitness', source: 'workouts', unit: 'workouts', title: 'Workouts done' },
-  { label: 'Save money', icon: '💰', category: 'money', source: 'manual', unit: 'R', title: 'Save money' },
-  { label: 'Words / kanji', icon: '🗣️', category: 'language', source: 'manual', unit: 'words', title: 'Learn words' },
-  { label: 'Anything else', icon: '✨', category: 'other', source: 'manual', unit: '', title: '' },
+  {
+    label: 'Body weight',
+    icon: 'body',
+    category: 'body',
+    source: 'weight',
+    unit: 'kg',
+    title: 'Reach a healthy weight',
+  },
+  {
+    label: 'Finish lessons',
+    icon: 'study',
+    category: 'study',
+    source: 'lessons',
+    unit: 'lessons',
+    title: 'Finish lessons',
+  },
+  {
+    label: 'Focus hours',
+    icon: 'focus',
+    category: 'study',
+    source: 'focusHours',
+    unit: 'hours',
+    title: 'Focus hours',
+  },
+  {
+    label: 'Workouts',
+    icon: 'fitness',
+    category: 'fitness',
+    source: 'workouts',
+    unit: 'workouts',
+    title: 'Workouts done',
+  },
+  {
+    label: 'Save money',
+    icon: 'money',
+    category: 'money',
+    source: 'manual',
+    unit: 'R',
+    title: 'Save money',
+  },
+  {
+    label: 'Words / kanji',
+    icon: 'language',
+    category: 'language',
+    source: 'manual',
+    unit: 'words',
+    title: 'Learn words',
+  },
+  {
+    label: 'Anything else',
+    icon: 'other',
+    category: 'other',
+    source: 'manual',
+    unit: '',
+    title: '',
+  },
 ]
 
 function NewGoal({ onClose }: { onClose: () => void }) {
@@ -104,7 +184,7 @@ function NewGoal({ onClose }: { onClose: () => void }) {
           <div className="stack-sm">
             {c.belowHealthy && (
               <p className="small">
-                💛 {tgt} kg is below the healthy range for your height ({c.healthyMin}–{c.healthyMax} kg), so we won't set that goal. Your body needs fuel to study, grow and stay well.
+                {tgt} kg is below the healthy range for your height ({c.healthyMin}–{c.healthyMax} kg), so we won't set that goal. Your body needs fuel to study, grow and stay well.
               </p>
             )}
             {!c.belowHealthy && c.saferDate && (
@@ -157,7 +237,9 @@ function NewGoal({ onClose }: { onClose: () => void }) {
           <div className="more-grid">
             {TEMPLATES.map((x) => (
               <button key={x.label} className="more-item" onClick={() => pick(x)}>
-                <span className="more-icon">{x.icon}</span>
+                <span className="more-icon">
+                  <GoalIcon g={x} />
+                </span>
                 <span>{x.label}</span>
               </button>
             ))}
@@ -174,7 +256,7 @@ function NewGoal({ onClose }: { onClose: () => void }) {
                 <select value={courseId} onChange={(e) => setCourseId(e.target.value)}>
                   {COURSES.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.icon} {c.name}
+                      {c.name}
                     </option>
                   ))}
                 </select>
@@ -214,7 +296,7 @@ function NewGoal({ onClose }: { onClose: () => void }) {
                   <option value="">None</option>
                   {subjects.map((x) => (
                     <option key={x.id} value={x.id}>
-                      {x.icon} {x.name}
+                      {x.name}
                     </option>
                   ))}
                 </select>
@@ -228,7 +310,7 @@ function NewGoal({ onClose }: { onClose: () => void }) {
                 Save goal
               </button>
               <button className="btn btn-ghost" onClick={() => setT(null)}>
-                ‹ Back
+                <ChevronLeft size={16} /> Back
               </button>
             </div>
           </div>
@@ -263,8 +345,12 @@ function GoalCard({ g, cur }: { g: Goal; cur: number }) {
   async function moveDate() {
     if (!pc.newDate) return
     // a new plan starts fresh from today, from where you are now
-    await db.goals.update(g.id!, { targetDate: pc.newDate, startDate: today, startValue: cur })
-    setMsg(`📅 New plan: about ${per(pc.assumedRate ?? pc.rate)}, finishing by ${fmt(pc.newDate)}.`)
+    await db.goals.update(g.id!, {
+      targetDate: pc.newDate,
+      startDate: today,
+      startValue: cur,
+    })
+    setMsg(`New plan: about ${per(pc.assumedRate ?? pc.rate)}, finishing by ${fmt(pc.newDate)}.`)
   }
 
   async function speedUp() {
@@ -274,16 +360,18 @@ function GoalCard({ g, cur }: { g: Goal; cur: number }) {
       const s = await db.subjects.get(g.subjectId)
       if (s) {
         await db.subjects.update(g.subjectId, { priority: 3 })
-        extra = ` ${s.name} is now top priority. Tap ✨ Generate week in the Planner to get more time for it.`
+        extra = ` ${s.name} is now top priority. Tap Generate week in the Planner to get more time for it.`
       }
     }
-    setMsg(`💪 New plan: ${per(pc.neededRate)} until ${fmt(g.targetDate)}.${extra}`)
+    setMsg(`New plan: ${per(pc.neededRate)} until ${fmt(g.targetDate)}.${extra}`)
   }
 
   return (
     <div className={'goal-card tone-' + tone}>
       <button className="goal-head" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <span className="goal-icon">{g.icon}</span>
+        <span className="goal-icon">
+          <GoalIcon g={g} />
+        </span>
         <span className="course-main">
           <strong>{g.title}</strong>
           <span className="muted small">
@@ -310,16 +398,18 @@ function GoalCard({ g, cur }: { g: Goal; cur: number }) {
 
           {(pc.status === 'behind' || pc.status === 'overdue') && (
             <div className="behind-box">
-              <strong>{pc.status === 'overdue' ? "The date passed. Let's re-plan 💕" : "You're a bit behind. Pick a new plan:"}</strong>
+              <strong>{pc.status === 'overdue' ? "The date passed. Let's re-plan" : "You're a bit behind. Pick a new plan:"}</strong>
               {pc.newDate && (
                 <button className="option-card" onClick={moveDate}>
-                  <b>📅 (a) Move the date to {fmt(pc.newDate)}</b>
+                  <b>(a) Move the date to {fmt(pc.newDate)}</b>
                   <span className="small muted">Keep a steady {per(pc.assumedRate ?? pc.rate)}. Less pressure.</span>
                 </button>
               )}
               {!pc.loadUnsafe ? (
                 <button className="option-card" onClick={speedUp}>
-                  <b>💪 (b) Keep {fmt(g.targetDate)}: do {per(pc.neededRate)}</b>
+                  <b>
+                    (b) Keep {fmt(g.targetDate)}: do {per(pc.neededRate)}
+                  </b>
                   <span className="small muted">
                     {pc.factor ? `That's ${r1(pc.factor)}× your current pace.` : 'Start now and keep it steady.'}
                     {g.subjectId ? ' Your linked subject gets more Planner time.' : ''}
@@ -344,8 +434,10 @@ function GoalCard({ g, cur }: { g: Goal; cur: number }) {
               </button>
             </form>
           )}
-          {g.source !== 'manual' && g.source !== 'weight' && <p className="field-hint">Updates automatically from your {g.source === 'lessons' ? 'lessons' : g.source === 'workouts' ? 'workouts' : 'focus timer'}.</p>}
-          {g.category === 'body' && <p className="field-hint">Steady habits win: regular meals, water, sleep and movement. No crash diets 💛</p>}
+          {g.source !== 'manual' && g.source !== 'weight' && (
+            <p className="field-hint">Updates automatically from your {g.source === 'lessons' ? 'lessons' : g.source === 'workouts' ? 'workouts' : 'focus timer'}.</p>
+          )}
+          {g.category === 'body' && <p className="field-hint">Steady habits win: regular meals, water, sleep and movement. No crash diets</p>}
           <div className="btn-row">
             {pc.status !== 'done' ? (
               <button className="btn btn-ghost" onClick={() => db.goals.update(g.id!, { done: true })}>
@@ -375,20 +467,22 @@ export default function GoalsSection() {
   }, [])
 
   return (
-    <section className="card">
-      <div className="row-between">
-        <h2>🎯 Goals</h2>
+    <section className="sec">
+      <div className="row-between sec-head">
+        <h2>Goals</h2>
         <button className="btn btn-ghost" onClick={() => setAdding(true)}>
           + New
         </button>
       </div>
-      {(data ?? []).length === 0 && <p className="muted small">Set a goal with a date: study, fitness, languages, money, anything. I'll track your pace and help you re-plan if you fall behind.</p>}
-      <div className="stack-sm">
-        {(data ?? []).map(({ g, cur }) => (
-          <GoalCard key={g.id} g={g} cur={cur} />
-        ))}
+      <div className="card">
+        {(data ?? []).length === 0 && <p className="muted small">Set a goal with a date: study, fitness, languages, money, anything. I'll track your pace and help you re-plan if you fall behind.</p>}
+        <div className="stack-sm">
+          {(data ?? []).map(({ g, cur }) => (
+            <GoalCard key={g.id} g={g} cur={cur} />
+          ))}
+        </div>
+        {adding && <NewGoal onClose={() => setAdding(false)} />}
       </div>
-      {adding && <NewGoal onClose={() => setAdding(false)} />}
     </section>
   )
 }

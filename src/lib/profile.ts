@@ -1,15 +1,20 @@
+import { Backpack, Briefcase, BriefcaseBusiness, Globe, GraduationCap, Sparkles, type LucideIcon } from 'lucide-react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from './db'
 
 export type LifeStage = 'school' | 'tertiary' | 'working' | 'work-study' | 'gap' | 'other'
 
-export const LIFE_STAGES: { id: LifeStage; label: string; icon: string }[] = [
-  { id: 'school', label: 'At school (Matric)', icon: '🎒' },
-  { id: 'tertiary', label: 'Studying (uni / college / online)', icon: '🎓' },
-  { id: 'working', label: 'Working', icon: '💼' },
-  { id: 'work-study', label: 'Working + studying', icon: '💼🎓' },
-  { id: 'gap', label: 'Gap year / between things', icon: '🌍' },
-  { id: 'other', label: 'Other', icon: '✨' },
+export const LIFE_STAGES: { id: LifeStage; label: string; Icon: LucideIcon }[] = [
+  { id: 'school', label: 'At school (Matric)', Icon: Backpack },
+  {
+    id: 'tertiary',
+    label: 'Studying (uni / college / online)',
+    Icon: GraduationCap,
+  },
+  { id: 'working', label: 'Working', Icon: Briefcase },
+  { id: 'work-study', label: 'Working + studying', Icon: BriefcaseBusiness },
+  { id: 'gap', label: 'Gap year / between things', Icon: Globe },
+  { id: 'other', label: 'Other', Icon: Sparkles },
 ]
 
 export interface Profile {

@@ -1,3 +1,4 @@
+import { Check, Heart, Trophy, Volume2, X } from 'lucide-react'
 import { useState } from 'react'
 import type { Lesson, Question } from './types'
 import QuestionView, { type Answered } from './QuestionView'
@@ -43,7 +44,10 @@ export default function LessonPlayer({
   const [idx, setIdx] = useState(0)
   const [teach, setTeach] = useState(!!lesson)
   const [result, setResult] = useState<Answered | null>(null)
-  const [firstTry, setFirstTry] = useState({ right: 0, total: lesson ? lesson.questions.length : review!.length })
+  const [firstTry, setFirstTry] = useState({
+    right: 0,
+    total: lesson ? lesson.questions.length : review!.length,
+  })
   const [wrongOnce] = useState(() => new Set<string>())
   const [done, setDone] = useState<{ xp: number; score: number } | null>(null)
   const [outOfHearts, setOutOfHearts] = useState(false)
@@ -107,23 +111,27 @@ export default function LessonPlayer({
     <div className="player" style={vars} role="dialog" aria-label={lesson?.title ?? 'Review'}>
       <div className="player-top">
         <button className="icon-btn subtle" onClick={() => (done || confirm('Quit this lesson? Progress in it is lost.') ? onClose() : null)} aria-label="Close">
-          ✕
+          <X size={18} />
         </button>
         <div className="bar thick player-bar">
           <div className="bar-fill" style={{ width: `${pct}%` }} />
         </div>
-        {!isReview && <span className="hearts">❤️ {hearts.n}</span>}
+        {!isReview && (
+          <span className="hearts">
+            <Heart size={16} fill="currentColor" /> {hearts.n}
+          </span>
+        )}
       </div>
 
       {teach && lesson && (
         <div className="player-body">
           <div className="teach">
-            <div className="teach-badge">💡 Learn</div>
+            <div className="teach-badge">Learn</div>
             <div className="row-between">
               <h1>{lesson.title}</h1>
               {lesson.teach.say && canSpeak && (
                 <button className="icon-btn" onClick={() => speak(lesson.teach.say!, lang)} aria-label="Listen">
-                  🔊
+                  <Volume2 size={18} />
                 </button>
               )}
             </div>
@@ -149,25 +157,25 @@ export default function LessonPlayer({
 
       {!teach && !done && item && (
         <div className="player-body">
-          {item.attempt > 0 && <div className="pill retry-pill">🔁 Try this one again</div>}
+          {item.attempt > 0 && <div className="pill retry-pill">Try this one again</div>}
           <QuestionView key={`${idx}-${item.q.id}-${item.attempt}`} q={item.q} attempt={item.attempt} locked={!!result} lang={item.lang ?? lang} onCheck={onCheck} />
         </div>
       )}
 
       {result && !done && (
         <div className={'feedback ' + (result.correct ? 'ok' : 'bad')}>
-          <strong>{result.correct ? ['Lekker! ✨', 'Correct! 💕', 'Yes!! 🎉', 'Nailed it 🔥'][idx % 4] : 'Not quite'}</strong>
+          <strong>{result.correct ? ['Lekker!', 'Correct!', 'Yes!!', 'Nailed it'][idx % 4] : 'Not quite'}</strong>
           {!result.correct && <div className="fb-solution">Answer: {result.solution}</div>}
           <div className="fb-explain">{item.q.explain}</div>
           {!result.correct && settings.mistralApiKey.trim() && !ai && (
             <button className="link-btn small" onClick={explainMore}>
-              🤖 Explain more
+              Explain more
             </button>
           )}
-          {ai && <div className="fb-ai small">{ai.loading ? '🤖 Thinking…' : ai.text}</div>}
+          {ai && <div className="fb-ai small">{ai.loading ? 'Thinking…' : ai.text}</div>}
           {outOfHearts ? (
             <div className="stack-sm">
-              <p className="small">You're out of hearts 💔 They refill 1 every 30 min, or earn them back by reviewing mistakes.</p>
+              <p className="small">You're out of hearts. They refill 1 every 30 min, or earn them back by reviewing mistakes.</p>
               <button className="btn btn-xl" onClick={onClose}>
                 OK
               </button>
@@ -182,14 +190,14 @@ export default function LessonPlayer({
 
       {done && (
         <div className="player-body center">
-          <div className="done-emoji">{done.score === 100 ? '🏆' : done.score >= 70 ? '🎉' : '💪'}</div>
+          <div className="done-emoji">{done.score === 100 ? <Trophy size={64} strokeWidth={1.5} /> : <Check size={64} strokeWidth={1.5} />}</div>
           <h1>{isReview ? 'Review done!' : 'Lesson complete!'}</h1>
           <p className="muted">
             {firstTry.right}/{firstTry.total} right first time · {done.score}%
           </p>
           <p className="xp-pop">+{done.xp} XP</p>
           {!isReview && done.score < 100 && <p className="small muted">Your mistakes are saved in Review, so you'll see them again in a day or two.</p>}
-          {!isReview && hearts.n < MAX_HEARTS && <p className="small muted">❤️ Review mistakes to earn hearts back.</p>}
+          {!isReview && hearts.n < MAX_HEARTS && <p className="small muted">Review mistakes to earn hearts back.</p>}
           <button className="btn btn-primary btn-xl" onClick={onClose}>
             Continue
           </button>

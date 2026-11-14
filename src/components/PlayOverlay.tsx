@@ -45,28 +45,27 @@ export default function PlayOverlay() {
   return (
     <div className="focus-overlay play-overlay" role="dialog" aria-label="Play timer">
       <div className="focus-top">
-        <span className="pill">🎮 Play time</span>
+        <span className="pill">Play time</span>
         {!st.finished && (
           <button className="btn btn-ghost" onClick={() => endPlay().then(setXp)}>
             End early
           </button>
         )}
       </div>
-      <div className="wk-icon">{st.icon}</div>
       <h2 className="focus-title">{st.name}</h2>
       {!st.finished ? (
         <>
           <div className="focus-time">
             {String(mm).padStart(2, '0')}:{String(ss).padStart(2, '0')}
           </div>
-          <p className="muted center">Enjoy it, you earned this 💕 I'll call you back when it's time.</p>
+          <p className="muted center">You earned this. You'll get a nudge when time's up.</p>
         </>
       ) : (
         <div className="focus-actions">
-          <h1 className="center">Break's over! ⏰</h1>
+          <h1 className="center">Break's over!</h1>
           <p className="center muted">Come back on time for +3 XP.{next ? ` Next up: ${next.title}.` : ''}</p>
           <button className="btn btn-primary btn-xl" onClick={backToIt}>
-            ⏱️ Back to it: just 2 minutes
+            Back to it: just 2 minutes
           </button>
           <div className="btn-row center-row">
             <button className="btn" onClick={() => extendPlay(5)}>

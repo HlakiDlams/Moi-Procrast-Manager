@@ -5,7 +5,7 @@ import type { Course } from '../types'
 export const JAPANESE: Course = {
   id: 'japanese',
   name: 'Japanese',
-  icon: '🇯🇵',
+  icon: '',
   color: '#FF5C8A',
   group: 'extra',
   section: 'Languages',
@@ -47,7 +47,7 @@ export const JAPANESE: Course = {
     {
       id: 'ja-basic',
       title: 'Basics',
-      icon: '🙇',
+      icon: '',
       description: 'Greetings and numbers',
       lessons: [
         {
@@ -81,7 +81,7 @@ export const JAPANESE: Course = {
 export const KOREAN: Course = {
   id: 'korean',
   name: 'Korean',
-  icon: '🇰🇷',
+  icon: '',
   color: '#7DB9FF',
   group: 'extra',
   section: 'Languages',
@@ -122,7 +122,7 @@ export const KOREAN: Course = {
     {
       id: 'ko-basic',
       title: 'Basics',
-      icon: '👋',
+      icon: '',
       description: 'Greetings',
       lessons: [
         {
@@ -144,7 +144,7 @@ export const KOREAN: Course = {
 export const MANDARIN: Course = {
   id: 'mandarin',
   name: 'Mandarin',
-  icon: '🇨🇳',
+  icon: '',
   color: '#FF6B6B',
   group: 'extra',
   section: 'Languages',
@@ -198,7 +198,7 @@ export const MANDARIN: Course = {
 export const SPANISH: Course = {
   id: 'spanish',
   name: 'Spanish',
-  icon: '🇪🇸',
+  icon: '',
   color: '#FFB347',
   group: 'extra',
   section: 'Languages',
@@ -207,7 +207,7 @@ export const SPANISH: Course = {
     {
       id: 'es-start',
       title: 'Getting started',
-      icon: '👋',
+      icon: '',
       description: 'Greetings, numbers, about me',
       lessons: [
         {
@@ -251,7 +251,7 @@ export const SPANISH: Course = {
 export const PORTUGUESE: Course = {
   id: 'portuguese',
   name: 'Portuguese',
-  icon: '🇵🇹',
+  icon: '',
   color: '#6BCB77',
   group: 'extra',
   section: 'Languages',
@@ -261,7 +261,7 @@ export const PORTUGUESE: Course = {
     {
       id: 'pt-start',
       title: 'Getting started',
-      icon: '👋',
+      icon: '',
       description: 'Greetings, numbers, about me',
       lessons: [
         {
@@ -305,7 +305,7 @@ export const PORTUGUESE: Course = {
 export const FRENCH: Course = {
   id: 'french',
   name: 'French',
-  icon: '🇫🇷',
+  icon: '',
   color: '#8C9EFF',
   group: 'extra',
   section: 'Languages',
@@ -314,7 +314,7 @@ export const FRENCH: Course = {
     {
       id: 'fr-start',
       title: 'Getting started',
-      icon: '👋',
+      icon: '',
       description: 'Greetings, numbers, about me',
       lessons: [
         {
@@ -358,7 +358,7 @@ export const FRENCH: Course = {
 export const HEBREW: Course = {
   id: 'hebrew',
   name: 'Hebrew',
-  icon: '🇮🇱',
+  icon: '',
   color: '#5AA2FF',
   group: 'extra',
   section: 'Languages',

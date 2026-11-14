@@ -1,3 +1,4 @@
+import { Play, Volume2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { Question } from './types'
 import { checkInput } from './check'
@@ -32,16 +33,43 @@ export interface Answered {
 export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q: Question; attempt: number; locked: boolean; lang?: string; onCheck: (a: Answered) => void }) {
   const seed = q.id + attempt
   // MCQ
-  const order = useMemo(() => (q.type === 'mcq' ? shuffle(q.options.map((_, i) => i), seed) : []), [q, seed])
+  const order = useMemo(
+    () =>
+      q.type === 'mcq'
+        ? shuffle(
+            q.options.map((_, i) => i),
+            seed,
+          )
+        : [],
+    [q, seed],
+  )
   const [pick, setPick] = useState<number | null>(null)
   // input
   const [text, setText] = useState('')
   // match
-  const rights = useMemo(() => (q.type === 'match' ? shuffle(q.pairs.map((p) => p[1]), seed) : []), [q, seed])
+  const rights = useMemo(
+    () =>
+      q.type === 'match'
+        ? shuffle(
+            q.pairs.map((p) => p[1]),
+            seed,
+          )
+        : [],
+    [q, seed],
+  )
   const [leftSel, setLeftSel] = useState<number | null>(null)
   const [pairs, setPairs] = useState<Record<number, number>>({}) // left index -> right index
   // order
-  const pool = useMemo(() => (q.type === 'order' ? shuffle(q.steps.map((_, i) => i), seed) : []), [q, seed])
+  const pool = useMemo(
+    () =>
+      q.type === 'order'
+        ? shuffle(
+            q.steps.map((_, i) => i),
+            seed,
+          )
+        : [],
+    [q, seed],
+  )
   const [seq, setSeq] = useState<number[]>([])
   // recall
   const [shown, setShown] = useState(false)
@@ -51,10 +79,18 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
 
   if (q.type === 'mcq') {
     ready = pick !== null
-    check = () => ({ correct: pick === q.answer, solution: q.options[q.answer], given: pick !== null ? q.options[pick] : '' })
+    check = () => ({
+      correct: pick === q.answer,
+      solution: q.options[q.answer],
+      given: pick !== null ? q.options[pick] : '',
+    })
   } else if (q.type === 'input') {
     ready = text.trim().length > 0
-    check = () => ({ correct: checkInput(q, text), solution: q.answers[0], given: text })
+    check = () => ({
+      correct: checkInput(q, text),
+      solution: q.answers[0],
+      given: text,
+    })
   } else if (q.type === 'match') {
     ready = Object.keys(pairs).length === q.pairs.length
     check = () => ({
@@ -66,7 +102,11 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
     ready = false
   } else {
     ready = seq.length === q.steps.length
-    check = () => ({ correct: seq.every((v, i) => v === i), solution: q.steps.map((s, i) => `${i + 1}. ${s}`).join('\n'), given: seq.map((v, i) => `${i + 1}. ${q.steps[v]}`).join('\n') })
+    check = () => ({
+      correct: seq.every((v, i) => v === i),
+      solution: q.steps.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+      given: seq.map((v, i) => `${i + 1}. ${q.steps[v]}`).join('\n'),
+    })
   }
 
   const submit = () => ready && !locked && onCheck(check())
@@ -77,7 +117,7 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
       {q.code && <pre className="q-code">{q.code}</pre>}
       {q.tones && (
         <button className="btn btn-xl q-play" type="button" onClick={() => playTones(q.tones!)}>
-          ▶ Play {q.tones.length > 1 ? `${q.tones.length} notes` : 'note'}
+          <Play size={16} fill="currentColor" /> Play {q.tones.length > 1 ? `${q.tones.length} notes` : 'note'}
         </button>
       )}
       <div className="q-prompt-row">
@@ -86,7 +126,7 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
         </h2>
         {q.say && canSpeak && (
           <button className="icon-btn" onClick={() => speak(q.say!, lang)} aria-label="Listen">
-            🔊
+            <Volume2 size={18} />
           </button>
         )}
       </div>
@@ -207,7 +247,7 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
             <>
               <p className="muted small">Think of the answer (or work it out on paper), then tap Show.</p>
               <button className="btn btn-primary btn-xl" onClick={() => setShown(true)}>
-                👀 Show answer
+                Show answer
               </button>
             </>
           ) : (
@@ -216,10 +256,10 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
               {!locked && (
                 <div className="btn-row">
                   <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => onCheck({ correct: true, solution: q.answer })}>
-                    ✅ I knew it
+                    I knew it
                   </button>
                   <button className="btn" style={{ flex: 1 }} onClick={() => onCheck({ correct: false, solution: q.answer })}>
-                    ❌ Not yet
+                    Not yet
                   </button>
                 </div>
               )}

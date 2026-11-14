@@ -17,8 +17,7 @@ export default class ErrorBoundary extends Component<{ children: ReactNode; onHo
     return (
       <div className="stack">
         <section className="card hero">
-          <div className="hero-icon">🙈</div>
-          <h1>Oops, this screen tripped</h1>
+          <h1>Something went wrong on this screen</h1>
           <p className="muted">Your data is safe. Try again, or go back to Today.</p>
           <p className="field-hint">{String(this.state.error.message || this.state.error.name).slice(0, 200)}</p>
           <div className="btn-row">

@@ -14,7 +14,15 @@ export async function generateAndSave(monday: string): Promise<number> {
     db.blocks.where('day').between(days[0], days[6], true, true).toArray(),
   ])
   const now = new Date()
-  const res = generateWeek({ days, today: localDay(now), nowMin: now.getHours() * 60 + now.getMinutes(), settings, subjects, commitments, existing })
+  const res = generateWeek({
+    days,
+    today: localDay(now),
+    nowMin: now.getHours() * 60 + now.getMinutes(),
+    settings,
+    subjects,
+    commitments,
+    existing,
+  })
   await db.transaction('rw', db.blocks, async () => {
     await db.blocks.bulkDelete(res.remove)
     await db.blocks.bulkAdd(res.add)
@@ -52,7 +60,7 @@ export async function rescheduleMissed(): Promise<number> {
   const first = moves.find((m) => m.to)
   if (first?.to) {
     emitFired({
-      title: `🔁 Moved ${moved} missed block${moved === 1 ? '' : 's'}`,
+      title: `Moved ${moved} missed block${moved === 1 ? '' : 's'}`,
       body: `${first.title} is now ${first.to.day === localDay(now) ? 'today' : new Date(first.to.day + 'T12:00:00').toLocaleDateString('en-ZA', { weekday: 'long' })} at ${first.to.start}${moved > 1 ? ', and more' : ''}.`,
       channel: 'reminders',
     })

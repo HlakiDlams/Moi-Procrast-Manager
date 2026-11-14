@@ -8,7 +8,7 @@ export default function ThemePicker({ theme, mode, onTheme, onMode }: { theme: s
       <div className="seg seg-3" role="radiogroup" aria-label="Mode">
         {MODES.map((m) => (
           <button key={m.id} type="button" className={mode === m.id ? 'on' : ''} onClick={() => onMode(m.id)} aria-pressed={mode === m.id}>
-            {m.icon} {m.label}
+            <m.Icon size={16} /> {m.label}
           </button>
         ))}
       </div>

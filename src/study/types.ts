@@ -7,11 +7,11 @@ interface QBase {
   explain: string
   /** a reading passage shown above the question (comprehension) */
   context?: string
-  /** text the 🔊 button reads aloud in the course language */
+  /** text the Listen button reads aloud in the course language */
   say?: string
   /** a code snippet shown in a monospace box above the prompt */
   code?: string
-  /** ear training: frequencies (Hz) played one after another with ▶ */
+  /** ear training: frequencies (Hz) played one after another */
   tones?: number[]
 }
 
@@ -55,7 +55,7 @@ export interface Lesson {
   id: string
   title: string
   /** short "teach me" card before the questions */
-  teach: { text: string[]; example?: string[]; /** read aloud with 🔊 */ say?: string }
+  teach: { text: string[]; example?: string[]; /** read aloud by the Listen button */ say?: string }
   questions: Question[]
 }
 

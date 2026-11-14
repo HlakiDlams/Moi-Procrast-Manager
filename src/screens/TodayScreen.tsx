@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react'
+import { Bell, Brain, Check, ChevronRight, Clock, Droplet, Gamepad2, Play, Plus, Star, Timer, X } from 'lucide-react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { displayName, useSettings } from '../lib/settings'
 import { addXp, useXpStats } from '../lib/xp'
@@ -40,9 +41,13 @@ function PlayLink({ go }: { go: (t: TabId) => void }) {
   const s = useSettings()
   const bal = usePlayBalance(s)
   return (
-    <button className="card link-card" onClick={() => go('play')}>
-      <span>🎮 Play time earned today</span>
-      <span className="muted small">{bal ? `${bal.left} min` : '…'} ›</span>
+    <button className="list-row" onClick={() => go('play')}>
+      <span className="row-icon">
+        <Gamepad2 size={18} />
+      </span>
+      <span className="row-main">Play time earned</span>
+      <span className="row-value">{bal ? `${bal.left} min` : '…'}</span>
+      <ChevronRight size={18} className="muted" />
     </button>
   )
 }
@@ -60,7 +65,14 @@ function AddBlock({ onDone }: { onDone: () => void }) {
   async function save(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim()) return
-    await db.blocks.add({ day: localDay(), start, minutes, title: title.trim(), kind, status: 'planned' })
+    await db.blocks.add({
+      day: localDay(),
+      start,
+      minutes,
+      title: title.trim(),
+      kind,
+      status: 'planned',
+    })
     onDone()
   }
 
@@ -79,7 +91,7 @@ function AddBlock({ onDone }: { onDone: () => void }) {
         <select value={kind} onChange={(e) => setKind(e.target.value as BlockKind)} aria-label="Type">
           {KINDS.map((k) => (
             <option key={k.id} value={k.id}>
-              {k.icon} {k.label}
+              {k.label}
             </option>
           ))}
         </select>
@@ -102,11 +114,11 @@ function BlockRow({ b, now }: { b: Block; now: Date }) {
   return (
     <li className={'block-row st-' + st} style={{ '--k': k.color } as CSSProperties}>
       <button className={'tick' + (b.status === 'done' ? ' on' : '')} onClick={() => setBlockDone(b, b.status !== 'done')} aria-label={b.status === 'done' ? 'Mark not done' : 'Mark done'}>
-        {b.status === 'done' ? '✓' : ''}
+        {b.status === 'done' ? <Check size={16} strokeWidth={3} /> : null}
       </button>
       <div className="block-main">
         <div className="block-title">
-          {k.icon} {b.title}
+          <k.Icon size={15} className="kind-icon" /> {b.title}
         </div>
         <div className="muted small">
           {b.start}–{fmtTime(blockEnd(b))} · {b.minutes} min
@@ -117,15 +129,11 @@ function BlockRow({ b, now }: { b: Block; now: Date }) {
       <div className="block-actions">
         {b.status === 'planned' && b.kind !== 'sleep' && (
           <button className="icon-btn" onClick={() => startStarter(b.title, b.id)} aria-label={`Start ${b.title}`}>
-            ▶
+            <Play size={16} />
           </button>
         )}
-        <button
-          className="icon-btn subtle"
-          onClick={() => confirm(`Delete "${b.title}"?`) && db.blocks.delete(b.id!)}
-          aria-label={`Delete ${b.title}`}
-        >
-          ✕
+        <button className="icon-btn subtle" onClick={() => confirm(`Delete "${b.title}"?`) && db.blocks.delete(b.id!)} aria-label={`Delete ${b.title}`}>
+          <X size={16} />
         </button>
       </div>
     </li>
@@ -147,8 +155,6 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
 
   const exam = new Date(s.matricStart + 'T09:00:00')
   const daysLeft = Math.max(0, Math.ceil((exam.getTime() - now.getTime()) / 86_400_000))
-  const goalPct = Math.min(100, Math.round((stats.today / Math.max(1, s.dailyXpGoal)) * 100))
-  const lvlPct = Math.round((stats.level.into / stats.level.need) * 100)
   const next = nextBlock(blocks, now)
   const done = blocks.filter((b) => b.status === 'done').length
   const missed = blocks.filter((b) => blockState(b, now) === 'missed').length
@@ -169,31 +175,30 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
     else startStarter(freeTitle.trim() || 'Anything, for 2 minutes')
   }
 
+  const when = next ? (blockState(next, now) === 'now' ? 'Now' : untilText(new Date(next.day + 'T' + next.start).getTime() - now.getTime())) : ''
+
   return (
     <div className="stack">
-      <section className="card hero">
-        <p className="muted small">
-          {now.toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long' })} · {fmtTime(now)}
-        </p>
+      <header className="today-head">
         <h1>
-          {greeting(now.getHours())}, {displayName(s)} 💕
+          {greeting(now.getHours())}, {displayName(s)}
         </h1>
-        <p className="small">Welcome to your scheduler ✨</p>
-      </section>
+        {s.showCountdown && (
+          <p className="muted">
+            {daysLeft} days to {s.countdownLabel || 'the big day'}
+          </p>
+        )}
+      </header>
 
-      {/* ---- the anti-procrastination core ---- */}
+      {/* the anti-procrastination core */}
       <section className="card next-card">
         <div className="row-between">
-          <h2>Next up</h2>
-          {next && (
-            <span className="pill">
-              {blockState(next, now) === 'now' ? 'happening now' : untilText(new Date(next.day + 'T' + next.start).getTime() - now.getTime())}
-            </span>
-          )}
+          <span className="label in">Next up</span>
+          {next && <span className="muted small">{when}</span>}
         </div>
         {next ? (
           <div className="next-title">
-            {kindInfo(next.kind).icon} {next.title}
+            {next.title}
             <div className="muted small">
               {next.start} · {next.minutes} min
             </div>
@@ -201,84 +206,52 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
         ) : (
           <input placeholder="Nothing planned. What will you start?" value={freeTitle} onChange={(e) => setFreeTitle(e.target.value)} maxLength={80} />
         )}
-        <button className="btn btn-primary btn-xl" onClick={justTwo} disabled={!!focus}>
-          ⏱️ Just 2 minutes
-          <span className="btn-sub">then roll into a {s.pomodoroWork}/{s.pomodoroBreak} Pomodoro if you're vibing</span>
+        <button className="btn btn-primary btn-xl stacked" onClick={justTwo} disabled={!!focus}>
+          <span className="row-inline">
+            <Timer size={20} /> Start with 2 minutes
+          </span>
+          <span className="btn-sub">Keep going and it becomes a {s.pomodoroWork}-minute Pomodoro</span>
         </button>
       </section>
 
-      <StreakCard stats={stats} />
-      <CycleMini go={go} />
-
-      <div className="grid-2">
-        <button className="card stat stat-btn" onClick={() => go('study')}>
-          <div className="stat-icon">🧠</div>
-          <div className="stat-num">{dueCount}</div>
-          <div className="muted small">{dueCount ? 'mistakes to review' : 'reviews: all clear'}</div>
-        </button>
-        <section className="card stat">
-          <div className="stat-icon">⭐</div>
-          <div className="stat-num">Lv {stats.level.level}</div>
-          <div className="bar">
-            <div className="bar-fill" style={{ width: `${lvlPct}%` }} />
-          </div>
-          <div className="muted small">
-            {stats.level.into}/{stats.level.need} XP
-          </div>
-        </section>
-        <section className="card stat water-card">
-          <div className="stat-icon">💧</div>
-          <div className="stat-num">
+      <div className="stat-strip">
+        <button className="stat-cell" onClick={addWater} aria-label="Add a glass of water">
+          <Droplet size={16} />
+          <span className="v">
             {water}/{s.waterGoal}
-          </div>
-          <div className="btn-row center-row">
-            <button className="btn btn-primary water-btn" onClick={addWater} aria-label="Add a glass of water">
-              +1 glass
-            </button>
-          </div>
-          {water > 0 && (
-            <button className="link-btn small" onClick={undoWater}>
-              undo
-            </button>
-          )}
-        </section>
-        {s.showCountdown ? (
-          <section className="card stat">
-            <div className="stat-icon">🎓</div>
-            <div className="stat-num">{daysLeft}</div>
-            <div className="muted small">days to {s.countdownLabel || 'the big day'}</div>
-            <div className="muted small">{Math.floor(daysLeft / 7)} weeks</div>
-          </section>
-        ) : (
-          <section className="card stat">
-            <div className="stat-icon">🍅</div>
-            <div className="stat-num">{focusToday}</div>
-            <div className="muted small">focus min today</div>
-          </section>
-        )}
+          </span>
+          <span className="k">water · tap +1</span>
+        </button>
+        <button className="stat-cell" onClick={() => go('study')}>
+          <Brain size={16} />
+          <span className="v">{dueCount}</span>
+          <span className="k">to review</span>
+        </button>
+        <div className="stat-cell">
+          <Star size={16} />
+          <span className="v">{stats.level.level}</span>
+          <span className="k">level</span>
+        </div>
+        <div className="stat-cell">
+          <Clock size={16} />
+          <span className="v">{focusToday}</span>
+          <span className="k">focus min</span>
+        </div>
       </div>
+      {water > 0 && (
+        <button className="link-btn small" onClick={undoWater}>
+          Undo last glass
+        </button>
+      )}
 
-      <section className="card">
-        <div className="row-between">
-          <h2>Daily XP goal</h2>
-          <span className="muted small">
-            {stats.today}/{s.dailyXpGoal}
-          </span>
-        </div>
-        <div className="bar thick">
-          <div className="bar-fill" style={{ width: `${goalPct}%` }} />
-        </div>
-        {goalPct >= 100 && <p className="small">Goal smashed today 🎉</p>}
-      </section>
+      <StreakCard stats={stats} goal={s.dailyXpGoal} />
 
+      <span className="label">
+        Schedule · {done}/{blocks.length} done
+        {missed ? ` · ${missed} missed` : ''}
+      </span>
       <section className="card">
-        <div className="row-between">
-          <h2>Today's schedule</h2>
-          <span className="muted small">
-            {done}/{blocks.length} done{missed ? ` · ${missed} missed` : ''}
-          </span>
-        </div>
-        {blocks.length === 0 && !adding && <p className="muted small">No blocks yet. Add one, or open the Planner and tap ✨ Generate week.</p>}
+        {blocks.length === 0 && !adding && <p className="muted small">Nothing yet. Add a block, or generate your week in the Planner.</p>}
         <ul className="blocks">
           {blocks.map((b) => (
             <BlockRow key={b.id} b={b} now={now} />
@@ -288,22 +261,28 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
           <AddBlock onDone={() => setAdding(false)} />
         ) : (
           <button className="btn btn-ghost full" onClick={() => setAdding(true)}>
-            + Add a block
+            <Plus size={18} /> Add a block
           </button>
         )}
       </section>
 
+      <span className="label">XP this week</span>
       <section className="card">
-        <h2>This week</h2>
         <WeekChart data={stats.week} />
       </section>
 
-      <PlayLink go={go} />
-
-      <button className="card link-card" onClick={() => go('alarms')}>
-        <span>⏰ Alarms & reminders</span>
-        <span className="muted small">{s.notifications ? 'Reminders on' : 'Reminders off'} ›</span>
-      </button>
+      <div className="list">
+        <PlayLink go={go} />
+        <CycleMini go={go} />
+        <button className="list-row" onClick={() => go('alarms')}>
+          <span className="row-icon">
+            <Bell size={18} />
+          </span>
+          <span className="row-main">Reminders</span>
+          <span className="row-value">{s.notifications ? 'On' : 'Off'}</span>
+          <ChevronRight size={18} className="muted" />
+        </button>
+      </div>
     </div>
   )
 }

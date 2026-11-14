@@ -4,14 +4,18 @@ import { addXp } from './xp'
 /** Give XP for something only once per day (e.g. logging mood). */
 export async function xpOnce(day: string, key: string, amount: number) {
   const note = `once:${key}`
-  const already = await db.xp.where('day').equals(day).filter((e) => e.note === note).count()
+  const already = await db.xp
+    .where('day')
+    .equals(day)
+    .filter((e) => e.note === note)
+    .count()
   if (!already) await addXp(amount, 'selfcare', note)
 }
 
 export const DEFAULT_ROUTINES: Omit<Routine, 'id'>[] = [
   {
     name: 'Morning skincare',
-    icon: '☀️',
+    icon: '',
     items: [
       { id: 'cleanse', label: 'Cleanse' },
       { id: 'moisturise', label: 'Moisturise' },
@@ -23,7 +27,7 @@ export const DEFAULT_ROUTINES: Omit<Routine, 'id'>[] = [
   },
   {
     name: 'Night skincare',
-    icon: '🌙',
+    icon: '',
     items: [
       { id: 'cleanse', label: 'Cleanse (remove the day)' },
       { id: 'moisturise', label: 'Moisturise' },
@@ -34,7 +38,7 @@ export const DEFAULT_ROUTINES: Omit<Routine, 'id'>[] = [
   },
   {
     name: 'Hair care',
-    icon: '💇🏾‍♀️',
+    icon: '',
     items: [
       { id: 'moist', label: 'Moisturise hair / ends' },
       { id: 'bonnet', label: 'Satin bonnet or scarf for sleep' },
@@ -44,7 +48,7 @@ export const DEFAULT_ROUTINES: Omit<Routine, 'id'>[] = [
   },
   {
     name: 'Wash day',
-    icon: '🧴',
+    icon: '',
     items: [
       { id: 'wash', label: 'Wash' },
       { id: 'condition', label: 'Deep condition' },

@@ -1,3 +1,4 @@
+import { ChevronRight, Play, Trophy, Wind } from 'lucide-react'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { EXERCISES, WARMUP, type Step } from './library'
 import { db, localDay } from '../lib/db'
@@ -29,7 +30,21 @@ function beep(freq = 880) {
 }
 
 /** Full-screen guided workout: warm-up → sets with timers/reps → rest countdowns → summary. */
-export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, vars, onClose }: { workoutId: string; name: string; steps: Step[]; programmeWeek?: number; vars: React.CSSProperties; onClose: () => void }) {
+export default function WorkoutPlayer({
+  workoutId,
+  name,
+  steps,
+  programmeWeek,
+  vars,
+  onClose,
+}: {
+  workoutId: string
+  name: string
+  steps: Step[]
+  programmeWeek?: number
+  vars: React.CSSProperties
+  onClose: () => void
+}) {
   const items = useMemo(() => {
     const out: Item[] = []
     const add = (list: Step[], warmup: boolean) => {
@@ -150,7 +165,16 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
       return
     }
     const now = new Date()
-    await db.workouts.add({ day: localDay(now), at: now.toISOString(), workoutId, name, minutes, sets, programmeWeek, completed })
+    await db.workouts.add({
+      day: localDay(now),
+      at: now.toISOString(),
+      workoutId,
+      name,
+      minutes,
+      sets,
+      programmeWeek,
+      completed,
+    })
     const xp = completed ? 15 : 5
     await addXp(xp, 'exercise', `${completed ? 'Workout' : 'Part workout'}: ${name}`)
     setSaved(xp)
@@ -169,9 +193,7 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
             if (confirm('Stop the workout? What you did so far will be saved.')) finishWorkout(false)
           }}
           aria-label="Stop"
-        >
-          ✕
-        </button>
+        ></button>
         <div className="bar thick player-bar">
           <div className="bar-fill" style={{ width: `${pct}%` }} />
         </div>
@@ -182,18 +204,17 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
 
       {phase !== 'done' && item && ex && (
         <div className="player-body center wk-body">
-          <div className="pill">{item.warmup ? '🔥 Warm-up' : `Set ${item.set} of ${item.step.sets}`}</div>
+          <div className="pill">{item.warmup ? 'Warm-up' : `Set ${item.set} of ${item.step.sets}`}</div>
           {phase === 'work' ? (
             <>
-              <div className="wk-icon">{ex.icon}</div>
               <h1>{ex.name}</h1>
-              {item.side && <div className="pill">{item.side === 'left' ? '⬅️ Left side' : 'Right side ➡️'}</div>}
+              {item.side && <div className="pill">{item.side === 'left' ? 'Left side' : 'Right side'}</div>}
               {ex.type === 'time' ? (
                 <>
                   <div className="wk-timer">{endAt || paused !== null ? secsLeft : item.step.secs}s</div>
                   {!endAt && paused === null && (
                     <button className="btn btn-primary btn-xl" onClick={() => startTimer(item.step.secs ?? 30)}>
-                      ▶ Start
+                      <Play size={16} fill="currentColor" /> Start
                     </button>
                   )}
                   {endAt && (
@@ -204,12 +225,12 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
                         setEndAt(null)
                       }}
                     >
-                      ⏸ Pause
+                      Pause
                     </button>
                   )}
                   {!endAt && paused !== null && (
                     <button className="btn btn-primary btn-xl" onClick={() => startTimer(paused / 1000)}>
-                      ▶ Resume
+                      <Play size={16} fill="currentColor" /> Resume
                     </button>
                   )}
                 </>
@@ -226,7 +247,7 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
                   </div>
                   <div className="muted small">reps{ex.perSide ? ' each side' : ''}: adjust to what you actually did</div>
                   <button className="btn btn-primary btn-xl" onClick={finishSet}>
-                    ✓ Done
+                    Done
                   </button>
                 </>
               )}
@@ -238,7 +259,9 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
             </>
           ) : (
             <>
-              <div className="wk-icon">😮‍💨</div>
+              <div className="wk-icon">
+                <Wind size={56} strokeWidth={1.5} />
+              </div>
               <h1>Rest</h1>
               <div className="wk-timer">{secsLeft}s</div>
               <div className="btn-row center-row">
@@ -252,16 +275,16 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
                     goNext()
                   }}
                 >
-                  Skip ›
+                  Skip <ChevronRight size={16} />
                 </button>
               </div>
               {next && (
                 <p className="muted">
-                  Next: {EXERCISES[next.step.ex].icon} {EXERCISES[next.step.ex].name}
+                  Next: {EXERCISES[next.step.ex].name}
                   {next.step.reps ? ` × ${next.step.reps}` : next.step.secs ? ` · ${next.step.secs}s` : ''}
                 </p>
               )}
-              <p className="small soft-note">Breathe in through your nose, out slowly through your mouth. Sip some water 💧</p>
+              <p className="small soft-note">Breathe in through your nose, out slowly through your mouth. Sip some water</p>
             </>
           )}
           <p className="field-hint">Stop straight away if you feel wheezy, dizzy, have chest pain or a nosebleed.</p>
@@ -270,7 +293,7 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
 
       {phase === 'done' && (
         <div className="player-body center">
-          <div className="done-emoji">{saved ? '🏆' : '👋🏾'}</div>
+          <div className="done-emoji">{saved ? <Trophy size={64} strokeWidth={1.5} /> : null}</div>
           <h1>{saved === 15 ? 'Workout done!' : saved ? 'Nice effort!' : 'Stopped'}</h1>
           {saved ? (
             <>
@@ -280,7 +303,7 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, v
               <p className="xp-pop">+{saved} XP</p>
             </>
           ) : (
-            <p className="muted">Nothing logged. Even 2 minutes counts next time 💕</p>
+            <p className="muted">Nothing logged. Even 2 minutes counts next time</p>
           )}
           <p className="small muted">Cool down: a slow walk and a few deep breaths. Drink water.</p>
           <button className="btn btn-primary btn-xl" onClick={onClose}>

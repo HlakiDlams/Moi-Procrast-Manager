@@ -1,3 +1,4 @@
+import { Check, ChevronLeft, ChevronRight, Crown, Flame, Heart, Lock, Play, Plus, Star, TriangleAlert } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
 import { COMING_SOON, COURSES, allLessons, findQuestion } from '../study/courses'
 import { db } from '../lib/db'
@@ -8,7 +9,13 @@ import { useXpStats } from '../lib/xp'
 import { setSetting, useSettings } from '../lib/settings'
 import { paletteVar, useTheme } from '../lib/themes'
 
-type Playing = { courseId: string; vars: CSSProperties; lang?: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
+type Playing = {
+  courseId: string
+  vars: CSSProperties
+  lang?: string
+  lesson?: Lesson
+  review?: { key: string; q: import('../study/types').Question }[]
+}
 
 function mins(ms: number) {
   return Math.ceil(ms / 60_000)
@@ -27,17 +34,23 @@ function CourseCard({ c, onOpen }: { c: Course; onOpen: () => void }) {
   const pct = Math.round((done.length / total) * 100)
   return (
     <button className="course-card" style={{ '--k': paletteVar(COURSES.indexOf(c)) } as CSSProperties} onClick={onOpen}>
-      <span className="course-icon">{c.icon}</span>
       <span className="course-main">
         <strong>{c.name}</strong>
         <span className="muted small">
           {done.length}/{total} lessons{due ? ` · ${due} to review` : ''}
         </span>
         <span className="bar">
-          <span className="bar-fill" style={{ width: `${pct}%`, background: paletteVar(COURSES.indexOf(c)), display: 'block' }} />
+          <span
+            className="bar-fill"
+            style={{
+              width: `${pct}%`,
+              background: paletteVar(COURSES.indexOf(c)),
+              display: 'block',
+            }}
+          />
         </span>
       </span>
-      <span className="muted">›</span>
+      <ChevronRight size={18} className="muted" />
     </button>
   )
 }
@@ -52,18 +65,16 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
     <div className="stack">
       <section className="card hero" style={theme.accentVars(COURSES.indexOf(c))}>
         <button className="link-btn small" onClick={onBack}>
-          ‹ All subjects
+          <ChevronLeft size={16} /> All subjects
         </button>
-        <h1>
-          {c.icon} {c.name}
-        </h1>
+        <h1>{c.name}</h1>
         {c.blurb && <p className="small">{c.blurb}</p>}
         <p className="muted small">
           {done.size}/{lessons.length} lessons · tap the glowing one to continue
         </p>
         {nextIdx >= 0 && (
           <button className="btn btn-primary btn-xl" onClick={() => onPlay(lessons[nextIdx])}>
-            ▶ {lessons[nextIdx].title}
+            <Play size={16} fill="currentColor" /> {lessons[nextIdx].title}
             <span className="btn-sub">about 5 minutes</span>
           </button>
         )}
@@ -71,16 +82,25 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
 
       {c.prompts && c.prompts.length > 0 && (
         <section className="card prompt-card" style={{ '--k': paletteVar(COURSES.indexOf(c)) } as CSSProperties}>
-          <div className="muted small">✏️ Today's practice prompt</div>
+          <div className="muted small">Today's practice prompt</div>
           <p className="prompt-text">{c.prompts[dayNumber() % c.prompts.length]}</p>
           <p className="field-hint">A new one every day. Set a 10–15 min timer and just start.</p>
         </section>
       )}
 
-      {c.units.map((u) => (
-        <section key={u.id} className="card unit" style={{ ...theme.accentVars(COURSES.indexOf(c)), '--k': 'var(--accent)' } as CSSProperties}>
+      {c.units.map((u, ui) => (
+        <section
+          key={u.id}
+          className="card unit"
+          style={
+            {
+              ...theme.accentVars(COURSES.indexOf(c)),
+              '--k': 'var(--accent)',
+            } as CSSProperties
+          }
+        >
           <div className="unit-head">
-            <span className="unit-icon">{u.icon}</span>
+            <span className="unit-icon">{String(ui + 1).padStart(2, '0')}</span>
             <div>
               <h2>{u.title}</h2>
               <p className="muted small">{u.description}</p>
@@ -93,13 +113,21 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
               const isNext = n === nextIdx
               const locked = !d && !isNext
               return (
-                <div key={l.id} className="path-row" style={{ '--off': `${[0, 1.6, 0, -1.6][n % 4]}rem` } as CSSProperties}>
+                <div
+                  key={l.id}
+                  className="path-row"
+                  style={
+                    {
+                      '--off': `${[0, 1.6, 0, -1.6][n % 4]}rem`,
+                    } as CSSProperties
+                  }
+                >
                   <button
                     className={'path-node' + (d ? ' done' : '') + (isNext ? ' next' : '') + (locked ? ' locked' : '')}
                     onClick={() => (!locked || confirm(`Skip ahead to "${l.title}"? (You can, if you already know the earlier stuff.)`)) && onPlay(l)}
                     aria-label={`${l.title}${d ? `, done, best ${d.best}%` : locked ? ', locked' : ''}`}
                   >
-                    {d ? (d.best === 100 ? '👑' : '✓') : locked ? '🔒' : '★'}
+                    {d ? d.best === 100 ? <Crown size={22} /> : <Check size={24} /> : locked ? <Lock size={20} /> : <Star size={24} />}
                   </button>
                   <span className="path-label">
                     {l.title}
@@ -112,9 +140,11 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
         </section>
       ))}
 
-      <section className="card">
-        <h2>➕ Add your own</h2>
-        <p className="muted small">Adding your own units and questions (and Mistral-generated lessons) is coming in the next Study update.</p>
+      <section className="sec">
+        <h2 className="section-title">Add your own</h2>
+        <div className="card">
+          <p className="muted small">Adding your own units and questions (and Mistral-generated lessons) is coming in the next Study update.</p>
+        </div>
       </section>
     </div>
   )
@@ -146,18 +176,32 @@ export default function StudyScreen() {
     for (const c of list) {
       // built-in lesson questions first, then app-made cards (e.g. homework mistakes)
       const q = findQuestion(c.courseId, c.qid)?.q ?? (await db.customQuestions.get(c.qid))?.q
-      if (q) items.push({ key: c.key, q, lang: COURSES.find((x) => x.id === c.courseId)?.lang })
+      if (q)
+        items.push({
+          key: c.key,
+          q,
+          lang: COURSES.find((x) => x.id === c.courseId)?.lang,
+        })
     }
     if (!items.length) return
-    setPlaying({ courseId: list[0].courseId, vars: theme.tabVars('study'), review: items })
+    setPlaying({
+      courseId: list[0].courseId,
+      vars: theme.tabVars('study'),
+      review: items,
+    })
   }
 
   function play(c: Course, l: Lesson) {
     if (hearts.n <= 0) {
-      alert(`You're out of hearts 💔 Next one in ${mins(hearts.nextIn ?? 0)} min, or review your mistakes to earn hearts now.`)
+      alert(`You're out of hearts. Next one in ${mins(hearts.nextIn ?? 0)} min, or review your mistakes to earn hearts now.`)
       return
     }
-    setPlaying({ courseId: c.id, vars: theme.accentVars(COURSES.indexOf(c)), lang: c.lang, lesson: l })
+    setPlaying({
+      courseId: c.id,
+      vars: theme.accentVars(COURSES.indexOf(c)),
+      lang: c.lang,
+      lesson: l,
+    })
   }
 
   return (
@@ -168,19 +212,23 @@ export default function StudyScreen() {
         <div className="stack">
           <div className="grid-3 study-stats">
             <section className="card stat">
-              <div className="stat-icon">{stats.streakInfo.atRisk ? '⚠️' : '🔥'}</div>
+              <div className="stat-icon">{stats.streakInfo.atRisk ? <TriangleAlert size={20} /> : <Flame size={20} />}</div>
               <div className="stat-num">{stats.streak}</div>
               <div className="muted small">{stats.streakInfo.atRisk ? 'save it today' : 'streak'}</div>
             </section>
             <section className="card stat">
-              <div className="stat-icon">❤️</div>
+              <div className="stat-icon">
+                <Heart size={20} />
+              </div>
               <div className="stat-num">
                 {hearts.n}/{MAX_HEARTS}
               </div>
               <div className="muted small">{hearts.nextIn ? `+1 in ${mins(hearts.nextIn)}m` : 'full'}</div>
             </section>
             <section className="card stat">
-              <div className="stat-icon">⭐</div>
+              <div className="stat-icon">
+                <Star size={20} />
+              </div>
               <div className="stat-num">{stats.today}</div>
               <div className="muted small">/{s.dailyXpGoal} XP today</div>
             </section>
@@ -192,10 +240,8 @@ export default function StudyScreen() {
           <section className="card review-card">
             <div className="row-between">
               <div>
-                <h2>🧠 Review my mistakes</h2>
-                <p className="muted small">
-                  {due.length ? `${due.length} due today` : cards.length ? `Nothing due. ${cards.length} in your deck.` : 'Wrong answers land here so you can fix them.'}
-                </p>
+                <h2>Review my mistakes</h2>
+                <p className="muted small">{due.length ? `${due.length} due today` : cards.length ? `Nothing due. ${cards.length} in your deck.` : 'Wrong answers land here so you can fix them.'}</p>
               </div>
             </div>
             <div className="btn-row">
@@ -208,14 +254,14 @@ export default function StudyScreen() {
                 </button>
               )}
             </div>
-            <p className="field-hint">Each right answer in review: +2 XP and +1 ❤️. Cards you keep getting right come back less often.</p>
+            <p className="field-hint">Each right answer in review: +2 XP and +1 heart. Cards you keep getting right come back less often.</p>
           </section>
 
-          {mine.length === 0 && <p className="muted center">No courses yet. Tap the button below to pick some 📚</p>}
+          {mine.length === 0 && <p className="muted center">No courses yet. Tap the button below to pick some</p>}
           {[
-            ['school', '📚 School'],
-            ['lang', '🌍 Languages'],
-            ['skills', '✨ Skills & knowledge'],
+            ['school', 'School'],
+            ['lang', 'Languages'],
+            ['skills', 'Skills & knowledge'],
           ].map(([key, title]) =>
             mine.some((c) => sectionOf(c) === key) ? (
               <div key={key} className="stack-sm">
@@ -230,14 +276,13 @@ export default function StudyScreen() {
           )}
 
           <button className="btn btn-ghost full" onClick={() => setManaging(true)}>
-            ＋ Add or remove courses
+            <Plus size={16} /> Add or remove courses
           </button>
 
           {COMING_SOON.length > 0 && (
             <div className="soon-grid">
               {COMING_SOON.map((c) => (
                 <div key={c.name} className="soon">
-                  <span>{c.icon}</span>
                   {c.name}
                   <span className="muted small">soon</span>
                 </div>
@@ -256,9 +301,7 @@ export default function StudyScreen() {
             {COURSES.map((c) => (
               <label key={c.id} className="toggle">
                 <input type="checkbox" checked={mine.includes(c)} onChange={() => toggleCourse(c.id)} />
-                <span>
-                  {c.icon} {c.name}
-                </span>
+                <span>{c.name}</span>
               </label>
             ))}
             <button className="btn btn-primary full" onClick={() => setManaging(false)}>

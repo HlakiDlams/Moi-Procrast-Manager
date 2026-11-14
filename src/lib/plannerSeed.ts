@@ -29,14 +29,14 @@ const NOV_FINALS = '2027-10-27'
 
 /** CAPS subjects. Marks are left blank on purpose: you fill them in on your phone. */
 export const DEFAULT_SUBJECTS: Omit<Subject, 'id'>[] = [
-  { name: 'Mathematics', icon: '📐', color: '#FF2E93', priority: 3, examDate: JUNE_REWRITE, currentMark: null, targetMark: 40, active: true, group: 'school' },
-  { name: 'Afrikaans EAT', icon: '🗣️', color: '#FF8AC8', priority: 3, examDate: JUNE_REWRITE, currentMark: null, targetMark: 40, active: true, group: 'school' },
-  { name: 'EGD', icon: '📏', color: '#FFD166', priority: 2, examDate: NOV_FINALS, currentMark: null, targetMark: 40, active: true, group: 'school' },
-  { name: 'Information Technology', icon: '💻', color: '#C77DFF', priority: 2, examDate: NOV_FINALS, currentMark: null, targetMark: 40, active: true, group: 'school' },
+  { name: 'Mathematics', icon: '', color: '#FF2E93', priority: 3, examDate: JUNE_REWRITE, currentMark: null, targetMark: 40, active: true, group: 'school' },
+  { name: 'Afrikaans EAT', icon: '', color: '#FF8AC8', priority: 3, examDate: JUNE_REWRITE, currentMark: null, targetMark: 40, active: true, group: 'school' },
+  { name: 'EGD', icon: '', color: '#FFD166', priority: 2, examDate: NOV_FINALS, currentMark: null, targetMark: 40, active: true, group: 'school' },
+  { name: 'Information Technology', icon: '', color: '#C77DFF', priority: 2, examDate: NOV_FINALS, currentMark: null, targetMark: 40, active: true, group: 'school' },
   // Done with these for school; kept for growing knowledge (no exam, light time)
-  { name: 'English', icon: '📖', color: '#FFB3C7', priority: 1, examDate: '', currentMark: null, targetMark: 60, active: true, group: 'extra' },
-  { name: 'CAT', icon: '🖥️', color: '#D6249F', priority: 1, examDate: '', currentMark: null, targetMark: 60, active: true, group: 'extra' },
-  { name: 'Life Orientation', icon: '🌱', color: '#9B8CFF', priority: 1, examDate: '', currentMark: null, targetMark: 50, active: false, group: 'extra' },
+  { name: 'English', icon: '', color: '#FFB3C7', priority: 1, examDate: '', currentMark: null, targetMark: 60, active: true, group: 'extra' },
+  { name: 'CAT', icon: '', color: '#D6249F', priority: 1, examDate: '', currentMark: null, targetMark: 60, active: true, group: 'extra' },
+  { name: 'Life Orientation', icon: '', color: '#9B8CFF', priority: 1, examDate: '', currentMark: null, targetMark: 50, active: false, group: 'extra' },
 ]
 
 /** Fill the planner tables the first time only. */

@@ -10,7 +10,7 @@ const C5 = 523.25
 export const ART: Course = {
   id: 'art',
   name: 'Art',
-  icon: '🎨',
+  icon: '',
   color: '#FF9F68',
   group: 'extra',
   section: 'Skills & knowledge',
@@ -41,7 +41,7 @@ export const ART: Course = {
     {
       id: 'art-basics',
       title: 'Fundamentals',
-      icon: '✏️',
+      icon: '',
       description: 'Elements, colour, proportion',
       lessons: [
         {
@@ -86,7 +86,7 @@ export const ART: Course = {
 export const CHESS: Course = {
   id: 'chess',
   name: 'Chess',
-  icon: '♟️',
+  icon: '',
   color: '#B0B0B0',
   group: 'extra',
   section: 'Skills & knowledge',
@@ -94,7 +94,7 @@ export const CHESS: Course = {
     {
       id: 'ch-basics',
       title: 'Chess basics',
-      icon: '♞',
+      icon: '',
       description: 'Pieces, rules, openings, tactics',
       lessons: [
         {
@@ -139,7 +139,7 @@ export const CHESS: Course = {
 export const MUSIC: Course = {
   id: 'music',
   name: 'Music',
-  icon: '🎵',
+  icon: '',
   color: '#C77DFF',
   group: 'extra',
   section: 'Skills & knowledge',
@@ -148,7 +148,7 @@ export const MUSIC: Course = {
     {
       id: 'mu-basics',
       title: 'Music basics',
-      icon: '🎼',
+      icon: '',
       description: 'Reading notes, rhythm, ear training',
       lessons: [
         {
@@ -193,7 +193,7 @@ export const MUSIC: Course = {
 export const FINANCE: Course = {
   id: 'finance',
   name: 'Personal finance',
-  icon: '💳',
+  icon: '',
   color: '#6BE3A4',
   group: 'extra',
   section: 'Skills & knowledge',
@@ -202,7 +202,7 @@ export const FINANCE: Course = {
     {
       id: 'fi-basics',
       title: 'Money basics',
-      icon: '💰',
+      icon: '',
       description: 'Budgeting, saving, debt, payslips',
       lessons: [
         {

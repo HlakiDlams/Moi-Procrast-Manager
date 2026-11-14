@@ -11,7 +11,7 @@ const THANDI = `Thandi woon in Potchefstroom saam met haar ouma. Elke oggend sta
 export const AFRIKAANS: Course = {
   id: 'afrikaans',
   name: 'Afrikaans EAT',
-  icon: '🗣️',
+  icon: '',
   color: '#FF8AC8',
   subjectName: 'Afrikaans EAT',
   group: 'school',
@@ -21,7 +21,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-basics',
       title: 'Basiese woordeskat',
-      icon: '👋',
+      icon: '',
       description: 'Groete, getalle, skool en huis',
       lessons: [
         {
@@ -110,7 +110,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-sentences',
       title: 'Sinsbou',
-      icon: '🧱',
+      icon: '',
       description: 'Woordorde (STOMPI) en voegwoorde',
       lessons: [
         {
@@ -160,7 +160,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-tense',
       title: 'Tye',
-      icon: '⏳',
+      icon: '',
       description: 'Verlede tyd en toekomende tyd',
       lessons: [
         {
@@ -205,7 +205,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-taal',
       title: 'Taal in konteks',
-      icon: '✍️',
+      icon: '',
       description: 'Paper 1: meervoud, ontkenning, lydende vorm, indirekte rede, trappe',
       lessons: [
         {
@@ -355,7 +355,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-read',
       title: 'Begrip en opsomming',
-      icon: '📰',
+      icon: '',
       description: 'Paper 1: leesbegrip en opsomming',
       lessons: [
         {
@@ -372,7 +372,7 @@ export const AFRIKAANS: Course = {
             { id: 'be3', type: 'mcq', context: THANDI, prompt: 'Saam met wie woon sy?', options: ['Haar ouma', 'Haar ma', 'Haar broer', 'Haar vriendin'], answer: 0, explain: '"…saam met haar ouma."' },
             { id: 'be4', type: 'mcq', context: THANDI, prompt: 'Watter vak is vir haar moeilik?', options: ['Wiskunde', 'Afrikaans', 'Engels', 'IT'], answer: 0, explain: '"Wiskunde is vir haar moeilik…"' },
             { id: 'be5', type: 'mcq', context: THANDI, prompt: 'Wat beteken "sy gee nie op nie"?', options: ['She does not give up', 'She does not get up', 'She gives it away', 'She is not upset'], answer: 0, explain: 'opgee = to give up.' },
-            { id: 'be6', type: 'mcq', context: THANDI, prompt: 'Waarom glo sy dat sy sal slaag?', options: ['Omdat sy elke dag ’n bietjie leer', 'Omdat wiskunde maklik is', 'Omdat haar ouma help', 'Omdat sy vroeg opstaan'], answer: 0, explain: '"As ek elke dag ’n bietjie leer, sal ek slaag." (Just like you 💕)' },
+            { id: 'be6', type: 'mcq', context: THANDI, prompt: 'Waarom glo sy dat sy sal slaag?', options: ['Omdat sy elke dag ’n bietjie leer', 'Omdat wiskunde maklik is', 'Omdat haar ouma help', 'Omdat sy vroeg opstaan'], answer: 0, explain: '"As ek elke dag ’n bietjie leer, sal ek slaag."' },
           ],
         },
         {
@@ -400,7 +400,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-write',
       title: 'Skryf',
-      icon: '📝',
+      icon: '',
       description: 'Paper 3: transaksionele tekste en opstel',
       lessons: [
         {
@@ -458,7 +458,7 @@ export const AFRIKAANS: Course = {
     {
       id: 'a-lit',
       title: 'Letterkunde',
-      icon: '🌹',
+      icon: '',
       description: 'Paper 2: poësie-terme',
       lessons: [
         {

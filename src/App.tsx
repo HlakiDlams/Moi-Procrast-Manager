@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Flame, LayoutGrid, Star, TriangleAlert } from 'lucide-react'
 import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
-import { applyScale, useSettings, useSettingsLoaded, displayName } from './lib/settings'
+import { applyScale, useSettings, useSettingsLoaded } from './lib/settings'
 import Welcome from './components/Welcome'
 import ErrorBoundary from './components/ErrorBoundary'
 import { applyTheme, resolveTheme, ThemeContext } from './lib/themes'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
-import ComingSoon from './screens/ComingSoon'
 import AlarmsScreen from './screens/AlarmsScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import PlannerScreen from './screens/PlannerScreen'
@@ -51,7 +51,7 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
     case 'homework':
       return <HomeworkScreen go={go} />
     default:
-      return <ComingSoon tab={tab} />
+      return null
   }
 }
 
@@ -99,83 +99,71 @@ export default function App() {
 
   return (
     <ThemeContext.Provider value={theme}>
-    <div className="app" style={theme.tabVars(def.id)}>
-      <header className="topbar">
-        <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
-          <span className="brand-dot" />
-          <span>
-            <span className="brand-name">Un-procrast-inator ✨</span>
-            <span className="brand-tab">
-              {def.icon} {def.label} · {displayName(settings)}'s scheduler
+      <div className="app" style={theme.tabVars(def.id)}>
+        <header className="topbar">
+          <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
+            <span className="brand-name">Un-procrast-inator</span>
+            <span className="page-title">{tab === 'today' ? new Date().toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' }) : def.label}</span>
+          </button>
+          <div className="chips">
+            <span className={'chip' + (stats.streakInfo.atRisk ? ' chip-warn' : '')} title={stats.streakInfo.atRisk ? 'Streak at risk: do something today!' : 'Day streak'}>
+              {stats.streakInfo.atRisk ? <TriangleAlert size={15} /> : <Flame size={15} />} {stats.streak}
             </span>
-          </span>
-        </button>
-        <div className="chips">
-          <span className={'chip' + (stats.streakInfo.atRisk ? ' chip-warn' : '')} title={stats.streakInfo.atRisk ? 'Streak at risk: do something today!' : 'Day streak'}>
-            {stats.streakInfo.atRisk ? '⚠️' : '🔥'} {stats.streak}
-          </span>
-          <span className="chip" title={`Level ${stats.level.level}`}>
-            ⭐ {stats.total} XP
-          </span>
-        </div>
-      </header>
+            <span className="chip" title={`Level ${stats.level.level}`}>
+              <Star size={15} /> {stats.total}
+            </span>
+          </div>
+        </header>
 
-      <main className="screen" key={tab}>
-        <ErrorBoundary key={tab} onHome={() => go('today')}>
-          <Screen tab={tab} go={go} />
-        </ErrorBoundary>
-      </main>
+        <main className="screen" key={tab}>
+          <ErrorBoundary key={tab} onHome={() => go('today')}>
+            <Screen tab={tab} go={go} />
+          </ErrorBoundary>
+        </main>
 
-      {loaded && !loaded.onboarded && <Welcome s={loaded} />}
-      <FocusOverlay />
-      <PlayOverlay />
-      <Alerts />
+        {loaded && !loaded.onboarded && <Welcome s={loaded} />}
+        <FocusOverlay />
+        <PlayOverlay />
+        <Alerts />
 
-      {moreOpen && (
-        <div className="sheet-backdrop" onClick={() => setMoreOpen(false)}>
-          <div className="sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="More tabs">
-            <div className="sheet-handle" />
-            <div className="more-grid">
-              {secondary.map((t) => (
-                <button
-                  key={t.id}
-                  className="more-item"
-                  style={theme.tabVars(t.id)}
-                  onClick={() => go(t.id)}
-                >
-                  <span className="more-icon">{t.icon}</span>
-                  <span>{t.label}</span>
-                </button>
-              ))}
+        {moreOpen && (
+          <div className="sheet-backdrop" onClick={() => setMoreOpen(false)}>
+            <div className="sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="More tabs">
+              <div className="sheet-handle" />
+              <div className="more-grid">
+                {secondary.map((t) => (
+                  <button key={t.id} className="more-item" style={theme.tabVars(t.id)} onClick={() => go(t.id)}>
+                    <span className="more-icon">
+                      <t.icon size={22} strokeWidth={1.75} />
+                    </span>
+                    <span>{t.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <nav className="bottomnav" aria-label="Main">
-        {primary.map((t) => (
+        <nav className="bottomnav" aria-label="Main">
+          {primary.map((t) => (
+            <button key={t.id} className={'nav-btn' + (tab === t.id ? ' active' : '')} style={theme.tabVars(t.id)} onClick={() => go(t.id)} aria-current={tab === t.id ? 'page' : undefined}>
+              <span className="nav-icon">
+                <t.icon size={22} strokeWidth={tab === t.id ? 2.2 : 1.75} />
+              </span>
+              <span className="nav-label">{t.label}</span>
+            </button>
+          ))}
           <button
-            key={t.id}
-            className={'nav-btn' + (tab === t.id ? ' active' : '')}
-            style={theme.tabVars(t.id)}
-            onClick={() => go(t.id)}
-            aria-current={tab === t.id ? 'page' : undefined}
+            className={'nav-btn' + (onSecondary || moreOpen ? ' active' : '')}
+            style={theme.tabVars(onSecondary ? def.id : 'today')}
+            onClick={() => setMoreOpen((o) => !o)}
+            aria-expanded={moreOpen}
           >
-            <span className="nav-icon">{t.icon}</span>
-            <span className="nav-label">{t.label}</span>
+            <span className="nav-icon">{onSecondary ? <def.icon size={22} strokeWidth={2.2} /> : <LayoutGrid size={22} strokeWidth={1.75} />}</span>
+            <span className="nav-label">{onSecondary ? def.label.split(' ')[0] : 'More'}</span>
           </button>
-        ))}
-        <button
-          className={'nav-btn' + (onSecondary || moreOpen ? ' active' : '')}
-          style={theme.tabVars(onSecondary ? def.id : 'today')}
-          onClick={() => setMoreOpen((o) => !o)}
-          aria-expanded={moreOpen}
-        >
-          <span className="nav-icon">{onSecondary ? def.icon : '✨'}</span>
-          <span className="nav-label">{onSecondary ? def.label.split(' ')[0] : 'More'}</span>
-        </button>
-      </nav>
-    </div>
+        </nav>
+      </div>
     </ThemeContext.Provider>
   )
 }

@@ -4,7 +4,7 @@ import type { Course } from '../types'
 export const IT: Course = {
   id: 'it',
   name: 'Information Technology',
-  icon: '💻',
+  icon: '',
   color: '#C77DFF',
   subjectName: 'Information Technology',
   group: 'school',
@@ -13,7 +13,7 @@ export const IT: Course = {
     {
       id: 'i-basics',
       title: 'Delphi basics',
-      icon: '🧮',
+      icon: '',
       description: 'Variables, types, operators, conversions',
       lessons: [
         {
@@ -72,7 +72,7 @@ export const IT: Course = {
     {
       id: 'i-control',
       title: 'Decisions and loops',
-      icon: '🔀',
+      icon: '',
       description: 'if, case, for, while, repeat',
       lessons: [
         {
@@ -115,7 +115,7 @@ export const IT: Course = {
     {
       id: 'i-data',
       title: 'Strings, arrays, files',
-      icon: '🧵',
+      icon: '',
       description: 'String functions, arrays, text files',
       lessons: [
         {
@@ -179,7 +179,7 @@ export const IT: Course = {
     {
       id: 'i-oop-sql',
       title: 'OOP and SQL',
-      icon: '🧩',
+      icon: '',
       description: 'Classes and objects, SQL queries',
       lessons: [
         {
@@ -240,7 +240,7 @@ export const IT: Course = {
     {
       id: 'i-theory',
       title: 'Theory',
-      icon: '🌐',
+      icon: '',
       description: 'Systems, networks, internet, data, social',
       lessons: [
         {
