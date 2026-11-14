@@ -5,6 +5,8 @@ export interface Settings {
   name: string
   /** Stored only in this browser's IndexedDB; never sent anywhere except api.mistral.ai */
   mistralApiKey: string
+  /** the user agreed that homework photos are sent to Mistral AI */
+  aiPhotoConsent: boolean
   mistralTextModel: string
   mistralVisionModel: string
   /** main countdown on Today (was Matric-only) */
@@ -81,6 +83,7 @@ function saved(key: string): string | null {
 export const DEFAULT_SETTINGS: Settings = {
   name: '',
   mistralApiKey: '',
+  aiPhotoConsent: false,
   mistralTextModel: 'mistral-medium-latest',
   mistralVisionModel: 'mistral-medium-latest',
   // NSC final exams usually start late October / early November.

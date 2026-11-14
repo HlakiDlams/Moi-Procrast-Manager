@@ -2,7 +2,7 @@ import { ChevronLeft, CircleCheck, CircleMinus, CircleX, EyeOff, X } from 'lucid
 import { useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type HomeworkCheck } from '../lib/db'
-import { useSettings } from '../lib/settings'
+import { setSetting, useSettings } from '../lib/settings'
 import { useProfile } from '../lib/profile'
 import { markHomework, saveCheck, shrinkImage, type HomeworkResult } from '../lib/homework'
 import { MistralError } from '../lib/mistral'
@@ -153,6 +153,13 @@ export default function HomeworkScreen({ go }: { go: (t: TabId) => void }) {
 
   async function check() {
     if (!images.length) return
+    if (!s.aiPhotoConsent) {
+      const ok = confirm(
+        'Your photos, subject and grade will be sent to Mistral AI (a company in France) to be marked. Nothing else leaves your phone.\n\nAvoid photographing names or ID numbers. If you are under 18, ask a parent or guardian first.\n\nSend photos to Mistral?',
+      )
+      if (!ok) return
+      await setSetting('aiPhotoConsent', true)
+    }
     setBusy(true)
     setErr('')
     setWait(0)

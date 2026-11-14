@@ -8,6 +8,7 @@ import ThemePicker from './ThemePicker'
 import { db } from '../lib/db'
 import { COURSES } from '../study/courses'
 import { MORE_SCHOOL_SUBJECTS, applySetup, subjectNameOf } from '../lib/setup'
+import Legal from './Legal'
 
 const GENDERS = ['Female', 'Male', 'Non-binary', 'Prefer not to say']
 
@@ -32,6 +33,7 @@ export default function Welcome({ s }: { s: Settings }) {
 
   // step 1
   const [name, setName] = useState(s.name)
+  const [legal, setLegal] = useState(false)
   const [gender, setGender] = useState<string | null>(null)
   const [theme, setTheme] = useState(s.theme)
   const [mode, setMode] = useState<Mode>(s.mode)
@@ -147,6 +149,13 @@ export default function Welcome({ s }: { s: Settings }) {
             <button className="btn btn-primary btn-xl" type="submit" disabled={!name.trim()}>
               Next <ChevronRight size={16} />
             </button>
+            <p className="field-hint center">
+              Everything you enter stays on this device.{' '}
+              <button type="button" className="link-btn small" onClick={() => setLegal(true)}>
+                Privacy and terms
+              </button>
+            </p>
+            {legal && <Legal onClose={() => setLegal(false)} />}
           </form>
         )}
 

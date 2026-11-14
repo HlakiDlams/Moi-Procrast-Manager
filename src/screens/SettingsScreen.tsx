@@ -5,6 +5,7 @@ import ThemePicker from '../components/ThemePicker'
 import { downloadBackup, importData } from '../lib/backup'
 import { db } from '../lib/db'
 import { addXp } from '../lib/xp'
+import Legal from '../components/Legal'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
@@ -57,10 +58,14 @@ export default function SettingsScreen() {
     }
   }
 
+  const [legal, setLegal] = useState(false)
+
   async function resetAll() {
     if (!confirm('Delete ALL data on this device? Export a backup first if you want to keep it.')) return
     await Promise.all(db.tables.map((t) => t.clear()))
-    setMsg('All data cleared.')
+    // theme and display size are remembered outside the database
+    for (const k of Object.keys(localStorage)) if (k.startsWith('hp-')) localStorage.removeItem(k)
+    setMsg('All data deleted from this device.')
   }
 
   return (
@@ -221,6 +226,16 @@ export default function SettingsScreen() {
           </div>
         </div>
       </section>
+      <section className="sec">
+        <h2 className="section-title">About</h2>
+        <div className="card">
+          <p className="muted small">Your data stays on this device. No accounts, ads or tracking.</p>
+          <button className="btn full" onClick={() => setLegal(true)}>
+            Privacy, terms and licences
+          </button>
+        </div>
+      </section>
+      {legal && <Legal onClose={() => setLegal(false)} />}
       <p className="muted small center">
         Un-procrast-inator {__VERSION__} · build {__BUILD__} · {__BUILT_AT__}
       </p>

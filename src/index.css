@@ -2825,3 +2825,38 @@ h2 svg {
 .stat-cell .v {
   margin-top: 0;
 }
+
+/* keyboard users always see where focus is */
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline-offset: 0;
+}
+
+/* privacy / terms sheet */
+.legal-backdrop {
+  z-index: 200;
+}
+.legal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.legal-body h3 {
+  font-size: var(--fs-md);
+  margin: 1.25rem 0 0.25rem;
+}
+.legal-body p,
+.legal-body li {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  margin: 0 0 0.5rem;
+}
+.legal-body ul:not(.history) {
+  padding-left: 1.25rem;
+  margin: 0;
+}
