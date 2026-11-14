@@ -63,6 +63,10 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
               <li>
                 <b>Backups.</b> Export creates a file containing all your data. It goes wherever you save or send it, so keep it somewhere safe.
               </li>
+              <li>
+                <b>Feedback.</b> The Send feedback screen shows exactly what it would send: your message and, if you leave it ticked, the app version, screen, theme, window size and device type. It is
+                only sent when you tap Email or Open on GitHub, to the developer. It never includes your name, profile, health logs, schedule or marks. A GitHub issue is public.
+              </li>
             </ul>
 
             <h3>Permissions</h3>
@@ -85,8 +89,8 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
 
             <h3>Changes and contact</h3>
             <p>
-              If the app ever starts handling data differently, this page will change first and the date above will be updated. Questions or requests: contact HFactor543 Studios, the developer, through
-              the person who shared the app with you or by opening an issue at {REPO}.
+              If the app ever starts handling data differently, this page will change first and the date above will be updated. Questions or requests: contact HFactor543 Studios, the developer,
+              through the person who shared the app with you or by opening an issue at {REPO}.
             </p>
           </div>
         )}

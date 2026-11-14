@@ -13,6 +13,28 @@ export interface AiLesson {
   topic: string
   at: string
   lesson: Lesson
+  /** set when the lesson belongs to an AI-made course */
+  courseId?: string
+}
+
+export interface AiCourse {
+  id: string
+  name: string
+  subject: string
+  topic: string
+  at: string
+  /** lesson titles planned by the AI, in order */
+  plan: string[]
+}
+
+const COURSE_KEY = 'aiCourses'
+
+export function useAiCourses(): AiCourse[] {
+  return useLiveQuery(async () => ((await db.settings.get(COURSE_KEY))?.value as AiCourse[] | undefined) ?? [], []) ?? []
+}
+
+async function courses(): Promise<AiCourse[]> {
+  return ((await db.settings.get(COURSE_KEY))?.value as AiCourse[] | undefined) ?? []
 }
 
 export function useAiLessons(): AiLesson[] {
@@ -65,7 +87,7 @@ export function toLesson(raw: Raw, id: string, fallbackTitle: string): Lesson {
 }
 
 /** Ask the AI for a short advanced lesson and save it. */
-export async function createAiLesson(subject: string, topic: string, level: string, signal?: AbortSignal): Promise<AiLesson> {
+export async function createAiLesson(subject: string, topic: string, level: string, signal?: AbortSignal, courseId?: string): Promise<AiLesson> {
   const reply = await chat(
     [
       {
@@ -81,10 +103,46 @@ Rules: 8 questions, 6 mcq then 2 input. "answer" is the index of the correct opt
   )
   const id = 'ai' + Date.now().toString(36)
   const lesson = toLesson(parseJson<Raw>(reply), id, topic)
-  const row: AiLesson = { subject, topic, at: new Date().toISOString(), lesson }
+  const row: AiLesson = { subject, topic, at: new Date().toISOString(), lesson, ...(courseId ? { courseId } : {}) }
   const list = ((await db.settings.get(KEY))?.value as AiLesson[] | undefined) ?? []
   await save([row, ...list].slice(0, 200))
   // so mistakes from this lesson can come back in Review
   await db.customQuestions.bulkPut(lesson.questions.map((q) => ({ id: q.id, courseId: AI_COURSE, q })))
   return row
+}
+
+export async function deleteAiCourse(id: string) {
+  const list = ((await db.settings.get(KEY))?.value as AiLesson[] | undefined) ?? []
+  const gone = list.filter((x) => x.courseId === id)
+  await save(list.filter((x) => x.courseId !== id))
+  await db.customQuestions.bulkDelete(gone.flatMap((x) => x.lesson.questions.map((q) => q.id)))
+  await db.settings.put({ key: COURSE_KEY, value: (await courses()).filter((c) => c.id !== id) })
+}
+
+/**
+ * Ask the AI for a short course outline, then write each lesson one after another.
+ * Lessons that finish are kept even if you cancel or something fails part-way.
+ */
+export async function createAiCourse(subject: string, topic: string, level: string, onProgress: (done: number, total: number, title: string) => void, signal?: AbortSignal): Promise<AiCourse> {
+  const reply = await chat(
+    [
+      {
+        role: 'system',
+        content: `You plan short courses for a learner in South Africa${level ? ` (${level})` : ''}. Subject area: ${subject}. Reply with JSON only: {"name": "short course name", "lessons": ["5 lesson titles, from the basics up, each a specific topic"]}. Exactly 5 lessons. Plain text only.`,
+      },
+      { role: 'user', content: `Plan a course on: ${topic}` },
+    ],
+    { json: true, signal, maxTokens: 500 },
+  )
+  const raw = parseJson<{ name?: unknown; lessons?: unknown }>(reply)
+  const plan = (Array.isArray(raw.lessons) ? raw.lessons.map(str).filter(Boolean) : []).slice(0, 6)
+  if (plan.length < 2) throw new MistralError('bad-reply', 'The AI did not send a usable course outline. Try again, or word the topic differently.')
+  const course: AiCourse = { id: 'ac' + Date.now().toString(36), name: str(raw.name) || topic, subject, topic, at: new Date().toISOString(), plan }
+  await db.settings.put({ key: COURSE_KEY, value: [course, ...(await courses())].slice(0, 50) })
+  for (let i = 0; i < plan.length; i++) {
+    onProgress(i, plan.length, plan[i])
+    await createAiLesson(subject, `${course.name}: ${plan[i]}`, level, signal, course.id)
+  }
+  onProgress(plan.length, plan.length, '')
+  return course
 }

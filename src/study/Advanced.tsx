@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { ChevronRight, Lock, Play, ScanText, Sparkles, Trash2 } from '../icons'
-import { AI_COURSE, createAiLesson, deleteAiLesson, useAiLessons } from '../lib/aiLessons'
+import { AI_COURSE, createAiCourse, createAiLesson, deleteAiCourse, deleteAiLesson, useAiCourses, useAiLessons } from '../lib/aiLessons'
 import { providerOf } from '../lib/mistral'
 import { useProfile } from '../lib/profile'
 import { useSettings } from '../lib/settings'
@@ -12,7 +12,11 @@ import { useLessonsDone } from './progress'
 export default function Advanced({ courses, onPlay, go }: { courses: Course[]; onPlay: (l: Lesson) => void; go: (t: TabId) => void }) {
   const s = useSettings()
   const p = useProfile()
-  const saved = useAiLessons()
+  const allSaved = useAiLessons()
+  const saved = allSaved.filter((x) => !x.courseId)
+  const aiCourses = useAiCourses()
+  const [asCourse, setAsCourse] = useState(false)
+  const [progress, setProgress] = useState('')
   const done = new Map(useLessonsDone(AI_COURSE).map((d) => [d.lessonId, d]))
   const [subject, setSubject] = useState('')
   const [topic, setTopic] = useState('')
@@ -50,20 +54,26 @@ export default function Advanced({ courses, onPlay, go }: { courses: Course[]; o
     abort.current = ac
     try {
       const level = p.lifeStage === 'school' && p.grade ? `Grade ${p.grade}` : ''
-      const row = await createAiLesson(subj, topic.trim(), level, ac.signal)
-      setTopic('')
-      onPlay(row.lesson)
+      if (asCourse) {
+        await createAiCourse(subj, topic.trim(), level, (n, total, title) => setProgress(n < total ? `Writing lesson ${n + 1} of ${total}: ${title}` : ''), ac.signal)
+        setTopic('')
+      } else {
+        const row = await createAiLesson(subj, topic.trim(), level, ac.signal)
+        setTopic('')
+        onPlay(row.lesson)
+      }
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setErr((e as Error).message)
     } finally {
       setBusy(false)
+      setProgress('')
     }
   }
 
   return (
     <div className="stack">
       <section className="sec">
-        <h2 className="section-title">New AI lesson</h2>
+        <h2 className="section-title">Create with AI</h2>
         <form className="card stack-sm" onSubmit={create}>
           <label className="field">
             <span className="field-label">Subject</span>
@@ -80,10 +90,18 @@ export default function Advanced({ courses, onPlay, go }: { courses: Course[]; o
             <span className="field-label">Topic</span>
             <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. completing the square, lydende vorm, isometric circles" maxLength={120} disabled={busy} />
           </label>
+          <div className="seg" role="radiogroup" aria-label="What to create">
+            <button type="button" role="radio" aria-checked={!asCourse} className={!asCourse ? 'on' : ''} onClick={() => setAsCourse(false)} disabled={busy}>
+              One lesson
+            </button>
+            <button type="button" role="radio" aria-checked={asCourse} className={asCourse ? 'on' : ''} onClick={() => setAsCourse(true)} disabled={busy}>
+              A whole course
+            </button>
+          </div>
           {busy ? (
             <div className="btn-row">
               <button className="btn btn-primary" type="button" disabled style={{ flex: 1 }}>
-                Writing your lesson…
+                {progress || (asCourse ? 'Planning your course…' : 'Writing your lesson…')}
               </button>
               <button className="btn" type="button" onClick={() => abort.current?.abort()}>
                 Cancel
@@ -91,11 +109,14 @@ export default function Advanced({ courses, onPlay, go }: { courses: Course[]; o
             </div>
           ) : (
             <button className="btn btn-primary full" type="submit" disabled={!topic.trim()}>
-              <Sparkles size={16} /> Write my lesson
+              <Sparkles size={16} /> {asCourse ? 'Create my course' : 'Write my lesson'}
             </button>
           )}
           {err && <p className="small warn-text">{err}</p>}
-          <p className="field-hint">Written by {ai.name}. Takes about 10 to 30 seconds. AI can make mistakes, so check anything that looks off against your textbook.</p>
+          <p className="field-hint">
+            Written by {ai.name}. A lesson takes about 10 to 30 seconds; a course of 5 lessons about 2 minutes. Leave the screen open while it writes. AI can make mistakes, so check anything that
+            looks off against your textbook.
+          </p>
         </form>
       </section>
 
@@ -113,9 +134,47 @@ export default function Advanced({ courses, onPlay, go }: { courses: Course[]; o
         </div>
       </section>
 
+      {aiCourses.length > 0 && (
+        <section className="sec">
+          <h2 className="section-title">My AI courses</h2>
+          {aiCourses.map((c) => {
+            const ls = allSaved.filter((x) => x.courseId === c.id).reverse()
+            const finished = ls.filter((x) => done.has(x.lesson.id)).length
+            return (
+              <div key={c.id} className="card stack-sm">
+                <div className="row-between">
+                  <div>
+                    <strong>{c.name}</strong>
+                    <div className="muted small">
+                      {c.subject} · {finished}/{ls.length} lessons done{!busy && ls.length < c.plan.length ? ` · ${c.plan.length - ls.length} did not finish writing` : ''}
+                    </div>
+                  </div>
+                  <button className="icon-btn subtle" onClick={() => confirm(`Delete the course "${c.name}" and its lessons?`) && deleteAiCourse(c.id)} aria-label={`Delete ${c.name}`}>
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+                <ul className="history ai-list">
+                  {ls.map((x) => (
+                    <li key={x.lesson.id}>
+                      <button className="ai-open" onClick={() => onPlay(x.lesson)}>
+                        <Play size={16} />
+                        <span>
+                          <strong>{x.lesson.title}</strong>
+                          <span className="muted small">{done.has(x.lesson.id) ? `best ${done.get(x.lesson.id)!.best}%` : 'not played yet'}</span>
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
+        </section>
+      )}
+
       {saved.length > 0 && (
         <section className="sec">
-          <h2 className="section-title">My AI lessons</h2>
+          <h2 className="section-title">My single lessons</h2>
           <ul className="history ai-list">
             {saved.map((x) => {
               const d = done.get(x.lesson.id)

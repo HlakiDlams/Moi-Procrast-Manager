@@ -6,6 +6,7 @@ import { downloadBackup, importData } from '../lib/backup'
 import { db } from '../lib/db'
 import { addXp } from '../lib/xp'
 import Legal from '../components/Legal'
+import Feedback from '../components/Feedback'
 import { PROVIDERS, providerOf, type ProviderId } from '../lib/mistral'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
@@ -71,6 +72,7 @@ export default function SettingsScreen() {
   }
 
   const [legal, setLegal] = useState(false)
+  const [feedback, setFeedback] = useState(false)
 
   async function resetAll() {
     if (!confirm('Delete ALL data on this device? Export a backup first if you want to keep it.')) return
@@ -255,12 +257,18 @@ export default function SettingsScreen() {
             Made by <strong>HFactor543 Studios</strong>
           </p>
           <p className="muted small">Your data stays on this device. No accounts, ads or tracking.</p>
-          <button className="btn full" onClick={() => setLegal(true)}>
-            Privacy, terms and licences
-          </button>
+          <div className="btn-row">
+            <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => setFeedback(true)}>
+              Send feedback
+            </button>
+            <button className="btn" style={{ flex: 1 }} onClick={() => setLegal(true)}>
+              Privacy and terms
+            </button>
+          </div>
         </div>
       </section>
       {legal && <Legal onClose={() => setLegal(false)} />}
+      {feedback && <Feedback onClose={() => setFeedback(false)} />}
       <p className="muted small center">
         Un-procrast-inator {__VERSION__} · build {__BUILD__} · {__BUILT_AT__}
       </p>
