@@ -11,6 +11,7 @@ import { paletteVar, useTheme } from '../lib/themes'
 import Advanced from '../study/Advanced'
 import { AI_COURSE } from '../lib/aiLessons'
 import type { TabId } from '../tabs'
+import CountUp from '../components/CountUp'
 
 type Playing = {
   courseId: string
@@ -234,7 +235,9 @@ export default function StudyScreen({ go }: { go: (t: TabId) => void }) {
           <div className="study-summary">
             <div className="row-between">
               <span>
-                <strong className="stat-num">{stats.today}</strong>
+                <strong className="stat-num">
+                  <CountUp value={stats.today} />
+                </strong>
                 <span className="muted"> / {s.dailyXpGoal} XP today</span>
               </span>
               <span className="muted small hearts-line">

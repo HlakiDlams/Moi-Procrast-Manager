@@ -8,6 +8,7 @@ import { canSpeak, speak } from '../lib/speech'
 import { explainMistake } from '../lib/mistral'
 import { useSettings } from '../lib/settings'
 import { COURSES } from './courses'
+import Confetti from '../components/Confetti'
 
 interface Item {
   q: Question
@@ -190,6 +191,7 @@ export default function LessonPlayer({
 
       {done && (
         <div className="player-body center">
+          {done.score === 100 && <Confetti />}
           <div className="done-emoji">{done.score === 100 ? <Trophy size={64} strokeWidth={1.5} /> : <Check size={64} strokeWidth={1.5} />}</div>
           <h1>{isReview ? 'Review done' : 'Lesson complete'}</h1>
           <p className="muted">

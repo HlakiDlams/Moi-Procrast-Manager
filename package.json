@@ -1,8 +1,8 @@
 {
   "name": "hlakis-planner",
   "private": true,
-  "version": "2.3.0",
-  "author": "HFactor Studios",
+  "version": "2.4.0",
+  "author": "HFactor543 Studios",
   "type": "module",
   "scripts": {
     "dev": "vite",

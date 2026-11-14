@@ -252,7 +252,7 @@ export default function SettingsScreen() {
         <h2 className="section-title">About</h2>
         <div className="card">
           <p>
-            Made by <strong>HFactor Studios</strong>
+            Made by <strong>HFactor543 Studios</strong>
           </p>
           <p className="muted small">Your data stays on this device. No accounts, ads or tracking.</p>
           <button className="btn full" onClick={() => setLegal(true)}>

@@ -85,7 +85,7 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
 
             <h3>Changes and contact</h3>
             <p>
-              If the app ever starts handling data differently, this page will change first and the date above will be updated. Questions or requests: contact HFactor Studios, the developer, through
+              If the app ever starts handling data differently, this page will change first and the date above will be updated. Questions or requests: contact HFactor543 Studios, the developer, through
               the person who shared the app with you or by opening an issue at {REPO}.
             </p>
           </div>
@@ -96,7 +96,7 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
             <p className="muted small">Last updated {LEGAL_UPDATED}</p>
             <h3>Using the app</h3>
             <p>
-              Un-procrast-inator is a free personal study and life planner made by HFactor Studios. It is provided as is, with no warranty. There is nothing to buy in the app, so there are no fees,
+              Un-procrast-inator is a free personal study and life planner made by HFactor543 Studios. It is provided as is, with no warranty. There is nothing to buy in the app, so there are no fees,
               subscriptions or refunds.
             </p>
 

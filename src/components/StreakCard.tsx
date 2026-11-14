@@ -1,5 +1,6 @@
 import { Flame } from '../icons'
 import type { XpStats } from '../lib/xp'
+import CountUp from './CountUp'
 
 const LETTER = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
@@ -19,12 +20,14 @@ export default function StreakCard({ stats, goal }: { stats: XpStats; goal: numb
           <Flame size={36} fill="currentColor" strokeWidth={1.5} />
         </span>
         <div className="streak-num">
-          <span className="stat-num">{s.count}</span>
+          <span className="stat-num">
+            <CountUp value={s.count} ms={350} />
+          </span>
           <span className="muted small">day streak</span>
         </div>
         <div className="streak-goal">
           <span className="muted small">
-            {stats.today}/{goal} XP today
+            <CountUp value={stats.today} />/{goal} XP today
           </span>
           <div className="bar">
             <div className="bar-fill" style={{ width: `${pct}%` }} />
