@@ -89,7 +89,8 @@ export async function chat(messages: Msg[], opts: { vision?: boolean; json?: boo
   const pr = providerOf(s)
   if (!pr.base) throw new MistralError('other', 'Add the address of your AI service in Settings → AI.')
   const url = pr.base + '/chat/completions'
-  const model = (opts.vision ? s.mistralVisionModel || pr.preset.vision : s.mistralTextModel || pr.preset.text) || 'mistral-medium-latest'
+  const model = opts.vision ? s.mistralVisionModel || pr.preset.vision : s.mistralTextModel || pr.preset.text
+  if (!model) throw new MistralError('other', `Add a ${opts.vision ? 'photo' : 'text'} model name for ${pr.name} in Settings → AI. Your provider's docs list them.`)
   // Mistral takes the image as a plain string; OpenAI-style services want { url }
   const msgs =
     pr.id === 'mistral'

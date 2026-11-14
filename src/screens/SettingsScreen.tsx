@@ -51,6 +51,7 @@ export default function SettingsScreen() {
   async function testKey() {
     if (!s.mistralApiKey) return setKeyStatus('Add a key first.')
     if (!ai.base) return setKeyStatus('Add the service address first.')
+    if (ai.id === 'custom' && !s.mistralTextModel.trim()) return setKeyStatus('Add a text model name first.')
     setKeyStatus('Checking…')
     try {
       const r = await fetch(ai.base + '/models', {
