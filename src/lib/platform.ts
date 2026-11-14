@@ -2,6 +2,10 @@ import { Capacitor, registerPlugin } from '@capacitor/core'
 
 /** True inside the Android app (APK), false in a normal browser / PWA. */
 export const isNative = Capacitor.isNativePlatform()
+/** 'android' | 'ios' | 'web' */
+export const platform = Capacitor.getPlatform()
+export const isAndroid = platform === 'android'
+export const isIOS = platform === 'ios'
 
 export interface ClockPlugin {
   /** days: 1=Sun ... 7=Sat (Android AlarmClock format) */

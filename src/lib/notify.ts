@@ -1,5 +1,5 @@
 import { LocalNotifications } from '@capacitor/local-notifications'
-import { isNative } from './platform'
+import { isAndroid, isNative } from './platform'
 
 /**
  * One API for reminders on both platforms:
@@ -80,6 +80,15 @@ let nativeReady: Promise<void> | null = null
 function setupNative() {
   if (nativeReady) return nativeReady
   nativeReady = (async () => {
+    // channels are an Android thing; iPhone has none
+    if (isAndroid) await createChannels()
+    await addListeners()
+  })()
+  return nativeReady
+}
+
+async function createChannels() {
+  {
     await LocalNotifications.createChannel({
       id: 'reminders',
       name: 'Reminders',
@@ -104,6 +113,11 @@ function setupNative() {
       visibility: 1,
       vibration: true,
     })
+  }
+}
+
+async function addListeners() {
+  {
     // App open: show alarms/timers in-app too
     await LocalNotifications.addListener('localNotificationReceived', (n) => {
       emitFired({
@@ -116,8 +130,7 @@ function setupNative() {
     await LocalNotifications.addListener('localNotificationActionPerformed', (a) => {
       emitTapped({ ...(a.notification.extra ?? {}), channel: a.notification.channelId })
     })
-  })()
-  return nativeReady
+  }
 }
 
 if (isNative) setupNative().catch(() => {})

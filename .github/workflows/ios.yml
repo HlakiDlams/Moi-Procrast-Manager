@@ -1,0 +1,38 @@
+name: iOS build check
+
+# Builds the iPhone app for the simulator (no signing) so we know the iOS
+# project compiles before opening it in Xcode. Installing on a real iPhone is
+# done from a Mac with Xcode (see README: "iPhone").
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build web app
+        run: |
+          npm ci
+          npm run build
+
+      - name: Copy web app into the iOS project
+        run: npx cap sync ios
+
+      - name: Build for the iOS simulator (no signing)
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+          exit ${PIPESTATUS[0]}

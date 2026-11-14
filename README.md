@@ -27,6 +27,30 @@ and turn on all three switches, or reminders may be blocked.
 
 Local Android build (needs Android SDK): `npm run build && npx cap sync android && cd android && ./gradlew assembleDebug`
 
+## iPhone (free Apple account + a Mac with Xcode)
+A free Apple ID is enough to run the app on your own iPhone. Apps installed this
+way keep working for **7 days**; after that, plug the phone in and press Run again
+(your data stays). A paid developer account ($99/yr) is only needed for 1-year
+installs, TestFlight or the App Store.
+
+1. On the Mac: `git clone` (or `git pull`) this repo, then:
+   ```bash
+   npm install
+   npm run build
+   npx cap sync ios
+   npx cap open ios        # opens Xcode
+   ```
+2. In Xcode: click **App** (blue icon, top left) → **Signing & Capabilities** →
+   tick *Automatically manage signing* → **Team**: your Apple ID (Personal Team).
+   If the bundle ID is taken, change it to something unique, e.g. `za.yourname.unprocrastinator`.
+3. Plug in the iPhone, pick it at the top of Xcode, press **▶ Run**.
+4. First time only, on the iPhone: **Settings → General → VPN & Device Management**
+   → your Apple ID → **Trust**. On iOS 16+ also turn on
+   **Settings → Privacy & Security → Developer Mode** (the phone restarts).
+
+The iOS project builds on GitHub on every push (`.github/workflows/ios.yml`), so
+if that check is green it should build in Xcode too.
+
 ## Web / PWA
 Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen"
 (or "Install app" in Edge/Chrome on Windows).

@@ -6,7 +6,7 @@ import { useProfile } from '../lib/profile'
 import { addXp } from '../lib/xp'
 import { ensureRoutinesSeeded, routineDueOn, sleepHours, xpOnce } from '../lib/selfcare'
 import WeekChart from '../components/WeekChart'
-import { isNative } from '../lib/platform'
+import { isIOS, isNative } from '../lib/platform'
 import { disableAutoSteps, enableAutoSteps, syncSteps } from '../lib/steps'
 import PeriodCard from './PeriodCard'
 
@@ -108,7 +108,7 @@ function WaterCard({ today, goal }: { today: string; goal: number }) {
 function AutoSteps({ on }: { on: boolean }) {
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
-  if (!isNative) return <p className="field-hint">📲 In the Android app, steps can be counted automatically.</p>
+  if (!isNative) return <p className="field-hint">📲 In the phone app (Android or iPhone), steps can be counted automatically.</p>
   return (
     <div className="auto-steps">
       <label className="toggle">
@@ -122,8 +122,8 @@ function AutoSteps({ on }: { on: boolean }) {
             if (e.target.checked) {
               const r = await enableAutoSteps().catch(() => 'denied' as const)
               if (r === 'no-sensor') setMsg("This phone doesn't have a step sensor, so keep typing steps in.")
-              if (r === 'denied') setMsg('Allow "Physical activity" for Un-procrast-inator in your phone settings, then try again.')
-              if (r === 'on') setMsg('Counting from now on ✨ Today starts from this moment; tomorrow will be the full day.')
+              if (r === 'denied') setMsg(isIOS ? 'Allow "Motion & Fitness" for Un-procrast-inator in Settings → Privacy & Security, then try again.' : 'Allow "Physical activity" for Un-procrast-inator in your phone settings, then try again.')
+              if (r === 'on') setMsg(isIOS ? 'Counting ✨ Your last 7 days were filled in from your iPhone.' : 'Counting from now on ✨ Today starts from this moment; tomorrow will be the full day.')
             } else await disableAutoSteps()
             setBusy(false)
           }}
@@ -142,7 +142,13 @@ function AutoSteps({ on }: { on: boolean }) {
         </button>
       )}
       {msg && <p className="small">{msg}</p>}
-      {on && <p className="field-hint">Uses your phone's step sensor, checked about every 15 min. On Huawei, set the app to "Manage manually" in Battery → App launch so it keeps counting. Carry your phone for it to count. A bigger number you type in (e.g. from a watch) wins.</p>}
+      {on && (
+        <p className="field-hint">
+          {isIOS
+            ? "Uses your iPhone's motion chip, which keeps the last 7 days, so it fills in whenever you open the app. Carry your phone for it to count. A bigger number you type in (e.g. from a watch) wins."
+            : 'Uses your phone\'s step sensor, checked about every 15 min. On Huawei, set the app to "Manage manually" in Battery → App launch so it keeps counting. Carry your phone for it to count. A bigger number you type in (e.g. from a watch) wins.'}
+        </p>
+      )}
     </div>
   )
 }

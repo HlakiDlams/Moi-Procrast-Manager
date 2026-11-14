@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Alarm } from '../lib/db'
 import { setSetting, useSettings } from '../lib/settings'
 import { pendingCount, permissionState, requestPermission, scheduleOne, TEST_ID } from '../lib/notify'
-import { Clock, isNative } from '../lib/platform'
+import { Clock, isAndroid, isIOS, isNative } from '../lib/platform'
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -26,7 +26,7 @@ function AlarmEditor({ onDone }: { onDone: () => void }) {
   const [time, setTime] = useState('06:00')
   const [label, setLabel] = useState('')
   const [days, setDays] = useState<number[]>([])
-  const [mode, setMode] = useState<Alarm['mode']>(isNative ? 'clock' : 'app')
+  const [mode, setMode] = useState<Alarm['mode']>(isAndroid ? 'clock' : 'app')
   const [err, setErr] = useState('')
 
   async function save(e: React.FormEvent) {
@@ -66,7 +66,7 @@ function AlarmEditor({ onDone }: { onDone: () => void }) {
       </div>
       <p className="muted small">{daysText(days)}</p>
       <div className="seg" role="radiogroup">
-        <button type="button" className={mode === 'clock' ? 'on' : ''} onClick={() => setMode('clock')} disabled={!isNative} aria-pressed={mode === 'clock'}>
+        <button type="button" className={mode === 'clock' ? 'on' : ''} onClick={() => setMode('clock')} disabled={!isAndroid} aria-pressed={mode === 'clock'}>
           📱 Phone's Clock app
         </button>
         <button type="button" className={mode === 'app' ? 'on' : ''} onClick={() => setMode('app')} aria-pressed={mode === 'app'}>
@@ -76,7 +76,7 @@ function AlarmEditor({ onDone }: { onDone: () => void }) {
       <p className="field-hint">
         {mode === 'clock'
           ? 'Loudest + most reliable: Huawei Clock rings even if this app is closed. Edit or delete it later in the Clock app.'
-          : isNative
+          : isAndroid
             ? 'Rings as a high-priority notification, plus a full alarm screen when the app is open.'
             : 'In the browser, alarms ring only while the app is open or in the background. Use the Android app for closed-app alarms.'}
       </p>
@@ -112,7 +112,7 @@ export default function AlarmsScreen() {
       const ok = await requestPermission()
       setPerm(await permissionState())
       if (!ok) {
-        setMsg(isNative ? 'Notifications are blocked. Allow them in Settings → Apps → Un-procrast-inator → Notifications.' : 'Notifications are blocked in your browser settings for this site.')
+        setMsg(isIOS ? 'Notifications are blocked. Allow them in Settings → Notifications → Un-procrast-inator.' : isNative ? 'Notifications are blocked. Allow them in Settings → Apps → Un-procrast-inator → Notifications.' : 'Notifications are blocked in your browser settings for this site.')
         return
       }
     }
@@ -185,7 +185,7 @@ export default function AlarmsScreen() {
       <section className="card">
         <div className="row-between">
           <h2>Alarms</h2>
-          {isNative && (
+          {isAndroid && (
             <button className="btn btn-ghost" onClick={() => Clock.showAlarms().catch(() => {})}>
               Open Clock
             </button>
@@ -233,7 +233,7 @@ export default function AlarmsScreen() {
             <button className="btn btn-primary" onClick={() => setAdding(true)}>
               + New alarm
             </button>
-            {isNative && (
+            {isAndroid && (
               <button className="btn" onClick={wakeToClock}>
                 🌅 Wake-up alarm ({s.wakeTime})
               </button>
@@ -242,7 +242,19 @@ export default function AlarmsScreen() {
         )}
       </section>
 
-      {isNative ? (
+      {isIOS ? (
+        <section className="card warn-card">
+          <h2>📱 iPhone tips</h2>
+          <ol className="small steps">
+            <li>
+              Allow notifications: <b>Settings → Notifications → Un-procrast-inator</b> → Allow, with Sounds and Banners on
+            </li>
+            <li>Focus modes (Sleep, Do Not Disturb) can hide reminders. Add the app to "Allowed apps" if you want them anyway</li>
+            <li>iPhone doesn't let apps put alarms in the Clock app, so use "Ring in this app" alarms here</li>
+            <li>Tap "Test in 10 s" above and lock the phone to check it works</li>
+          </ol>
+        </section>
+      ) : isAndroid ? (
         <section className="card warn-card">
           <h2>📱 Huawei: one-time setup</h2>
           <p className="small">Huawei closes background apps to save battery, which can block reminders. Do this once:</p>
