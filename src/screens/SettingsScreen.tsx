@@ -42,7 +42,7 @@ export default function SettingsScreen() {
       const r = await fetch('https://api.mistral.ai/v1/models', {
         headers: { Authorization: `Bearer ${s.mistralApiKey}` },
       })
-      setKeyStatus(r.ok ? 'Key works!' : `Mistral said ${r.status}. Check the key.`)
+      setKeyStatus(r.ok ? 'Key works.' : `Mistral said ${r.status}. Check the key.`)
     } catch {
       setKeyStatus("Couldn't reach Mistral. Are you online?")
     }

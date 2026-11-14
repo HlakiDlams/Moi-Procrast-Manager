@@ -46,7 +46,7 @@ export default function Alerts() {
       id: SNOOZE_ID,
       at: new Date(Date.now() + 5 * 60_000),
       title: alarm.title,
-      body: 'Snoozed 5 min. Time now!',
+      body: 'Snoozed 5 min. Time now.',
       channel: 'alarms',
       extra: alarm.extra,
     })

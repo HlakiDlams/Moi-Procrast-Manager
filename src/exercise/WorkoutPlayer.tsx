@@ -294,7 +294,7 @@ export default function WorkoutPlayer({
       {phase === 'done' && (
         <div className="player-body center">
           <div className="done-emoji">{saved ? <Trophy size={64} strokeWidth={1.5} /> : null}</div>
-          <h1>{saved === 15 ? 'Workout done!' : saved ? 'Nice effort!' : 'Stopped'}</h1>
+          <h1>{saved === 15 ? 'Workout done' : saved ? 'Stopped early' : 'Stopped'}</h1>
           {saved ? (
             <>
               <p className="muted">

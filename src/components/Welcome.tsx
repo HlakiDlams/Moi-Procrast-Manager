@@ -291,7 +291,7 @@ export default function Welcome({ s }: { s: Settings }) {
                 <ChevronLeft size={16} /> Back
               </button>
               <button className="btn btn-primary btn-xl" style={{ flex: 1 }} onClick={finish} disabled={busy}>
-                {busy ? 'Setting up…' : `Let's go, ${name.trim()}`}
+                {busy ? 'Setting up…' : 'Finish setup'}
               </button>
             </div>
           </div>

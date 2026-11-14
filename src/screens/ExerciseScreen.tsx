@@ -264,7 +264,7 @@ export default function ExerciseScreen() {
             <div className="bar-fill" style={{ width: `${goalPct}%` }} />
           </div>
           <p className="field-hint">
-            {goalPct >= 100 ? 'Weekly goal reached!' : ''}Workouts and sports both count. Goal:{' '}
+            {goalPct >= 100 ? 'Weekly goal reached' : ''}Workouts and sports both count. Goal:{' '}
             <select className="inline-select" value={s.exerciseGoalMin} onChange={(e) => setSetting('exerciseGoalMin', Number(e.target.value))} aria-label="Weekly goal">
               {[60, 90, 120, 150, 180, 240, 300].map((m) => (
                 <option key={m} value={m}>

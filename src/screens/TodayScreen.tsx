@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react'
-import { Bell, Brain, Check, ChevronRight, Clock, Droplet, Gamepad2, Play, Plus, Star, Timer, X } from 'lucide-react'
+import { Bell, Check, ChevronRight, Gamepad2, Play, Plus, Timer, X } from 'lucide-react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { displayName, useSettings } from '../lib/settings'
 import { addXp, useXpStats } from '../lib/xp'
@@ -216,24 +216,20 @@ export default function TodayScreen({ go }: { go: (t: TabId) => void }) {
 
       <div className="stat-strip">
         <button className="stat-cell" onClick={addWater} aria-label="Add a glass of water">
-          <Droplet size={16} />
           <span className="v">
             {water}/{s.waterGoal}
           </span>
           <span className="k">water · tap +1</span>
         </button>
         <button className="stat-cell" onClick={() => go('study')}>
-          <Brain size={16} />
           <span className="v">{dueCount}</span>
           <span className="k">to review</span>
         </button>
         <div className="stat-cell">
-          <Star size={16} />
           <span className="v">{stats.level.level}</span>
           <span className="k">level</span>
         </div>
         <div className="stat-cell">
-          <Clock size={16} />
           <span className="v">{focusToday}</span>
           <span className="k">focus min</span>
         </div>

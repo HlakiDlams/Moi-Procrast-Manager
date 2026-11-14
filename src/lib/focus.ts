@@ -44,8 +44,8 @@ async function load(): Promise<FocusState | null> {
 }
 
 const MESSAGES: Record<Phase, [string, string]> = {
-  starter: ['2 minutes done!', "You started, that's the hardest part. Keep going?"],
-  work: ['Pomodoro done!', 'Amazing focus. Take your break now.'],
+  starter: ['2 minutes done', "You started, that's the hardest part. Keep going?"],
+  work: ['Pomodoro done', 'Take your break now.'],
   break: ['Break over', 'Ready for another round?'],
 }
 

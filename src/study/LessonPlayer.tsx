@@ -150,7 +150,7 @@ export default function LessonPlayer({
             )}
           </div>
           <button className="btn btn-primary btn-xl" onClick={() => setTeach(false)}>
-            Got it, let's go
+            Start
           </button>
         </div>
       )}
@@ -164,7 +164,7 @@ export default function LessonPlayer({
 
       {result && !done && (
         <div className={'feedback ' + (result.correct ? 'ok' : 'bad')}>
-          <strong>{result.correct ? ['Lekker!', 'Correct!', 'Yes!!', 'Nailed it'][idx % 4] : 'Not quite'}</strong>
+          <strong>{result.correct ? 'Correct' : 'Not quite'}</strong>
           {!result.correct && <div className="fb-solution">Answer: {result.solution}</div>}
           <div className="fb-explain">{item.q.explain}</div>
           {!result.correct && settings.mistralApiKey.trim() && !ai && (
@@ -191,7 +191,7 @@ export default function LessonPlayer({
       {done && (
         <div className="player-body center">
           <div className="done-emoji">{done.score === 100 ? <Trophy size={64} strokeWidth={1.5} /> : <Check size={64} strokeWidth={1.5} />}</div>
-          <h1>{isReview ? 'Review done!' : 'Lesson complete!'}</h1>
+          <h1>{isReview ? 'Review done' : 'Lesson complete'}</h1>
           <p className="muted">
             {firstTry.right}/{firstTry.total} right first time · {done.score}%
           </p>

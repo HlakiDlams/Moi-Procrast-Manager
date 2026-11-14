@@ -55,6 +55,11 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
   }
 }
 
+/** Short date for the Today header, e.g. "Mon, 16 Nov". */
+function headerDate() {
+  return new Date().toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
 export default function App() {
   const [tab, navigate] = useHashTab()
   const [moreOpen, setMoreOpen] = useState(false)
@@ -103,16 +108,18 @@ export default function App() {
         <header className="topbar">
           <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
             <span className="brand-name">Un-procrast-inator</span>
-            <span className="page-title">{tab === 'today' ? new Date().toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short' }) : def.label}</span>
+            <span className="page-title">{tab === 'today' ? headerDate() : def.label}</span>
           </button>
-          <div className="chips">
-            <span className={'chip' + (stats.streakInfo.atRisk ? ' chip-warn' : '')} title={stats.streakInfo.atRisk ? 'Streak at risk: do something today!' : 'Day streak'}>
-              {stats.streakInfo.atRisk ? <TriangleAlert size={15} /> : <Flame size={15} />} {stats.streak}
-            </span>
-            <span className="chip" title={`Level ${stats.level.level}`}>
-              <Star size={15} /> {stats.total}
-            </span>
-          </div>
+          {tab !== 'today' && (
+            <div className="chips">
+              <span className={'chip' + (stats.streakInfo.atRisk ? ' chip-warn' : '')} title={stats.streakInfo.atRisk ? 'Streak at risk: do something today' : 'Day streak'}>
+                {stats.streakInfo.atRisk ? <TriangleAlert size={15} /> : <Flame size={15} />} {stats.streak}
+              </span>
+              <span className="chip" title={`Level ${stats.level.level}`}>
+                <Star size={15} /> {stats.total}
+              </span>
+            </div>
+          )}
         </header>
 
         <main className="screen" key={tab}>

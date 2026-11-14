@@ -62,7 +62,7 @@ export default function PlayOverlay() {
         </>
       ) : (
         <div className="focus-actions">
-          <h1 className="center">Break's over!</h1>
+          <h1 className="center">Break's up</h1>
           <p className="center muted">Come back on time for +3 XP.{next ? ` Next up: ${next.title}.` : ''}</p>
           <button className="btn btn-primary btn-xl" onClick={backToIt}>
             Back to it: just 2 minutes

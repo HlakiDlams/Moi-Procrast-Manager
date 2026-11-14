@@ -568,7 +568,7 @@ export default function PlannerScreen() {
             className="btn btn-ghost"
             onClick={async () => {
               const n = await rescheduleMissed()
-              setMsg(n ? `Moved ${n} missed block${n === 1 ? '' : 's'}.` : 'Nothing missed. Lekker!')
+              setMsg(n ? `Moved ${n} missed block${n === 1 ? '' : 's'}.` : 'Nothing missed.')
             }}
           ></button>
         </div>

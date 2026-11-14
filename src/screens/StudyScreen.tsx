@@ -1,4 +1,4 @@
-import { Check, ChevronLeft, ChevronRight, Crown, Flame, Heart, Lock, Play, Plus, Star, TriangleAlert } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Crown, Heart, Lock, Play, Plus, Star } from 'lucide-react'
 import { useState, type CSSProperties } from 'react'
 import { COMING_SOON, COURSES, allLessons, findQuestion } from '../study/courses'
 import { db } from '../lib/db'
@@ -210,31 +210,21 @@ export default function StudyScreen() {
         <CoursePath c={course} onPlay={(l) => play(course, l)} onBack={() => setOpen(null)} />
       ) : (
         <div className="stack">
-          <div className="grid-3 study-stats">
-            <section className="card stat">
-              <div className="stat-icon">{stats.streakInfo.atRisk ? <TriangleAlert size={20} /> : <Flame size={20} />}</div>
-              <div className="stat-num">{stats.streak}</div>
-              <div className="muted small">{stats.streakInfo.atRisk ? 'save it today' : 'streak'}</div>
-            </section>
-            <section className="card stat">
-              <div className="stat-icon">
-                <Heart size={20} />
-              </div>
-              <div className="stat-num">
-                {hearts.n}/{MAX_HEARTS}
-              </div>
-              <div className="muted small">{hearts.nextIn ? `+1 in ${mins(hearts.nextIn)}m` : 'full'}</div>
-            </section>
-            <section className="card stat">
-              <div className="stat-icon">
-                <Star size={20} />
-              </div>
-              <div className="stat-num">{stats.today}</div>
-              <div className="muted small">/{s.dailyXpGoal} XP today</div>
-            </section>
-          </div>
-          <div className="bar thick">
-            <div className="bar-fill" style={{ width: `${goalPct}%` }} />
+          <div className="study-summary">
+            <div className="row-between">
+              <span>
+                <strong className="stat-num">{stats.today}</strong>
+                <span className="muted"> / {s.dailyXpGoal} XP today</span>
+              </span>
+              <span className="muted small hearts-line">
+                <Heart size={14} fill="currentColor" /> {hearts.n}/{MAX_HEARTS}
+                {hearts.nextIn ? ` · +1 in ${mins(hearts.nextIn)}m` : ''}
+              </span>
+            </div>
+            <div className="bar">
+              <div className="bar-fill" style={{ width: `${goalPct}%` }} />
+            </div>
+            {stats.streakInfo.atRisk && <p className="small warn-text">Your {stats.streak}-day streak ends tonight unless you do a lesson.</p>}
           </div>
 
           <section className="card review-card">
