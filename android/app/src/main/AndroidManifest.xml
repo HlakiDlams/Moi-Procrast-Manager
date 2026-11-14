@@ -45,6 +45,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- Automatic step counting from the phone's step sensor -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
     <!-- Lets the app put alarms into the phone's Clock app -->
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 

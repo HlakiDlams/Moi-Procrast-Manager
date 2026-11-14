@@ -6,6 +6,8 @@ import { useProfile } from '../lib/profile'
 import { addXp } from '../lib/xp'
 import { ensureRoutinesSeeded, routineDueOn, sleepHours, xpOnce } from '../lib/selfcare'
 import WeekChart from '../components/WeekChart'
+import { isNative } from '../lib/platform'
+import { disableAutoSteps, enableAutoSteps, syncSteps } from '../lib/steps'
 import PeriodCard from './PeriodCard'
 
 const MOODS = ['😞', '😕', '😐', '🙂', '😄']
@@ -103,7 +105,49 @@ function WaterCard({ today, goal }: { today: string; goal: number }) {
 
 // ---------------- steps ----------------
 
-function StepsCard({ today, goal }: { today: string; goal: number }) {
+function AutoSteps({ on }: { on: boolean }) {
+  const [msg, setMsg] = useState('')
+  const [busy, setBusy] = useState(false)
+  if (!isNative) return <p className="field-hint">📲 In the Android app, steps can be counted automatically.</p>
+  return (
+    <div className="auto-steps">
+      <label className="toggle">
+        <input
+          type="checkbox"
+          checked={on}
+          disabled={busy}
+          onChange={async (e) => {
+            setBusy(true)
+            setMsg('')
+            if (e.target.checked) {
+              const r = await enableAutoSteps().catch(() => 'denied' as const)
+              if (r === 'no-sensor') setMsg("This phone doesn't have a step sensor, so keep typing steps in.")
+              if (r === 'denied') setMsg('Allow "Physical activity" for Un-procrast-inator in your phone settings, then try again.')
+              if (r === 'on') setMsg('Counting from now on ✨ Today starts from this moment; tomorrow will be the full day.')
+            } else await disableAutoSteps()
+            setBusy(false)
+          }}
+        />
+        <span>📲 Count steps automatically</span>
+      </label>
+      {on && (
+        <button
+          className="link-btn small"
+          onClick={async () => {
+            const r = await syncSteps()
+            setMsg(r?.ok ? 'Updated ✅' : "Couldn't read the step sensor just now.")
+          }}
+        >
+          Refresh now
+        </button>
+      )}
+      {msg && <p className="small">{msg}</p>}
+      {on && <p className="field-hint">Uses your phone's step sensor, checked about every 15 min. On Huawei, set the app to "Manage manually" in Battery → App launch so it keeps counting. Carry your phone for it to count. A bigger number you type in (e.g. from a watch) wins.</p>}
+    </div>
+  )
+}
+
+function StepsCard({ today, goal, auto }: { today: string; goal: number; auto: boolean }) {
   const days = last7(today)
   const rows = useLiveQuery(() => db.steps.where('day').between(days[0], today, true, true).toArray(), [today]) ?? []
   const todayRow = rows.find((r) => r.day === today)
@@ -134,7 +178,8 @@ function StepsCard({ today, goal }: { today: string; goal: number }) {
           Save
         </button>
       </form>
-      <p className="field-hint">Copy today's number from your phone's health app (e.g. Huawei Health). Goal: </p>
+      <AutoSteps on={auto} />
+      <p className="field-hint">{auto ? 'Or type a number from your watch or health app.' : "Copy today's number from your phone's health app (e.g. Huawei Health)."} Goal: </p>
       <select className="inline-select" value={goal} onChange={(e) => setSetting('stepsGoal', Number(e.target.value))} aria-label="Steps goal">
         {[3000, 5000, 6000, 7500, 8000, 10000, 12000].map((g) => (
           <option key={g} value={g}>
@@ -435,7 +480,7 @@ export default function SelfCareScreen() {
       <RoutinesCard today={today} />
       <MealsCard today={today} />
       <SleepCard today={today} bedDefault={s.bedtime} wakeDefault={s.wakeTime} />
-      <StepsCard today={today} goal={s.stepsGoal} />
+      <StepsCard today={today} goal={s.stepsGoal} auto={s.autoSteps} />
       <section className="card">
         <h2>Period tracker</h2>
         <div className="seg seg-3">

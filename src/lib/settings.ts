@@ -31,6 +31,8 @@ export interface Settings {
   /** period tracker: auto = shown when gender is Female */
   trackPeriods: 'auto' | 'on' | 'off'
   stepsGoal: number
+  /** count steps automatically from the phone's sensor (Android app) */
+  autoSteps: boolean
   /** 12-week programme start (a Monday), '' = not started */
   programmeStart: string
   /** minutes of effort that earn 1 minute of play */
@@ -88,6 +90,7 @@ export const DEFAULT_SETTINGS: Settings = {
   onboarded: false,
   trackPeriods: 'auto',
   stepsGoal: 8000,
+  autoSteps: false,
   myCourses: null,
   programmeStart: '',
   lowImpact: true,

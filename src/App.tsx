@@ -22,6 +22,7 @@ import { ensurePlannerSeeded } from './lib/plannerSeed'
 import FocusOverlay from './components/FocusOverlay'
 import Alerts from './components/Alerts'
 import { useReminderSync } from './lib/reminders'
+import { useStepSync } from './lib/steps'
 import { onTapped } from './lib/notify'
 import { startStarter } from './lib/focus'
 import { db } from './lib/db'
@@ -64,6 +65,7 @@ export default function App() {
   const def = tabById(tab)!
   useReminderSync()
   useAutoReschedule()
+  useStepSync()
   // Existing installs keep their original setup (and get one-time migrations).
   // New installs are set up by the welcome screen instead.
   const onboarded = loaded?.onboarded

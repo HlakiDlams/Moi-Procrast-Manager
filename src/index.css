@@ -2216,3 +2216,4 @@ textarea {
 .option-card:hover {
   border-color: var(--accent);
 }
+.auto-steps { margin: 0.4rem 0; }
