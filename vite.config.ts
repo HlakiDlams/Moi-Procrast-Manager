@@ -16,13 +16,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'Un-procrast-inator',
         short_name: 'Un-procrast-inator',
         description: 'Study + life planner that beats procrastination. Works offline.',
         theme_color: '#0D0D0D',
-        background_color: '#0D0D0D',
+        background_color: '#F70F85',
         display: 'standalone',
         orientation: 'portrait',
         start_url: './',
