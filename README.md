@@ -64,5 +64,5 @@ Host `dist/` anywhere with HTTPS, open it in a browser, then "Add to Home screen
 - [x] 6. Play (earned play time, hobby timers, back-on-time nudge, optional planner reward breaks)
 - [x] 7. Exercise (7 home workouts, low-impact mode, guided player, 12-week programme, PBs)
 - [x] 8. Profile & Goals (pace tracking, re-plan options, healthy-rate safety)
-- [ ] 9. Homework Checker
+- [x] 9. Homework Checker (Mistral vision marking, step-by-step fixes, mistakes to Review, Explain more in lessons)
 - [ ] 10. Windows app

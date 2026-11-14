@@ -16,6 +16,7 @@ import StudyScreen from './screens/StudyScreen'
 import SelfCareScreen from './screens/SelfCareScreen'
 import ExerciseScreen from './screens/ExerciseScreen'
 import PlayScreen from './screens/PlayScreen'
+import HomeworkScreen from './screens/HomeworkScreen'
 import PlayOverlay from './components/PlayOverlay'
 import { useAutoReschedule } from './lib/planner'
 import { ensurePlannerSeeded } from './lib/plannerSeed'
@@ -47,6 +48,8 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
       return <ExerciseScreen />
     case 'play':
       return <PlayScreen />
+    case 'homework':
+      return <HomeworkScreen go={go} />
     default:
       return <ComingSoon tab={tab} />
   }

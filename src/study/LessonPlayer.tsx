@@ -4,6 +4,9 @@ import QuestionView, { type Answered } from './QuestionView'
 import { addMistake, changeHearts, finishLesson, MAX_HEARTS, reviewResult, useHearts } from './progress'
 import { chime } from '../lib/sound'
 import { canSpeak, speak } from '../lib/speech'
+import { explainMistake } from '../lib/mistral'
+import { useSettings } from '../lib/settings'
+import { COURSES } from './courses'
 
 interface Item {
   q: Question
@@ -33,6 +36,8 @@ export default function LessonPlayer({
   onClose: () => void
 }) {
   const hearts = useHearts()
+  const settings = useSettings()
+  const [ai, setAi] = useState<{ loading: boolean; text: string } | null>(null)
   const [queue, setQueue] = useState<Item[]>(() => (lesson ? lesson.questions.map((q) => ({ q, attempt: 0 })) : review!.map((r) => ({ q: r.q, attempt: 0, key: r.key, lang: r.lang }))))
   const [idx, setIdx] = useState(0)
   const [teach, setTeach] = useState(!!lesson)
@@ -70,9 +75,22 @@ export default function LessonPlayer({
     }
   }
 
+  async function explainMore() {
+    if (!result) return
+    setAi({ loading: true, text: '' })
+    try {
+      const subject = COURSES.find((c) => c.id === courseId)?.name ?? 'this subject'
+      const text = await explainMistake(item.q, result.given ?? '', result.solution, subject)
+      setAi({ loading: false, text })
+    } catch (e) {
+      setAi({ loading: false, text: (e as Error).message })
+    }
+  }
+
   async function next() {
     if (outOfHearts) return
     setResult(null)
+    setAi(null)
     if (idx + 1 < queue.length) {
       setIdx(idx + 1)
       return
@@ -140,6 +158,12 @@ export default function LessonPlayer({
           <strong>{result.correct ? ['Lekker! ✨', 'Correct! 💕', 'Yes!! 🎉', 'Nailed it 🔥'][idx % 4] : 'Not quite'}</strong>
           {!result.correct && <div className="fb-solution">Answer: {result.solution}</div>}
           <div className="fb-explain">{item.q.explain}</div>
+          {!result.correct && settings.mistralApiKey.trim() && !ai && (
+            <button className="link-btn small" onClick={explainMore}>
+              🤖 Explain more
+            </button>
+          )}
+          {ai && <div className="fb-ai small">{ai.loading ? '🤖 Thinking…' : ai.text}</div>}
           {outOfHearts ? (
             <div className="stack-sm">
               <p className="small">You're out of hearts 💔 They refill 1 every 30 min, or earn them back by reviewing mistakes.</p>

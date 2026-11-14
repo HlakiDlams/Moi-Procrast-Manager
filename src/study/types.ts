@@ -43,7 +43,13 @@ export interface OrderQ extends QBase {
   steps: string[]
 }
 
-export type Question = MCQ | InputQ | MatchQ | OrderQ
+/** Think of the answer, reveal it, then say honestly if you knew it (homework mistakes, AI cards). */
+export interface RecallQ extends QBase {
+  type: 'recall'
+  answer: string
+}
+
+export type Question = MCQ | InputQ | MatchQ | OrderQ | RecallQ
 
 export interface Lesson {
   id: string

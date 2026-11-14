@@ -6,6 +6,10 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a photo of your homework so it can be marked.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Pick a photo of your homework so it can be marked.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Counts your steps for your daily steps goal. The numbers stay on your phone.</string>
 	<key>CFBundleDisplayName</key>

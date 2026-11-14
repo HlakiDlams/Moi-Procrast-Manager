@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie'
+import type { Question } from '../study/types'
 
 /** Key/value settings (API key, timer lengths, exam date, etc.). */
 export interface SettingRow {
@@ -257,6 +258,40 @@ export interface GoalLog {
   value: number
 }
 
+export interface HomeworkResult {
+  readable: boolean
+  summary: string
+  score: { earned: number; total: number }
+  items: {
+    question: string
+    learnerAnswer: string
+    verdict: 'correct' | 'partial' | 'wrong' | 'unreadable'
+    marks: { earned: number; total: number }
+    feedback: string
+    steps: string[]
+    correctAnswer: string
+  }[]
+  tips: string[]
+}
+
+/** A homework check (only a small preview of the photo is kept). */
+export interface HomeworkCheck {
+  id?: number
+  at: string
+  day: string
+  subject: string
+  task: string
+  thumb: string
+  result: HomeworkResult
+}
+
+/** Questions made by the app (e.g. from homework mistakes) for the review deck. */
+export interface CustomQuestion {
+  id: string
+  courseId: string
+  q: Question
+}
+
 class PlannerDB extends Dexie {
   settings!: Table<SettingRow, string>
   xp!: Table<XpEvent, number>
@@ -282,6 +317,8 @@ class PlannerDB extends Dexie {
   playLogs!: Table<PlayLog, number>
   goals!: Table<Goal, number>
   goalLogs!: Table<GoalLog, number>
+  homework!: Table<HomeworkCheck, number>
+  customQuestions!: Table<CustomQuestion, string>
 
   constructor() {
     super('hlakis-planner')
@@ -326,6 +363,10 @@ class PlannerDB extends Dexie {
     this.version(9).stores({
       goals: '++id',
       goalLogs: '++id, goalId, day',
+    })
+    this.version(10).stores({
+      homework: '++id, day',
+      customQuestions: 'id, courseId',
     })
   }
 }

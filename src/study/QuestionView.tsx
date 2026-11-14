@@ -21,6 +21,8 @@ export interface Answered {
   correct: boolean
   /** what to show as the right answer */
   solution: string
+  /** what the learner gave (for "Explain more") */
+  given?: string
 }
 
 /**
@@ -41,25 +43,30 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
   // order
   const pool = useMemo(() => (q.type === 'order' ? shuffle(q.steps.map((_, i) => i), seed) : []), [q, seed])
   const [seq, setSeq] = useState<number[]>([])
+  // recall
+  const [shown, setShown] = useState(false)
 
   let ready = false
   let check: () => Answered = () => ({ correct: false, solution: '' })
 
   if (q.type === 'mcq') {
     ready = pick !== null
-    check = () => ({ correct: pick === q.answer, solution: q.options[q.answer] })
+    check = () => ({ correct: pick === q.answer, solution: q.options[q.answer], given: pick !== null ? q.options[pick] : '' })
   } else if (q.type === 'input') {
     ready = text.trim().length > 0
-    check = () => ({ correct: checkInput(q, text), solution: q.answers[0] })
+    check = () => ({ correct: checkInput(q, text), solution: q.answers[0], given: text })
   } else if (q.type === 'match') {
     ready = Object.keys(pairs).length === q.pairs.length
     check = () => ({
       correct: q.pairs.every((p, i) => rights[pairs[i]] === p[1]),
       solution: q.pairs.map((p) => `${p[0]} → ${p[1]}`).join('  ·  '),
+      given: q.pairs.map((p, i) => `${p[0]} → ${rights[pairs[i]] ?? '?'}`).join('  ·  '),
     })
+  } else if (q.type === 'recall') {
+    ready = false
   } else {
     ready = seq.length === q.steps.length
-    check = () => ({ correct: seq.every((v, i) => v === i), solution: q.steps.map((s, i) => `${i + 1}. ${s}`).join('\n') })
+    check = () => ({ correct: seq.every((v, i) => v === i), solution: q.steps.map((s, i) => `${i + 1}. ${s}`).join('\n'), given: seq.map((v, i) => `${i + 1}. ${q.steps[v]}`).join('\n') })
   }
 
   const submit = () => ready && !locked && onCheck(check())
@@ -194,7 +201,34 @@ export default function QuestionView({ q, attempt, locked, lang, onCheck }: { q:
         </div>
       )}
 
-      {!locked && (
+      {q.type === 'recall' && (
+        <div className="q-recall">
+          {!shown ? (
+            <>
+              <p className="muted small">Think of the answer (or work it out on paper), then tap Show.</p>
+              <button className="btn btn-primary btn-xl" onClick={() => setShown(true)}>
+                👀 Show answer
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="q-context">{q.answer}</div>
+              {!locked && (
+                <div className="btn-row">
+                  <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => onCheck({ correct: true, solution: q.answer })}>
+                    ✅ I knew it
+                  </button>
+                  <button className="btn" style={{ flex: 1 }} onClick={() => onCheck({ correct: false, solution: q.answer })}>
+                    ❌ Not yet
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {!locked && q.type !== 'recall' && (
         <button className="btn btn-primary btn-xl q-check" disabled={!ready} onClick={submit}>
           Check
         </button>

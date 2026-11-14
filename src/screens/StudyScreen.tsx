@@ -1,6 +1,7 @@
 import { useState, type CSSProperties } from 'react'
 import { COMING_SOON, COURSES, allLessons, findQuestion } from '../study/courses'
-import type { Course, Lesson } from '../study/types'
+import { db } from '../lib/db'
+import type { Course, Lesson, Question } from '../study/types'
 import { MAX_HEARTS, useAllCards, useDueCards, useHearts, useLessonsDone } from '../study/progress'
 import LessonPlayer from '../study/LessonPlayer'
 import { useXpStats } from '../lib/xp'
@@ -137,11 +138,14 @@ export default function StudyScreen() {
   }
   const goalPct = Math.min(100, Math.round((stats.today / Math.max(1, s.dailyXpGoal)) * 100))
 
-  function startReview(onlyDue: boolean) {
+  async function startReview(onlyDue: boolean) {
     const list = (onlyDue ? due : cards).slice(0, 10)
-    const items = list
-      .map((c) => ({ key: c.key, q: findQuestion(c.courseId, c.qid)?.q, lang: COURSES.find((x) => x.id === c.courseId)?.lang }))
-      .filter((x): x is { key: string; q: NonNullable<typeof x.q>; lang: string | undefined } => !!x.q)
+    const items: { key: string; q: Question; lang?: string }[] = []
+    for (const c of list) {
+      // built-in lesson questions first, then app-made cards (e.g. homework mistakes)
+      const q = findQuestion(c.courseId, c.qid)?.q ?? (await db.customQuestions.get(c.qid))?.q
+      if (q) items.push({ key: c.key, q, lang: COURSES.find((x) => x.id === c.courseId)?.lang })
+    }
     if (!items.length) return
     setPlaying({ courseId: list[0].courseId, color: themeById(s.theme).accents.study, review: items })
   }

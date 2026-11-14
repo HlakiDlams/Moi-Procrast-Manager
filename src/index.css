@@ -2217,3 +2217,123 @@ textarea {
   border-color: var(--accent);
 }
 .auto-steps { margin: 0.4rem 0; }
+.q-recall { display: flex; flex-direction: column; gap: 0.75rem; }
+
+/* ---------- homework ---------- */
+.hw-photos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+.hw-photo {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.hw-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hw-photo .icon-btn {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.65);
+}
+.hw-wait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0;
+}
+.hw-spinner {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  border: 0.3rem solid var(--card-2);
+  border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.hw-score {
+  text-align: center;
+}
+.hw-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.hw-item {
+  background: var(--card-2);
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--line);
+}
+.hw-item.v-correct {
+  border-left-color: #6be3a4;
+}
+.hw-item.v-partial {
+  border-left-color: #ffd166;
+}
+.hw-item.v-wrong {
+  border-left-color: var(--danger);
+}
+.hw-head {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.7rem;
+}
+.hw-icon {
+  font-size: 1.2rem;
+}
+.hw-body {
+  padding: 0 0.8rem 0.8rem 2.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.hw-correct {
+  background: color-mix(in srgb, #6be3a4 12%, var(--card));
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.6rem;
+}
+.hw-hist {
+  grid-template-columns: 3rem 1fr auto !important;
+  cursor: pointer;
+  padding: 0.4rem 0 !important;
+}
+.hw-hist img {
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  border-radius: 0.4rem;
+}
+.hw-pct {
+  font-weight: 900;
+  color: var(--accent);
+}
+.fb-ai {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  white-space: pre-line;
+}
