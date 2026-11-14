@@ -191,7 +191,7 @@ export default function LessonPlayer({
 
       {done && (
         <div className="player-body center">
-          {done.score === 100 && <Confetti />}
+          <Confetti />
           <div className="done-emoji">{done.score === 100 ? <Trophy size={64} strokeWidth={1.5} /> : <Check size={64} strokeWidth={1.5} />}</div>
           <h1>{isReview ? 'Review done' : 'Lesson complete'}</h1>
           <p className="muted">
