@@ -2,16 +2,16 @@ import { atTime, db, localDay, type Block, type BlockKind } from './db'
 import { addXp } from './xp'
 
 export const KINDS: { id: BlockKind; label: string; icon: string; color: string }[] = [
-  { id: 'study', label: 'Study', icon: '📚', color: '#FF8AC8' },
-  { id: 'homework', label: 'Homework', icon: '✏️', color: '#FFD166' },
-  { id: 'break', label: 'Break', icon: '☕', color: '#FFB3C7' },
-  { id: 'meal', label: 'Meal', icon: '🍽️', color: '#FFB3C7' },
-  { id: 'play', label: 'Play', icon: '🎮', color: '#C77DFF' },
-  { id: 'exercise', label: 'Exercise', icon: '💪', color: '#FF3B5C' },
-  { id: 'selfcare', label: 'Self-care', icon: '🧴', color: '#FFB3C7' },
-  { id: 'prayer', label: 'Prayer', icon: '🙏', color: '#FFE3A3' },
-  { id: 'sleep', label: 'Sleep', icon: '😴', color: '#9B8CFF' },
-  { id: 'other', label: 'Other', icon: '📌', color: '#D6249F' },
+  { id: 'study', label: 'Study', icon: '📚', color: 'var(--c2)' },
+  { id: 'homework', label: 'Homework', icon: '✏️', color: 'var(--c3)' },
+  { id: 'break', label: 'Break', icon: '☕', color: 'var(--c4)' },
+  { id: 'meal', label: 'Meal', icon: '🍽️', color: 'var(--c4)' },
+  { id: 'play', label: 'Play', icon: '🎮', color: 'var(--c5)' },
+  { id: 'exercise', label: 'Exercise', icon: '💪', color: 'var(--c1)' },
+  { id: 'selfcare', label: 'Self-care', icon: '🧴', color: 'var(--c4)' },
+  { id: 'prayer', label: 'Prayer', icon: '🙏', color: 'var(--c3)' },
+  { id: 'sleep', label: 'Sleep', icon: '😴', color: 'var(--c5)' },
+  { id: 'other', label: 'Other', icon: '📌', color: 'var(--c3)' },
 ]
 
 export const kindInfo = (k: BlockKind) => KINDS.find((x) => x.id === k) ?? KINDS[KINDS.length - 1]

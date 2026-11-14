@@ -24,7 +24,7 @@ export default function LessonPlayer({
   courseId,
   lesson,
   review,
-  color,
+  vars,
   lang,
   onClose,
 }: {
@@ -32,7 +32,8 @@ export default function LessonPlayer({
   courseId: string
   lesson?: Lesson
   review?: { key: string; q: Question; lang?: string }[]
-  color: string
+  /** theme colour variables for this course */
+  vars: React.CSSProperties
   onClose: () => void
 }) {
   const hearts = useHearts()
@@ -103,7 +104,7 @@ export default function LessonPlayer({
   const pct = done ? 100 : Math.round((idx / Math.max(1, total)) * 100)
 
   return (
-    <div className="player" style={{ '--accent': color } as React.CSSProperties} role="dialog" aria-label={lesson?.title ?? 'Review'}>
+    <div className="player" style={vars} role="dialog" aria-label={lesson?.title ?? 'Review'}>
       <div className="player-top">
         <button className="icon-btn subtle" onClick={() => (done || confirm('Quit this lesson? Progress in it is lost.') ? onClose() : null)} aria-label="Close">
           ✕

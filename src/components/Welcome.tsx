@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { setSetting, type Settings } from '../lib/settings'
 import { LIFE_STAGES, saveProfile, useProfile, type LifeStage } from '../lib/profile'
-import { THEMES, applyTheme, themeById } from '../lib/themes'
+import { applyTheme, resolveTheme, type Mode } from '../lib/themes'
+import ThemePicker from './ThemePicker'
 import { db } from '../lib/db'
 import { COURSES } from '../study/courses'
 import { MORE_SCHOOL_SUBJECTS, applySetup, subjectNameOf } from '../lib/setup'
@@ -32,6 +33,7 @@ export default function Welcome({ s }: { s: Settings }) {
   const [name, setName] = useState(s.name)
   const [gender, setGender] = useState<string | null>(null)
   const [theme, setTheme] = useState(s.theme)
+  const [mode, setMode] = useState<Mode>(s.mode)
   const g = gender ?? p.gender
 
   // step 2: start from what this install already has (empty for a new one)
@@ -77,6 +79,7 @@ export default function Welcome({ s }: { s: Settings }) {
     try {
       await setSetting('name', name.trim())
       await setSetting('theme', theme)
+      await setSetting('mode', mode)
       await saveProfile({ gender: g, lifeStage: st, ...(st === 'school' ? { school: school ?? p.school, grade: grade ?? p.grade } : {}) })
       await setSetting('showCountdown', showCd)
       if (showCd) {
@@ -131,27 +134,18 @@ export default function Welcome({ s }: { s: Settings }) {
               ))}
             </div>
             <span className="field-label">Pick your colours</span>
-            <div className="theme-grid">
-              {THEMES.map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  className={'theme-chip' + (theme === t.id ? ' on' : '')}
-                  onClick={() => {
-                    setTheme(t.id)
-                    applyTheme(themeById(t.id))
-                  }}
-                  aria-pressed={theme === t.id}
-                >
-                  <span className="theme-dots">
-                    {[t.accents.today, t.accents.study, t.accents.planner, t.accents.selfcare].map((c) => (
-                      <i key={c} style={{ background: c }} />
-                    ))}
-                  </span>
-                  {t.emoji} {t.name}
-                </button>
-              ))}
-            </div>
+            <ThemePicker
+              theme={theme}
+              mode={mode}
+              onTheme={(id) => {
+                setTheme(id)
+                applyTheme(resolveTheme(id, mode))
+              }}
+              onMode={(m) => {
+                setMode(m)
+                applyTheme(resolveTheme(theme, m))
+              }}
+            />
             <button className="btn btn-primary btn-xl" type="submit" disabled={!name.trim()}>
               Next ›
             </button>

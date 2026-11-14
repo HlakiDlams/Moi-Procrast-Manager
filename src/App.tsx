@@ -1,11 +1,11 @@
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
 import { applyScale, useSettings, useSettingsLoaded, displayName } from './lib/settings'
 import Welcome from './components/Welcome'
 import ErrorBoundary from './components/ErrorBoundary'
-import { applyTheme, themeById } from './lib/themes'
+import { applyTheme, resolveTheme, ThemeContext } from './lib/themes'
 import TodayScreen from './screens/TodayScreen'
 import SettingsScreen from './screens/SettingsScreen'
 import ComingSoon from './screens/ComingSoon'
@@ -76,9 +76,8 @@ export default function App() {
     if (onboarded) ensurePlannerSeeded().catch((e) => console.warn('seed failed', e))
   }, [onboarded])
   useEffect(() => applyScale(settings.uiScale), [settings.uiScale])
-  const theme = themeById(settings.theme)
+  const theme = useMemo(() => resolveTheme(settings.theme, settings.mode), [settings.theme, settings.mode])
   useEffect(() => applyTheme(theme), [theme])
-  const accent = (id: TabId) => theme.accents[id]
 
   // Tapping a notification: jump to the right place (and start the 2-min timer for a task).
   useEffect(
@@ -99,7 +98,8 @@ export default function App() {
   const onSecondary = !def.primary
 
   return (
-    <div className="app" style={{ '--accent': accent(def.id) } as CSSProperties}>
+    <ThemeContext.Provider value={theme}>
+    <div className="app" style={theme.tabVars(def.id)}>
       <header className="topbar">
         <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
           <span className="brand-dot" />
@@ -140,7 +140,7 @@ export default function App() {
                 <button
                   key={t.id}
                   className="more-item"
-                  style={{ '--accent': accent(t.id) } as CSSProperties}
+                  style={theme.tabVars(t.id)}
                   onClick={() => go(t.id)}
                 >
                   <span className="more-icon">{t.icon}</span>
@@ -157,7 +157,7 @@ export default function App() {
           <button
             key={t.id}
             className={'nav-btn' + (tab === t.id ? ' active' : '')}
-            style={{ '--accent': accent(t.id) } as CSSProperties}
+            style={theme.tabVars(t.id)}
             onClick={() => go(t.id)}
             aria-current={tab === t.id ? 'page' : undefined}
           >
@@ -167,7 +167,7 @@ export default function App() {
         ))}
         <button
           className={'nav-btn' + (onSecondary || moreOpen ? ' active' : '')}
-          style={{ '--accent': onSecondary ? accent(def.id) : accent('today') } as CSSProperties}
+          style={theme.tabVars(onSecondary ? def.id : 'today')}
           onClick={() => setMoreOpen((o) => !o)}
           aria-expanded={moreOpen}
         >
@@ -176,5 +176,6 @@ export default function App() {
         </button>
       </nav>
     </div>
+    </ThemeContext.Provider>
   )
 }

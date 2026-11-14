@@ -4,7 +4,7 @@ import { addDays, db, localDay } from '../lib/db'
 import { setSetting, useSettings } from '../lib/settings'
 import { addXp } from '../lib/xp'
 import { useProfile } from '../lib/profile'
-import { themeById } from '../lib/themes'
+import { useTheme } from '../lib/themes'
 import { EXERCISES, GOALS, WORKOUTS, estMinutes, lowImpact, scaleSteps, workoutById, type Goal, type Step } from '../exercise/library'
 import { PHASES, nextMonday, phaseDays, programmeDay } from '../exercise/programme'
 import WorkoutPlayer from '../exercise/WorkoutPlayer'
@@ -89,7 +89,8 @@ export default function ExerciseScreen() {
   const s = useSettings()
   const p = useProfile()
   const today = localDay()
-  const color = themeById(s.theme).accents.exercise
+  const t = useTheme()
+  const vars = t.tabVars('exercise')
   const [goal, setGoal] = useState<Goal | 'all'>('all')
   const [playing, setPlaying] = useState<Playing | null>(null)
   const logs = useLiveQuery(() => db.workouts.reverse().toArray(), []) ?? []
@@ -157,7 +158,7 @@ export default function ExerciseScreen() {
       </section>
 
       {/* ---------------- 12-week programme ---------------- */}
-      <section className="card hero prog-card" style={{ '--accent': color } as React.CSSProperties}>
+      <section className="card hero prog-card" style={vars}>
         <h2>🌅 12-week early-morning programme</h2>
         {!s.programmeStart ? (
           <>
@@ -261,7 +262,7 @@ export default function ExerciseScreen() {
           {WORKOUTS.filter((w) => goal === 'all' || w.goal === goal).map((w) => {
             const steps = prepare(w.steps)
             return (
-              <button key={w.id} className="course-card" style={{ '--k': color } as React.CSSProperties} onClick={() => setPlaying({ workoutId: w.id, name: w.name, steps })}>
+              <button key={w.id} className="course-card" style={{ '--k': 'var(--accent)' } as React.CSSProperties} onClick={() => setPlaying({ workoutId: w.id, name: w.name, steps })}>
                 <span className="course-icon">{w.icon}</span>
                 <span className="course-main">
                   <strong>{w.name}</strong>
@@ -325,7 +326,7 @@ export default function ExerciseScreen() {
         )}
       </section>
 
-      {playing && <WorkoutPlayer {...playing} color={color} onClose={() => setPlaying(null)} />}
+      {playing && <WorkoutPlayer {...playing} vars={vars} onClose={() => setPlaying(null)} />}
     </div>
   )
 }

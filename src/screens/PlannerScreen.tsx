@@ -7,6 +7,7 @@ import { generateAndSave, rescheduleMissed } from '../lib/planner'
 import { setSetting, useSettings, type Settings } from '../lib/settings'
 import { startStarter } from '../lib/focus'
 import Timeline from '../components/Timeline'
+import { paletteVar } from '../lib/themes'
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const DAY_LETTER = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -186,8 +187,8 @@ function SubjectsEditor({ subjects }: { subjects: Subject[] }) {
   const upd = (id: number, p: Partial<Subject>) => db.subjects.update(id, p)
   return (
     <div className="stack-sm">
-      {subjects.map((s) => (
-        <div key={s.id} className={'subject-row' + (s.active ? '' : ' off')} style={{ '--k': s.color } as CSSProperties}>
+      {subjects.map((s, si) => (
+        <div key={s.id} className={'subject-row' + (s.active ? '' : ' off')} style={{ '--k': paletteVar(si) } as CSSProperties}>
           <button className="subject-head" onClick={() => setOpen(open === s.id ? null : s.id!)}>
             <span>
               {s.icon} {s.name}
@@ -555,7 +556,7 @@ export default function PlannerScreen() {
                   </span>
                 </div>
                 <div className="bar">
-                  <div className="bar-fill" style={{ width: `${Math.round((done / planned) * 100)}%`, background: sub.color }} />
+                  <div className="bar-fill" style={{ width: `${Math.round((done / planned) * 100)}%`, background: paletteVar(subjects.indexOf(sub)) }} />
                 </div>
               </div>
             ))}

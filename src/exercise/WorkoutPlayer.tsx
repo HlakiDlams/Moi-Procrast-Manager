@@ -29,7 +29,7 @@ function beep(freq = 880) {
 }
 
 /** Full-screen guided workout: warm-up → sets with timers/reps → rest countdowns → summary. */
-export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, color, onClose }: { workoutId: string; name: string; steps: Step[]; programmeWeek?: number; color: string; onClose: () => void }) {
+export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, vars, onClose }: { workoutId: string; name: string; steps: Step[]; programmeWeek?: number; vars: React.CSSProperties; onClose: () => void }) {
   const items = useMemo(() => {
     const out: Item[] = []
     const add = (list: Step[], warmup: boolean) => {
@@ -160,7 +160,7 @@ export default function WorkoutPlayer({ workoutId, name, steps, programmeWeek, c
   const pct = phase === 'done' ? 100 : Math.round((idx / total) * 100)
 
   return (
-    <div className="player workout" style={{ '--accent': color } as React.CSSProperties} role="dialog" aria-label={name}>
+    <div className="player workout" style={vars} role="dialog" aria-label={name}>
       <div className="player-top">
         <button
           className="icon-btn subtle"

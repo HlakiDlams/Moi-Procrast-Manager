@@ -26,6 +26,8 @@ export interface Settings {
   autoReschedule: boolean
   /** colour theme id (see lib/themes.ts) */
   theme: string
+  /** dark, gray or light */
+  mode: 'dark' | 'gray' | 'light'
   /** finished the first-run welcome */
   onboarded: boolean
   /** period tracker: auto = shown when gender is Female */
@@ -86,7 +88,8 @@ export const DEFAULT_SETTINGS: Settings = {
   matricStart: '2027-10-27',
   showCountdown: true,
   uiScale: Number(saved('hp-ui-scale')) || 80,
-  theme: saved('hp-theme') || 'pink',
+  theme: saved('hp-theme') || 'rose',
+  mode: (saved('hp-mode') as 'dark' | 'gray' | 'light') || 'dark',
   onboarded: false,
   trackPeriods: 'auto',
   stepsGoal: 8000,

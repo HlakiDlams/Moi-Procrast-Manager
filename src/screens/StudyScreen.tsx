@@ -6,9 +6,9 @@ import { MAX_HEARTS, useAllCards, useDueCards, useHearts, useLessonsDone } from 
 import LessonPlayer from '../study/LessonPlayer'
 import { useXpStats } from '../lib/xp'
 import { setSetting, useSettings } from '../lib/settings'
-import { themeById } from '../lib/themes'
+import { paletteVar, useTheme } from '../lib/themes'
 
-type Playing = { courseId: string; color: string; lang?: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
+type Playing = { courseId: string; vars: CSSProperties; lang?: string; lesson?: Lesson; review?: { key: string; q: import('../study/types').Question }[] }
 
 function mins(ms: number) {
   return Math.ceil(ms / 60_000)
@@ -26,7 +26,7 @@ function CourseCard({ c, onOpen }: { c: Course; onOpen: () => void }) {
   const due = useDueCards(c.id).length
   const pct = Math.round((done.length / total) * 100)
   return (
-    <button className="course-card" style={{ '--k': c.color } as CSSProperties} onClick={onOpen}>
+    <button className="course-card" style={{ '--k': paletteVar(COURSES.indexOf(c)) } as CSSProperties} onClick={onOpen}>
       <span className="course-icon">{c.icon}</span>
       <span className="course-main">
         <strong>{c.name}</strong>
@@ -34,7 +34,7 @@ function CourseCard({ c, onOpen }: { c: Course; onOpen: () => void }) {
           {done.length}/{total} lessons{due ? ` · ${due} to review` : ''}
         </span>
         <span className="bar">
-          <span className="bar-fill" style={{ width: `${pct}%`, background: c.color, display: 'block' }} />
+          <span className="bar-fill" style={{ width: `${pct}%`, background: paletteVar(COURSES.indexOf(c)), display: 'block' }} />
         </span>
       </span>
       <span className="muted">›</span>
@@ -43,13 +43,14 @@ function CourseCard({ c, onOpen }: { c: Course; onOpen: () => void }) {
 }
 
 function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => void; onBack: () => void }) {
+  const theme = useTheme()
   const done = new Map(useLessonsDone(c.id).map((d) => [d.lessonId, d]))
   const lessons = allLessons(c)
   const nextIdx = lessons.findIndex((l) => !done.has(l.id))
   const indexOf = new Map(lessons.map((l, i) => [l.id, i]))
   return (
     <div className="stack">
-      <section className="card hero" style={{ '--accent': c.color } as CSSProperties}>
+      <section className="card hero" style={theme.accentVars(COURSES.indexOf(c))}>
         <button className="link-btn small" onClick={onBack}>
           ‹ All subjects
         </button>
@@ -69,7 +70,7 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
       </section>
 
       {c.prompts && c.prompts.length > 0 && (
-        <section className="card prompt-card" style={{ '--k': c.color } as CSSProperties}>
+        <section className="card prompt-card" style={{ '--k': paletteVar(COURSES.indexOf(c)) } as CSSProperties}>
           <div className="muted small">✏️ Today's practice prompt</div>
           <p className="prompt-text">{c.prompts[dayNumber() % c.prompts.length]}</p>
           <p className="field-hint">A new one every day. Set a 10–15 min timer and just start.</p>
@@ -77,7 +78,7 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
       )}
 
       {c.units.map((u) => (
-        <section key={u.id} className="card unit" style={{ '--k': c.color } as CSSProperties}>
+        <section key={u.id} className="card unit" style={{ ...theme.accentVars(COURSES.indexOf(c)), '--k': 'var(--accent)' } as CSSProperties}>
           <div className="unit-head">
             <span className="unit-icon">{u.icon}</span>
             <div>
@@ -120,6 +121,7 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
 }
 
 export default function StudyScreen() {
+  const theme = useTheme()
   const s = useSettings()
   const stats = useXpStats()
   const hearts = useHearts()
@@ -147,7 +149,7 @@ export default function StudyScreen() {
       if (q) items.push({ key: c.key, q, lang: COURSES.find((x) => x.id === c.courseId)?.lang })
     }
     if (!items.length) return
-    setPlaying({ courseId: list[0].courseId, color: themeById(s.theme).accents.study, review: items })
+    setPlaying({ courseId: list[0].courseId, vars: theme.tabVars('study'), review: items })
   }
 
   function play(c: Course, l: Lesson) {
@@ -155,7 +157,7 @@ export default function StudyScreen() {
       alert(`You're out of hearts 💔 Next one in ${mins(hearts.nextIn ?? 0)} min, or review your mistakes to earn hearts now.`)
       return
     }
-    setPlaying({ courseId: c.id, color: c.color, lang: c.lang, lesson: l })
+    setPlaying({ courseId: c.id, vars: theme.accentVars(COURSES.indexOf(c)), lang: c.lang, lesson: l })
   }
 
   return (
@@ -266,7 +268,7 @@ export default function StudyScreen() {
         </div>
       )}
 
-      {playing && <LessonPlayer courseId={playing.courseId} lesson={playing.lesson} review={playing.review} color={playing.color} lang={playing.lang} onClose={() => setPlaying(null)} />}
+      {playing && <LessonPlayer courseId={playing.courseId} lesson={playing.lesson} review={playing.review} vars={playing.vars} lang={playing.lang} onClose={() => setPlaying(null)} />}
     </>
   )
 }
