@@ -11,7 +11,20 @@ const MINDSET: CourseLink = { name: 'Mindset Learn', url: 'https://learn.mindset
 const DUOLINGO: CourseLink = { name: 'Duolingo', url: 'https://www.duolingo.com', note: 'Daily bite-size practice with a full course tree' }
 const LANGUAGE_TRANSFER: CourseLink = { name: 'Language Transfer', url: 'https://www.languagetransfer.org', note: 'Free audio course that teaches you to build sentences' }
 
+const KHAN_SCI: CourseLink = { name: 'Khan Academy: Science', url: 'https://www.khanacademy.org/science', note: 'Physics, chemistry and biology videos with exercises' }
+const KHAN_ECON: CourseLink = { name: 'Khan Academy: Economics', url: 'https://www.khanacademy.org/economics-finance-domain', note: 'Micro and macro economics, finance and accounting basics' }
+
 export const COURSE_LINKS: Record<string, CourseLink[]> = {
+  mathlit: [DBE, WCED, MINDSET],
+  physci: [SIYAVULA, KHAN_SCI, MINDSET, DBE],
+  lifesci: [SIYAVULA, KHAN_SCI, MINDSET, DBE],
+  geography: [DBE, WCED, MINDSET],
+  history: [DBE, WCED, { name: 'South African History Online', url: 'https://www.sahistory.org.za', note: 'Articles, timelines and biographies on South African history' }],
+  accounting: [DBE, WCED, KHAN_ECON],
+  business: [DBE, WCED],
+  economics: [DBE, KHAN_ECON, WCED],
+  cat: [DBE, WCED],
+  lo: [DBE, WCED],
   maths: [SIYAVULA, { name: 'Khan Academy: Maths', url: 'https://www.khanacademy.org/math', note: 'Videos and exercises for every topic, from basics up' }, MINDSET, DBE],
   afrikaans: [DBE, WCED, MINDSET],
   egd: [DBE, WCED],

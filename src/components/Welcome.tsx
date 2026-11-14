@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from '../icons'
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { setSetting, type Settings } from '../lib/settings'
-import { LIFE_STAGES, saveProfile, useProfile, type LifeStage } from '../lib/profile'
+import { LIFE_STAGES, saveProfile, useProfile, type LifeStage, LIFE_STAGES_SOON } from '../lib/profile'
 import { applyTheme, resolveTheme, type Mode } from '../lib/themes'
 import ThemePicker from './ThemePicker'
 import { db } from '../lib/db'
@@ -42,6 +42,8 @@ export default function Welcome({ s }: { s: Settings }) {
   // step 2: start from what this install already has (empty for a new one)
   const [stage, setStage] = useState<LifeStage | null>(null)
   const st = stage ?? (p.lifeStage || 'school')
+  /** school subjects are only offered to learners at school; everyone gets languages and skills */
+  const atSchool = st === 'school'
   const [school, setSchool] = useState<string | null>(null)
   const [grade, setGrade] = useState<string | null>(null)
   const [picked, setPicked] = useState<Set<string> | null>(null)
@@ -52,6 +54,9 @@ export default function Welcome({ s }: { s: Settings }) {
   const coursePick = picked ?? new Set(s.myCourses ? s.myCourses : COURSES.filter((c) => subjectNames.has(subjectNameOf(c.id))).map((c) => c.id))
   const courseSubjectNames = new Set(COURSES.map((c) => subjectNameOf(c.id)))
   const extraPick = extras ?? new Set([...subjectNames].filter((n) => !courseSubjectNames.has(n)))
+
+  /** learners at school see the common subjects; everyone else only what they typed in themselves */
+  const moreList = atSchool ? [...new Set([...MORE_SCHOOL_SUBJECTS, ...extraPick])] : [...extraPick].filter((n) => !MORE_SCHOOL_SUBJECTS.includes(n))
 
   // step 3
   const [wake, setWake] = useState(s.wakeTime)
@@ -88,8 +93,8 @@ export default function Welcome({ s }: { s: Settings }) {
         await setSetting('matricStart', cdDate)
       }
       await applySetup({
-        courseIds: [...coursePick],
-        extraSubjects: [...extraPick],
+        courseIds: [...coursePick].filter((id) => atSchool || COURSES.find((c) => c.id === id)?.group !== 'school'),
+        extraSubjects: atSchool ? [...extraPick] : moreList.filter((n) => extraPick.has(n)),
         prayers: pray,
         wake,
         bed,
@@ -172,6 +177,13 @@ export default function Welcome({ s }: { s: Settings }) {
                 </button>
               ))}
             </div>
+            <p className="field-hint soon-note">
+              {LIFE_STAGES_SOON.map((n) => (
+                <span key={n} className="pill soon-pill">
+                  {n}: next update
+                </span>
+              ))}
+            </p>
             {st === 'school' && (
               <div className="grid-2">
                 <label className="field">
@@ -186,15 +198,22 @@ export default function Welcome({ s }: { s: Settings }) {
             )}
 
             <h2>What do you want to learn?</h2>
-            <p className="field-hint">These get lessons in Study and time in your Planner. Pick as many as you like. You can change them any time.</p>
-            <span className="field-label">School subjects with lessons</span>
-            <div className="chip-wrap">
-              {COURSES.filter((c) => c.group === 'school').map((c) => (
-                <Chip key={c.id} on={coursePick.has(c.id)} onClick={() => toggle(coursePick, c.id, setPicked)}>
-                  {c.name}
-                </Chip>
-              ))}
-            </div>
+            <p className="field-hint">
+              {atSchool ? 'These get lessons in Study and time in your Planner.' : 'Pick languages and skills to learn alongside work and life. They get lessons in Study and time in your Planner.'}{' '}
+              Pick as many as you like. You can change them any time.
+            </p>
+            {atSchool && (
+              <>
+                <span className="field-label">School subjects with lessons</span>
+                <div className="chip-wrap">
+                  {COURSES.filter((c) => c.group === 'school').map((c) => (
+                    <Chip key={c.id} on={coursePick.has(c.id)} onClick={() => toggle(coursePick, c.id, setPicked)}>
+                      {c.name}
+                    </Chip>
+                  ))}
+                </div>
+              </>
+            )}
             <span className="field-label">Languages</span>
             <div className="chip-wrap">
               {COURSES.filter((c) => c.section === 'Languages').map((c) => (
@@ -211,14 +230,18 @@ export default function Welcome({ s }: { s: Settings }) {
                 </Chip>
               ))}
             </div>
-            <span className="field-label">More subjects (planner time now, lessons later)</span>
-            <div className="chip-wrap">
-              {[...new Set([...MORE_SCHOOL_SUBJECTS, ...extraPick])].map((n) => (
-                <Chip key={n} on={extraPick.has(n)} onClick={() => toggle(extraPick, n, setExtras)}>
-                  {n}
-                </Chip>
-              ))}
-            </div>
+            {(atSchool || moreList.length > 0) && (
+              <>
+                <span className="field-label">{atSchool ? 'More subjects (planner time now, lessons later)' : 'Your own topics (planner time)'}</span>
+                <div className="chip-wrap">
+                  {moreList.map((n) => (
+                    <Chip key={n} on={extraPick.has(n)} onClick={() => toggle(extraPick, n, setExtras)}>
+                      {n}
+                    </Chip>
+                  ))}
+                </div>
+              </>
+            )}
             <form
               className="input-row"
               onSubmit={(e) => {
@@ -268,7 +291,7 @@ export default function Welcome({ s }: { s: Settings }) {
             </label>
             {showCd && (
               <div className="grid-2">
-                <input value={cdLabel} onChange={(e) => setCdLabel(e.target.value)} placeholder="e.g. Matric finals" maxLength={40} aria-label="Countdown name" />
+                <input value={cdLabel} onChange={(e) => setCdLabel(e.target.value)} placeholder="e.g. Final exams" maxLength={40} aria-label="Countdown name" />
                 <input type="date" value={cdDate} onChange={(e) => setCdDate(e.target.value)} aria-label="Countdown date" />
               </div>
             )}

@@ -2,7 +2,7 @@ import { Trash2 } from '../icons'
 import { useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, localDay, type WeightLog } from '../lib/db'
-import { ADULT_BMI_AGE, ageOn, bmi, bmiLabel, healthyRange, LIFE_STAGES, saveProfile, useProfile, type LifeStage, type Profile } from '../lib/profile'
+import { ADULT_BMI_AGE, ageOn, bmi, bmiLabel, healthyRange, LIFE_STAGES, LIFE_STAGES_SOON, saveProfile, useProfile, type LifeStage, type Profile } from '../lib/profile'
 import { setSetting, useSettings } from '../lib/settings'
 import GoalsSection from '../components/GoalsSection'
 
@@ -65,8 +65,8 @@ export default function ProfileScreen() {
 
   async function changeStage(st: LifeStage) {
     await saveProfile({ lifeStage: st })
-    if (st !== 'school' && s.countdownLabel === 'Matric finals') {
-      if (confirm('Done with Matric? Turn off the Matric countdown on Today? (You can set a new countdown in Settings.)')) await setSetting('showCountdown', false)
+    if (st !== 'school' && ['Matric finals', 'Final exams'].includes(s.countdownLabel)) {
+      if (confirm('Done with school? Turn off the exam countdown on Today? (You can set a new countdown in Settings.)')) await setSetting('showCountdown', false)
     }
   }
 
@@ -153,6 +153,13 @@ export default function ProfileScreen() {
               </button>
             ))}
           </div>
+          <p className="field-hint soon-note">
+            {LIFE_STAGES_SOON.map((n) => (
+              <span key={n} className="pill soon-pill">
+                {n}: next update
+              </span>
+            ))}
+          </p>
           {isSchool && (
             <div className="grid-2">
               <Field label="School">

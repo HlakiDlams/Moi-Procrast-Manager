@@ -150,6 +150,18 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
           <p className="muted small">Want a lesson on something that is not here? Use Advanced on the Study home.</p>
         </div>
       </section>
+      <section className="card barrier">
+        <span className="locked-icon">
+          <Lock size={22} />
+        </span>
+        <div>
+          <strong>More lessons arrive in the next update</strong>
+          <p className="muted small">
+            You have reached the end of {c.name} for now. Keep your marks up with Review{c.links?.length ? ', or carry on with the free sites below' : ''}.
+          </p>
+        </div>
+      </section>
+
       {c.links && c.links.length > 0 && (
         <section className="sec">
           <h2 className="section-title">Keep going online</h2>

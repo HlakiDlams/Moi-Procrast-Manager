@@ -5,28 +5,7 @@ import { generateAndSave } from './planner'
 import { mondayOf, fromMin, toMin } from './scheduler'
 
 /** School subjects that don't have lessons yet but can still get planner time. */
-export const MORE_SCHOOL_SUBJECTS = [
-  'Physical Sciences',
-  'Life Sciences',
-  'Mathematical Literacy',
-  'Accounting',
-  'Business Studies',
-  'Economics',
-  'Geography',
-  'History',
-  'Tourism',
-  'Consumer Studies',
-  'Agricultural Sciences',
-  'Visual Arts',
-  'Dramatic Arts',
-  'CAT',
-  'Life Orientation',
-  'isiZulu',
-  'isiXhosa',
-  'Sesotho',
-  'Setswana',
-  'Sepedi',
-]
+export const MORE_SCHOOL_SUBJECTS = ['Tourism', 'Consumer Studies', 'Agricultural Sciences', 'Visual Arts', 'Dramatic Arts', 'isiZulu', 'isiXhosa', 'Sesotho', 'Setswana', 'Sepedi']
 
 /** The Planner subject name a course maps to. */
 export const subjectNameOf = (courseId: string) => {

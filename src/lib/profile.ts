@@ -5,7 +5,7 @@ import { db } from './db'
 export type LifeStage = 'school' | 'tertiary' | 'working' | 'work-study' | 'gap' | 'other'
 
 export const LIFE_STAGES: { id: LifeStage; label: string; Icon: LucideIcon }[] = [
-  { id: 'school', label: 'At school (Matric)', Icon: Backpack },
+  { id: 'school', label: 'High school', Icon: Backpack },
   {
     id: 'tertiary',
     label: 'Studying (uni / college / online)',
@@ -16,6 +16,9 @@ export const LIFE_STAGES: { id: LifeStage; label: string; Icon: LucideIcon }[] =
   { id: 'gap', label: 'Gap year / between things', Icon: Globe },
   { id: 'other', label: 'Other', Icon: Sparkles },
 ]
+
+/** School levels that get their own subjects and lessons in a later update. */
+export const LIFE_STAGES_SOON = ['Primary school', 'Middle school']
 
 export interface Profile {
   fullName: string

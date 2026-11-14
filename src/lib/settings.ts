@@ -14,7 +14,7 @@ export interface Settings {
   aiPhotoConsent: boolean
   mistralTextModel: string
   mistralVisionModel: string
-  /** main countdown on Today (was Matric-only) */
+  /** main countdown on Today (exams, a trip, any big day) */
   countdownLabel: string
   matricStart: string // YYYY-MM-DD, the countdown date
   showCountdown: boolean
@@ -93,8 +93,8 @@ export const DEFAULT_SETTINGS: Settings = {
   aiPhotoConsent: false,
   mistralTextModel: 'mistral-medium-latest',
   mistralVisionModel: 'mistral-medium-latest',
-  // NSC final exams usually start late October / early November.
-  countdownLabel: 'Matric finals',
+  // South African final exams usually start late October / early November.
+  countdownLabel: 'Final exams',
   matricStart: '2027-10-27',
   showCountdown: true,
   uiScale: Number(saved('hp-ui-scale')) || 80,

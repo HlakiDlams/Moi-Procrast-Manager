@@ -3151,3 +3151,26 @@ a.list-row {
     transition: none !important;
   }
 }
+
+/* end-of-course barrier and "next update" notes */
+.barrier {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  border: 1px dashed var(--line);
+  background: transparent;
+  box-shadow: none !important;
+}
+.barrier p {
+  margin: 0.25rem 0 0;
+}
+.soon-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.soon-pill {
+  background: var(--card-2);
+  color: var(--muted);
+  margin: 0;
+}

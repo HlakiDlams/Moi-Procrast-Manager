@@ -95,7 +95,7 @@ export default function SettingsScreen() {
           {s.showCountdown && (
             <div className="grid-2">
               <Field label="Counting down to">
-                <input value={s.countdownLabel} onChange={str('countdownLabel')} maxLength={40} placeholder="e.g. Matric finals, exams, payday" />
+                <input value={s.countdownLabel} onChange={str('countdownLabel')} maxLength={40} placeholder="e.g. Final exams, a trip, payday" />
               </Field>
               <Field label="Date">
                 <input type="date" value={s.matricStart} onChange={str('matricStart')} />
