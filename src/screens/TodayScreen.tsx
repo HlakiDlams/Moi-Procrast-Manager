@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react'
-import { Bell, Check, ChevronRight, Gamepad2, Play, Plus, Timer, X } from 'lucide-react'
+import { Bell, Check, ChevronRight, Gamepad2, Play, Plus, Timer, X } from '../icons'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { displayName, useSettings } from '../lib/settings'
 import { addXp, useXpStats } from '../lib/xp'

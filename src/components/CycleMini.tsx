@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { ChevronRight, Flower2 } from 'lucide-react'
+import { ChevronRight, Flower2 } from '../icons'
 import { db, localDay } from '../lib/db'
 import { cycleInfo } from '../lib/cycle'
 import { useSettings } from '../lib/settings'

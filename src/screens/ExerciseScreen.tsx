@@ -1,4 +1,4 @@
-import { Play, Trash2 } from 'lucide-react'
+import { Play, Trash2 } from '../icons'
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, localDay } from '../lib/db'

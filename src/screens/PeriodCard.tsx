@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from '../icons'
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, type PeriodLog } from '../lib/db'

@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, X } from '../icons'
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, localDay, type Block, type BlockKind, type Commitment, type Subject } from '../lib/db'

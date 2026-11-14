@@ -1,4 +1,4 @@
-import { ChevronRight, Play, Trophy, Wind } from 'lucide-react'
+import { ChevronRight, Play, Trophy, Wind } from '../icons'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { EXERCISES, WARMUP, type Step } from './library'
 import { db, localDay } from '../lib/db'

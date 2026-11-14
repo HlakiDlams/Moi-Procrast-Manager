@@ -1,4 +1,4 @@
-import { BookOpen, Coffee, Dumbbell, Gamepad2, HandHeart, Moon, PencilLine, Pin, Sparkles, Utensils, type LucideIcon } from 'lucide-react'
+import { BookOpen, Coffee, Dumbbell, Gamepad2, HandHeart, Moon, PencilLine, Pin, Sparkles, Utensils, type LucideIcon } from '../icons'
 import { atTime, db, localDay, type Block, type BlockKind } from './db'
 import { addXp } from './xp'
 

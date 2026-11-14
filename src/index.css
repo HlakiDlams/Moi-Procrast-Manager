@@ -2520,7 +2520,7 @@ h2 {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.chip svg {
+.chip .ic {
   color: var(--accent-ink);
 }
 
@@ -2684,7 +2684,7 @@ h2 {
   color: var(--muted);
   font-weight: 600;
 }
-.stat-cell svg {
+.stat-cell .ic {
   color: var(--accent-ink);
 }
 
@@ -2770,13 +2770,13 @@ h2 {
 }
 
 /* inline line icons sit on the text baseline */
-.btn svg,
-.link-btn svg,
-.pill svg,
-.hearts svg,
-.seg svg,
-h1 svg,
-h2 svg {
+.btn .ic,
+.link-btn .ic,
+.pill .ic,
+.hearts .ic,
+.seg .ic,
+h1 .ic,
+h2 .ic {
   vertical-align: -0.2em;
   flex-shrink: 0;
 }
@@ -2818,7 +2818,7 @@ h2 svg {
 .study-summary .stat-num {
   font-size: var(--fs-2xl);
 }
-.hearts-line svg {
+.hearts-line .ic {
   vertical-align: -0.15em;
   color: var(--danger);
 }
@@ -2859,4 +2859,94 @@ textarea:focus-visible {
 .legal-body ul:not(.history) {
   padding-left: 1.25rem;
   margin: 0;
+}
+
+/* icons from the app's own set: a stencil painted with the current text colour */
+.ic {
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+  vertical-align: -0.2em;
+}
+
+/* ---------- polish ---------- */
+/* headlines break into even lines; body text avoids one-word last lines */
+h1,
+h2,
+h3,
+.next-title {
+  text-wrap: balance;
+}
+p,
+li {
+  text-wrap: pretty;
+}
+/* numbers that change or line up in columns keep a fixed width */
+.stat-num,
+.stat-cell .v,
+.block-row .muted,
+.row-value,
+.big-val,
+.period-big,
+.focus-time,
+.wk-timer,
+.xp-pop,
+.history,
+.chip,
+input[type='number'],
+input[type='time'],
+input[type='date'] {
+  font-variant-numeric: tabular-nums;
+}
+/* nested corners: things inside a card are rounder-than-square but tighter than the card */
+.card {
+  --r-md: var(--r-sm);
+}
+/* feedback you can feel: a small pop when something is ticked, filled or chosen */
+@keyframes pop {
+  0% {
+    transform: scale(0.82);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.tick.on,
+.glass.full,
+.mood-btn.on,
+.tag-chip.on,
+.star.on,
+.q-opt.right,
+.fire-day.active .fire-icon,
+.path-node.done {
+  animation: pop 0.22s ease-out;
+}
+@keyframes nudge {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+.q-opt.wrong {
+  animation: nudge 0.2s ease-in-out;
+}
+.icon-btn:active,
+.tick:active,
+.stat-cell:active,
+.list-row:active,
+.course-card:active {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }

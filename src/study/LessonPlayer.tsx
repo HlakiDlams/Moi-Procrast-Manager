@@ -1,4 +1,4 @@
-import { Check, Heart, Trophy, Volume2, X } from 'lucide-react'
+import { Check, Heart, Trophy, Volume2, X } from '../icons'
 import { useState } from 'react'
 import type { Lesson, Question } from './types'
 import QuestionView, { type Answered } from './QuestionView'

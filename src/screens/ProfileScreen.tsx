@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from '../icons'
 import { useState, type ReactNode } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, localDay, type WeightLog } from '../lib/db'

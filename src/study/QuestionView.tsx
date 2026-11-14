@@ -1,4 +1,4 @@
-import { Play, Volume2 } from 'lucide-react'
+import { Play, Volume2 } from '../icons'
 import { useMemo, useState } from 'react'
 import type { Question } from './types'
 import { checkInput } from './check'

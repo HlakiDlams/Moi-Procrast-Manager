@@ -1,4 +1,4 @@
-import { Check, ChevronLeft, ChevronRight, Crown, Heart, Lock, Play, Plus, Star } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Crown, Heart, Lock, Play, Plus, Star } from '../icons'
 import { useState, type CSSProperties } from 'react'
 import { COMING_SOON, COURSES, allLessons, findQuestion } from '../study/courses'
 import { db } from '../lib/db'

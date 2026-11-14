@@ -1,4 +1,4 @@
-import { BookOpen, ChevronLeft, Dumbbell, Languages, Scale, Target, Timer, Wallet, type LucideIcon } from 'lucide-react'
+import { BookOpen, ChevronLeft, Dumbbell, Languages, Scale, Target, Timer, Wallet, type LucideIcon } from '../icons'
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, localDay, type Goal, type GoalSource } from '../lib/db'

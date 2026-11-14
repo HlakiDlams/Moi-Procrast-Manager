@@ -1,7 +1,7 @@
 {
   "name": "hlakis-planner",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,7 +19,6 @@
     "@fontsource-variable/figtree": "^5.3.0",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",
-    "lucide-react": "^1.73.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },

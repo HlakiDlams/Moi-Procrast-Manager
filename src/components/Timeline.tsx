@@ -1,4 +1,4 @@
-import { Check, GripVertical } from 'lucide-react'
+import { Check, GripVertical } from '../icons'
 import { useRef, useState, type CSSProperties } from 'react'
 import { db, type Block } from '../lib/db'
 import { blockState, kindInfo } from '../lib/blocks'

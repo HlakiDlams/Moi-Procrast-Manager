@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { X } from '../icons'
 import { useState } from 'react'
 
 export const LEGAL_UPDATED = '14 November 2026'
@@ -10,7 +10,6 @@ const LICENCES: [string, string][] = [
   ['React, React DOM', 'MIT'],
   ['Capacitor (core, Android, iOS, App, Local Notifications)', 'MIT'],
   ['Dexie, dexie-react-hooks', 'Apache 2.0'],
-  ['Lucide icons', 'ISC'],
   ['Bricolage Grotesque (font)', 'SIL Open Font License 1.1'],
   ['Figtree (font)', 'SIL Open Font License 1.1'],
   ['Workbox (offline support)', 'MIT'],
@@ -136,7 +135,7 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
                 </li>
               ))}
             </ul>
-            <p className="muted small">Lesson text and exercise descriptions were written for this app. It uses no stock photos and no third-party trackers or advertising code.</p>
+            <p className="muted small">Lesson text, exercise descriptions, the app icon and the icon set were made for this app. It uses no stock photos and no third-party trackers or advertising code.</p>
           </div>
         )}
       </div>

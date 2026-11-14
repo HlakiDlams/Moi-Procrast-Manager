@@ -1,4 +1,4 @@
-import { AlarmClock, BookOpen, CalendarDays, Dumbbell, Gamepad2, HeartPulse, ScanText, Settings, Sun, UserRound, type LucideIcon } from 'lucide-react'
+import { AlarmClock, BookOpen, CalendarDays, Dumbbell, Gamepad2, HeartPulse, ScanText, Settings, Sun, UserRound, type LucideIcon } from './icons'
 
 export type TabId = 'today' | 'study' | 'planner' | 'selfcare' | 'play' | 'exercise' | 'homework' | 'profile' | 'alarms' | 'settings'
 

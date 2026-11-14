@@ -1,4 +1,4 @@
-import { Annoyed, Apple, Droplet, EggFried, Frown, Laugh, Meh, Sandwich, Smile, Soup, Star, Trash2, X, type LucideIcon } from 'lucide-react'
+import { Annoyed, Apple, Droplet, EggFried, Frown, Laugh, Meh, Sandwich, Smile, Soup, Star, Trash2, X, type LucideIcon } from '../icons'
 import { useEffect, useState, type CSSProperties } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, db, localDay, type MealKind, type Routine } from '../lib/db'

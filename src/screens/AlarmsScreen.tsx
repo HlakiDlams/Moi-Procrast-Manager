@@ -1,4 +1,4 @@
-import { RotateCw } from 'lucide-react'
+import { RotateCw } from '../icons'
 import { useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type Alarm } from '../lib/db'

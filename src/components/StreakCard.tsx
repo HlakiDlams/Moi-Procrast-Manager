@@ -1,4 +1,4 @@
-import { Flame } from 'lucide-react'
+import { Flame } from '../icons'
 import type { XpStats } from '../lib/xp'
 
 const LETTER = ['M', 'T', 'W', 'T', 'F', 'S', 'S']

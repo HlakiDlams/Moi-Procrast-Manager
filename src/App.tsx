@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Flame, LayoutGrid, Star, TriangleAlert } from 'lucide-react'
+import { LayoutGrid, TriangleAlert } from './icons'
 import { TABS, tabById, type TabId } from './tabs'
 import { useHashTab } from './lib/useHashTab'
 import { useXpStats } from './lib/xp'
@@ -107,16 +107,13 @@ export default function App() {
       <div className="app" style={theme.tabVars(def.id)}>
         <header className="topbar">
           <button className="brand" onClick={() => go('profile')} aria-label="Open my profile">
-            <span className="brand-name">Un-procrast-inator</span>
+            {tab === 'today' && <span className="brand-name">Un-procrast-inator</span>}
             <span className="page-title">{tab === 'today' ? headerDate() : def.label}</span>
           </button>
-          {tab !== 'today' && (
+          {stats.streakInfo.atRisk && (
             <div className="chips">
-              <span className={'chip' + (stats.streakInfo.atRisk ? ' chip-warn' : '')} title={stats.streakInfo.atRisk ? 'Streak at risk: do something today' : 'Day streak'}>
-                {stats.streakInfo.atRisk ? <TriangleAlert size={15} /> : <Flame size={15} />} {stats.streak}
-              </span>
-              <span className="chip" title={`Level ${stats.level.level}`}>
-                <Star size={15} /> {stats.total}
+              <span className="chip chip-warn" title="Streak at risk: do something today">
+                <TriangleAlert size={15} /> {stats.streak}-day streak at risk
               </span>
             </div>
           )}

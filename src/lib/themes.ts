@@ -1,4 +1,4 @@
-import { CloudFog, Moon, Sun, type LucideIcon } from 'lucide-react'
+import { CloudFog, Moon, Sun, type LucideIcon } from '../icons'
 import { createContext, useContext, type CSSProperties } from 'react'
 import type { TabId } from '../tabs'
 import { buttonSafe, contrast, ensureContrast, mix } from './color'

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from '../icons'
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { setSetting, type Settings } from '../lib/settings'

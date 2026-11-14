@@ -1,4 +1,4 @@
-import { ChevronRight, Download, Upload } from 'lucide-react'
+import { ChevronRight, Download, Upload } from '../icons'
 import { useRef, useState, type ReactNode } from 'react'
 import { setSetting, useSettings, type Settings } from '../lib/settings'
 import ThemePicker from '../components/ThemePicker'

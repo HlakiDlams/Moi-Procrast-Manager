@@ -1,4 +1,4 @@
-import { Check, Play } from 'lucide-react'
+import { Check, Play } from '../icons'
 import { useEffect, useRef, useState } from 'react'
 import { completePhase, msLeft, pause, resume, startBreak, startWork, stop, useFocus, type FocusState } from '../lib/focus'
 import { setBlockDone } from '../lib/blocks'

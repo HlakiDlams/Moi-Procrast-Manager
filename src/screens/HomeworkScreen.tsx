@@ -1,4 +1,4 @@
-import { ChevronLeft, CircleCheck, CircleMinus, CircleX, EyeOff, X } from 'lucide-react'
+import { ChevronLeft, CircleCheck, CircleMinus, CircleX, EyeOff, X } from '../icons'
 import { useRef, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, type HomeworkCheck } from '../lib/db'

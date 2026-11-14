@@ -1,4 +1,4 @@
-import { Backpack, Briefcase, BriefcaseBusiness, Globe, GraduationCap, Sparkles, type LucideIcon } from 'lucide-react'
+import { Backpack, Briefcase, BriefcaseBusiness, Globe, GraduationCap, Sparkles, type LucideIcon } from '../icons'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from './db'
 

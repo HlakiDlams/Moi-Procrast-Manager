@@ -1,4 +1,4 @@
-import { AlarmClock } from 'lucide-react'
+import { AlarmClock } from '../icons'
 import { useEffect, useState } from 'react'
 import { onFired, scheduleOne, SNOOZE_ID, type FiredDetail } from '../lib/notify'
 import { chime, startAlarmSound } from '../lib/sound'
