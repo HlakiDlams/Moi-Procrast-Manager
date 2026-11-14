@@ -13,11 +13,14 @@ export interface Theme {
   name: string
   /** most important colour first */
   palette: [string, string, string, string, string]
+  /** how strongly the main colour washes the backgrounds (1 = a whisper, the default) */
+  wash?: number
 }
 
 export type Mode = 'dark' | 'gray' | 'light'
 
 export const THEMES: Theme[] = [
+  { id: 'baby-pink', name: 'Baby Pink', palette: ['#F2A7C3', '#F70F85', '#B79AD9', '#F4B6A6', '#C7577F'], wash: 3 },
   { id: 'rose', name: 'Rose Petal', palette: ['#C9233F', '#0D5157', '#A0163A', '#87173A', '#800F1F'] },
   { id: 'fiery-ocean', name: 'Fiery Ocean', palette: ['#C1121F', '#669BBC', '#003049', '#780000', '#4E3215'] },
   { id: 'summer', name: 'Summer Fun', palette: ['#0899A8', '#F2850E', '#B8861B', '#1B6B7F', '#022F40'] },
@@ -39,7 +42,7 @@ export const MODES: { id: Mode; label: string; Icon: LucideIcon }[] = [
 /** Old theme ids (before palettes) → closest new theme. */
 const LEGACY: Record<string, string> = { pink: 'rose', purple: 'purple-rain', blue: 'fiery-ocean', mint: 'meadow', sunset: 'daybreak', red: 'fiery-ocean' }
 
-export const themeById = (id: string) => THEMES.find((t) => t.id === (LEGACY[id] ?? id)) ?? THEMES[0]
+export const themeById = (id: string) => THEMES.find((t) => t.id === (LEGACY[id] ?? id)) ?? THEMES.find((t) => t.id === 'rose')!
 
 /** Which palette colour each tab uses. */
 const TAB_INDEX: Record<TabId, number> = { today: 0, study: 1, planner: 2, selfcare: 3, play: 4, exercise: 1, homework: 2, profile: 0, alarms: 0, settings: 3 }
@@ -72,7 +75,7 @@ export function resolveTheme(id: string, mode: Mode): ResolvedTheme {
   const b = BASE[mode] ?? BASE.dark
   const p0 = theme.palette[0]
   // a whisper of the main colour in the surfaces so each theme feels like its own room
-  const tint = mode === 'light' ? 0.035 : 0.05
+  const tint = (mode === 'light' ? 0.035 : 0.05) * (theme.wash ?? 1)
   const bg = mix(b.bg, p0, tint)
   const card = mix(b.card, p0, tint * 0.8)
   const card2 = mix(b.card2, p0, tint)

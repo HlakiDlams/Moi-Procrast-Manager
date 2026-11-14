@@ -5,7 +5,7 @@ import { db, type HomeworkCheck } from '../lib/db'
 import { setSetting, useSettings } from '../lib/settings'
 import { useProfile } from '../lib/profile'
 import { markHomework, saveCheck, shrinkImage, type HomeworkResult } from '../lib/homework'
-import { MistralError } from '../lib/mistral'
+import { MistralError, providerOf } from '../lib/mistral'
 import type { TabId } from '../tabs'
 
 const VERDICT = {
@@ -119,6 +119,7 @@ function Result({ r, cards, onAgain }: { r: HomeworkResult; cards?: number; onAg
 
 export default function HomeworkScreen({ go }: { go: (t: TabId) => void }) {
   const s = useSettings()
+  const ai = providerOf(s)
   const p = useProfile()
   const subjects = useLiveQuery(() => db.subjects.toArray(), []) ?? []
   const history = useLiveQuery(() => db.homework.reverse().limit(20).toArray(), []) ?? []
@@ -155,7 +156,7 @@ export default function HomeworkScreen({ go }: { go: (t: TabId) => void }) {
     if (!images.length) return
     if (!s.aiPhotoConsent) {
       const ok = confirm(
-        'Your photos, subject and grade will be sent to Mistral AI (a company in France) to be marked. Nothing else leaves your phone.\n\nAvoid photographing names or ID numbers. If you are under 18, ask a parent or guardian first.\n\nSend photos to Mistral?',
+        `Your photos, subject and grade will be sent to ${ai.name}${ai.id === 'mistral' ? ' AI (a company in France)' : ''} to be marked. Nothing else leaves your phone.\n\nAvoid photographing names or ID numbers. If you are under 18, ask a parent or guardian first.\n\nSend photos to ${ai.name}?`,
       )
       if (!ok) return
       await setSetting('aiPhotoConsent', true)
@@ -188,10 +189,10 @@ export default function HomeworkScreen({ go }: { go: (t: TabId) => void }) {
       <div className="stack">
         <section className="card hero">
           <h1>Homework Checker</h1>
-          <p>Snap your homework and get it marked with step-by-step explanations. It uses Mistral AI with your own free key.</p>
+          <p>Snap your homework and get it marked with step-by-step explanations. It is part of Advanced and uses an AI service with your own key. Mistral has a free tier.</p>
         </section>
         <section className="sec">
-          <h2 className="section-title">Add your Mistral key (once)</h2>
+          <h2 className="section-title">Add your API key (once)</h2>
           <div className="card">
             <ol className="steps small">
               <li>
@@ -202,10 +203,10 @@ export default function HomeworkScreen({ go }: { go: (t: TabId) => void }) {
                 <b>Create new key</b> and copy it
               </li>
               <li>
-                Paste it in <b>Settings → Mistral AI</b> and tap <b>Test key</b>
+                Paste it in <b>Settings → AI</b> and tap <b>Test key</b>
               </li>
             </ol>
-            <p className="field-hint">Your key is saved only on this phone and is only ever sent to Mistral. Usage goes on your own Mistral account.</p>
+            <p className="field-hint">Your key is saved only on this phone and is only ever sent to the AI service you pick. Usage goes on your own account with them.</p>
             <button className="btn btn-primary full" onClick={() => go('settings')}>
               Open Settings
             </button>
@@ -292,7 +293,7 @@ export default function HomeworkScreen({ go }: { go: (t: TabId) => void }) {
             </button>
           )}
           {err && <p className="small warn-text">{err}</p>}
-          <p className="field-hint">Photos are sent to Mistral only when you tap Check. Only a small preview is kept on your phone.</p>
+          <p className="field-hint">Photos are sent to {ai.name} only when you tap Check. Only a small preview is kept on your phone.</p>
         </div>
       </section>
 

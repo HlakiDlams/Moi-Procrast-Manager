@@ -67,7 +67,16 @@ export interface Unit {
   lessons: Lesson[]
 }
 
+export interface CourseLink {
+  name: string
+  url: string
+  /** what it is good for, one short line */
+  note: string
+}
+
 export interface Course {
+  /** free outside sites to carry on with once the built-in lessons are done */
+  links?: CourseLink[]
   id: string
   name: string
   icon: string

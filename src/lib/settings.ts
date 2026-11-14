@@ -4,6 +4,11 @@ import { db } from './db'
 export interface Settings {
   name: string
   /** Stored only in this browser's IndexedDB; never sent anywhere except api.mistral.ai */
+  /** which AI service the key below belongs to */
+  aiProvider: 'mistral' | 'openai' | 'custom'
+  /** for 'custom': an OpenAI-compatible base URL, e.g. https://api.groq.com/openai/v1 */
+  aiBaseUrl: string
+  /** the AI key (kept under its first name so older backups still load) */
   mistralApiKey: string
   /** the user agreed that homework photos are sent to Mistral AI */
   aiPhotoConsent: boolean
@@ -82,6 +87,8 @@ function saved(key: string): string | null {
 
 export const DEFAULT_SETTINGS: Settings = {
   name: '',
+  aiProvider: 'mistral',
+  aiBaseUrl: '',
   mistralApiKey: '',
   aiPhotoConsent: false,
   mistralTextModel: 'mistral-medium-latest',

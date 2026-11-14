@@ -8,6 +8,8 @@ export interface TabDef {
   icon: LucideIcon
   /** shown in the bottom bar (others live under "More") */
   primary: boolean
+  /** reached from inside another screen, not listed under More */
+  hidden?: boolean
 }
 
 export const TABS: TabDef[] = [
@@ -17,7 +19,7 @@ export const TABS: TabDef[] = [
   { id: 'selfcare', label: 'Self-Care', icon: HeartPulse, primary: true },
   { id: 'play', label: 'Play', icon: Gamepad2, primary: false },
   { id: 'exercise', label: 'Exercise', icon: Dumbbell, primary: false },
-  { id: 'homework', label: 'Homework', icon: ScanText, primary: false },
+  { id: 'homework', label: 'Homework', icon: ScanText, primary: false, hidden: true },
   { id: 'profile', label: 'Profile', icon: UserRound, primary: false },
   { id: 'alarms', label: 'Reminders', icon: AlarmClock, primary: false },
   { id: 'settings', label: 'Settings', icon: Settings, primary: false },

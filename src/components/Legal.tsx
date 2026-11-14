@@ -52,9 +52,10 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
             <p>Only in these cases, and only when you start them:</p>
             <ul>
               <li>
-                <b>Homework Checker and Explain more.</b> If you add your own Mistral AI key, the photos you choose, the subject, your grade and the question text are sent to Mistral AI
-                (api.mistral.ai, a company in France) to be marked or explained. Your profile and health logs are never sent. Mistral handles that data under its own privacy policy and your own
-                Mistral account. Avoid photographing names, ID numbers or other people's work.
+                <b>Advanced (AI lessons, Homework Checker, Explain more).</b> If you add your own AI key, the topic you type, the photos you choose, the subject, your grade and the question text are
+                sent to the AI service you picked to be written, marked or explained. By default that is Mistral AI (api.mistral.ai, a company in France); you can choose OpenAI or another service in
+                Settings. Your profile and health logs are never sent. The service handles that data under its own privacy policy and your own account with it. Avoid photographing names, ID numbers or
+                other people's work.
               </li>
               <li>
                 <b>Alarms.</b> On Android, an alarm you set is handed to your phone's Clock app, with its label and time.
@@ -73,7 +74,7 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
             <h3>Seeing, correcting and deleting your data</h3>
             <p>
               You can see and change everything in the app itself. To take a copy, use Settings, Backup, Export. To delete everything, use Settings, Delete all data, or uninstall the app. Because
-              nothing is stored anywhere else, that removes it completely. To have Mistral delete what you sent it, use your Mistral account.
+              nothing is stored anywhere else, that removes it completely. To have an AI service delete what you sent it, use your account with that service.
             </p>
 
             <h3>If you are under 18</h3>
@@ -84,8 +85,8 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
 
             <h3>Changes and contact</h3>
             <p>
-              If the app ever starts handling data differently, this page will change first and the date above will be updated. Questions or requests: ask the person who shared the app with you, or
-              open an issue at {REPO}.
+              If the app ever starts handling data differently, this page will change first and the date above will be updated. Questions or requests: contact HFactor Studios, the developer, through
+              the person who shared the app with you or by opening an issue at {REPO}.
             </p>
           </div>
         )}
@@ -95,7 +96,8 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
             <p className="muted small">Last updated {LEGAL_UPDATED}</p>
             <h3>Using the app</h3>
             <p>
-              Un-procrast-inator is a free personal study and life planner. It is provided as is, with no warranty. There is nothing to buy in the app, so there are no fees, subscriptions or refunds.
+              Un-procrast-inator is a free personal study and life planner made by HFactor Studios. It is provided as is, with no warranty. There is nothing to buy in the app, so there are no fees,
+              subscriptions or refunds.
             </p>
 
             <h3>Study content</h3>
@@ -106,8 +108,8 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
 
             <h3>AI features</h3>
             <p>
-              The Homework Checker and explanations are produced by Mistral AI. They can be wrong, so treat them as a study aid, not a final mark. You use these features with your own Mistral key, and
-              any cost or limit on that account is yours. Do your own work: use the checker to find and fix mistakes, not to copy answers.
+              Advanced lessons, the Homework Checker and explanations are produced by an AI service (Mistral by default). They can be wrong, so treat them as a study aid, not a final mark. You use
+              these features with your own key, and any cost or limit on that account is yours. Do your own work: use the checker to find and fix mistakes, not to copy answers.
             </p>
 
             <h3>Health, body and exercise</h3>
@@ -115,6 +117,9 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
               BMI, weight ranges, cycle predictions, sleep, steps and workouts are general information and estimates. They are not medical advice, a diagnosis or contraception. Talk to a clinic, nurse
               or doctor about your health, and stop any exercise that causes pain, dizziness or trouble breathing.
             </p>
+
+            <h3>Links to other sites</h3>
+            <p>Courses list free outside sites for further study. They open in your browser, are run by other people, and have their own terms and privacy policies.</p>
 
             <h3>Reminders and alarms</h3>
             <p>Phones sometimes delay or block notifications to save battery. Do not rely on the app alone for anything critical, such as an exam start time.</p>
@@ -135,7 +140,9 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
                 </li>
               ))}
             </ul>
-            <p className="muted small">Lesson text, exercise descriptions, the app icon and the icon set were made for this app. It uses no stock photos and no third-party trackers or advertising code.</p>
+            <p className="muted small">
+              Lesson text, exercise descriptions, the app icon and the icon set were made for this app. It uses no stock photos and no third-party trackers or advertising code.
+            </p>
           </div>
         )}
       </div>

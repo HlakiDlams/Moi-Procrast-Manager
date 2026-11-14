@@ -6,6 +6,7 @@ import { downloadBackup, importData } from '../lib/backup'
 import { db } from '../lib/db'
 import { addXp } from '../lib/xp'
 import Legal from '../components/Legal'
+import { PROVIDERS, providerOf, type ProviderId } from '../lib/mistral'
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
@@ -36,16 +37,27 @@ export default function SettingsScreen() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
       setSetting(k, e.target.value as Settings[K])
 
+  const ai = providerOf(s)
+
+  async function setProvider(id: ProviderId) {
+    await setSetting('aiProvider', id)
+    // each service has its own model names
+    await setSetting('mistralTextModel', PROVIDERS[id].text)
+    await setSetting('mistralVisionModel', PROVIDERS[id].vision)
+    setKeyStatus('')
+  }
+
   async function testKey() {
     if (!s.mistralApiKey) return setKeyStatus('Add a key first.')
+    if (!ai.base) return setKeyStatus('Add the service address first.')
     setKeyStatus('Checking…')
     try {
-      const r = await fetch('https://api.mistral.ai/v1/models', {
+      const r = await fetch(ai.base + '/models', {
         headers: { Authorization: `Bearer ${s.mistralApiKey}` },
       })
-      setKeyStatus(r.ok ? 'Key works.' : `Mistral said ${r.status}. Check the key.`)
+      setKeyStatus(r.ok ? 'Key works.' : `${ai.name} said ${r.status}. Check the key.`)
     } catch {
-      setKeyStatus("Couldn't reach Mistral. Are you online?")
+      setKeyStatus(`Couldn't reach ${ai.name}. Are you online?`)
     }
   }
 
@@ -141,19 +153,29 @@ export default function SettingsScreen() {
       </section>
 
       <section className="sec">
-        <h2 className="section-title">Mistral AI</h2>
+        <h2 className="section-title" id="ai">
+          AI (unlocks Advanced)
+        </h2>
         <div className="card">
-          <p className="muted small">Optional. Powers new lessons, explanations and the Homework Checker. Your key is saved only on this device and is only ever sent to api.mistral.ai.</p>
+          <p className="muted small">
+            Optional. Unlocks Advanced in Study: AI lessons on any topic, extra explanations and the Homework Checker. Your key is saved only on this device and is only ever sent to the service you
+            pick.
+          </p>
+          <Field label="AI service">
+            <select value={ai.id} onChange={(e) => setProvider(e.target.value as ProviderId)}>
+              <option value="mistral">Mistral (free tier available)</option>
+              <option value="openai">OpenAI</option>
+              <option value="custom">Other (OpenAI-compatible)</option>
+            </select>
+          </Field>
+          {ai.id === 'custom' && (
+            <Field label="Service address" hint="The base URL from your provider's docs. It must work like OpenAI's chat completions API.">
+              <input value={s.aiBaseUrl} onChange={str('aiBaseUrl')} placeholder="https://api.example.com/v1" spellCheck={false} autoCapitalize="off" inputMode="url" />
+            </Field>
+          )}
           <Field label="API key">
             <div className="input-row">
-              <input
-                type={showKey ? 'text' : 'password'}
-                value={s.mistralApiKey}
-                onChange={str('mistralApiKey')}
-                placeholder="Paste your key from console.mistral.ai"
-                autoComplete="off"
-                spellCheck={false}
-              />
+              <input type={showKey ? 'text' : 'password'} value={s.mistralApiKey} onChange={str('mistralApiKey')} placeholder={ai.preset.keyHint} autoComplete="off" spellCheck={false} />
               <button className="btn btn-ghost" onClick={() => setShowKey((v) => !v)} type="button">
                 {showKey ? 'Hide' : 'Show'}
               </button>
@@ -163,7 +185,7 @@ export default function SettingsScreen() {
             <Field label="Text model">
               <input value={s.mistralTextModel} onChange={str('mistralTextModel')} spellCheck={false} />
             </Field>
-            <Field label="Vision model">
+            <Field label="Photo model">
               <input value={s.mistralVisionModel} onChange={str('mistralVisionModel')} spellCheck={false} />
             </Field>
           </div>
@@ -229,6 +251,9 @@ export default function SettingsScreen() {
       <section className="sec">
         <h2 className="section-title">About</h2>
         <div className="card">
+          <p>
+            Made by <strong>HFactor Studios</strong>
+          </p>
           <p className="muted small">Your data stays on this device. No accounts, ads or tracking.</p>
           <button className="btn full" onClick={() => setLegal(true)}>
             Privacy, terms and licences

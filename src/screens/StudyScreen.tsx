@@ -8,6 +8,9 @@ import LessonPlayer from '../study/LessonPlayer'
 import { useXpStats } from '../lib/xp'
 import { setSetting, useSettings } from '../lib/settings'
 import { paletteVar, useTheme } from '../lib/themes'
+import Advanced from '../study/Advanced'
+import { AI_COURSE } from '../lib/aiLessons'
+import type { TabId } from '../tabs'
 
 type Playing = {
   courseId: string
@@ -143,14 +146,31 @@ function CoursePath({ c, onPlay, onBack }: { c: Course; onPlay: (l: Lesson) => v
       <section className="sec">
         <h2 className="section-title">Add your own</h2>
         <div className="card">
-          <p className="muted small">Adding your own units and questions (and Mistral-generated lessons) is coming in the next Study update.</p>
+          <p className="muted small">Want a lesson on something that is not here? Use Advanced on the Study home.</p>
         </div>
       </section>
+      {c.links && c.links.length > 0 && (
+        <section className="sec">
+          <h2 className="section-title">Keep going online</h2>
+          <div className="list">
+            {c.links.map((l) => (
+              <a key={l.url} className="list-row" href={l.url} target="_blank" rel="noopener noreferrer">
+                <span className="row-main">
+                  {l.name}
+                  <span className="muted small row-sub">{l.note}</span>
+                </span>
+                <ChevronRight size={18} className="muted" />
+              </a>
+            ))}
+          </div>
+          <p className="field-hint">Free outside sites, opened in your browser. They are not part of this app and need internet.</p>
+        </section>
+      )}
     </div>
   )
 }
 
-export default function StudyScreen() {
+export default function StudyScreen({ go }: { go: (t: TabId) => void }) {
   const theme = useTheme()
   const s = useSettings()
   const stats = useXpStats()
@@ -159,6 +179,7 @@ export default function StudyScreen() {
   const cards = useAllCards()
   const [open, setOpen] = useState<string | null>(null)
   const [playing, setPlaying] = useState<Playing | null>(null)
+  const [level, setLevel] = useState<'lessons' | 'advanced'>('lessons')
 
   const course = COURSES.find((c) => c.id === open)
   const [managing, setManaging] = useState(false)
@@ -227,57 +248,74 @@ export default function StudyScreen() {
             {stats.streakInfo.atRisk && <p className="small warn-text">Your {stats.streak}-day streak ends tonight unless you do a lesson.</p>}
           </div>
 
-          <section className="card review-card">
-            <div className="row-between">
-              <div>
-                <h2>Review my mistakes</h2>
-                <p className="muted small">{due.length ? `${due.length} due today` : cards.length ? `Nothing due. ${cards.length} in your deck.` : 'Wrong answers land here so you can fix them.'}</p>
-              </div>
-            </div>
-            <div className="btn-row">
-              <button className="btn btn-primary" disabled={!due.length} onClick={() => startReview(true)}>
-                Review {due.length ? `(${Math.min(10, due.length)})` : ''}
-              </button>
-              {cards.length > 0 && (
-                <button className="btn" onClick={() => startReview(false)}>
-                  Practise all
-                </button>
-              )}
-            </div>
-            <p className="field-hint">Each right answer in review: +2 XP and +1 heart. Cards you keep getting right come back less often.</p>
-          </section>
+          <div className="seg" role="tablist" aria-label="Level">
+            <button role="tab" aria-selected={level === 'lessons'} className={level === 'lessons' ? 'on' : ''} onClick={() => setLevel('lessons')}>
+              Lessons
+            </button>
+            <button role="tab" aria-selected={level === 'advanced'} className={level === 'advanced' ? 'on' : ''} onClick={() => setLevel('advanced')}>
+              {!s.mistralApiKey.trim() && <Lock size={14} />} Advanced
+            </button>
+          </div>
 
-          {mine.length === 0 && <p className="muted center">No courses yet. Tap the button below to pick some</p>}
-          {[
-            ['school', 'School'],
-            ['lang', 'Languages'],
-            ['skills', 'Skills & knowledge'],
-          ].map(([key, title]) =>
-            mine.some((c) => sectionOf(c) === key) ? (
-              <div key={key} className="stack-sm">
-                <h2 className="section-title">{title}</h2>
-                {mine
-                  .filter((c) => sectionOf(c) === key)
-                  .map((c) => (
-                    <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
-                  ))}
-              </div>
-            ) : null,
-          )}
+          {level === 'advanced' && <Advanced courses={mine} go={go} onPlay={(l) => setPlaying({ courseId: AI_COURSE, vars: theme.tabVars('study'), lesson: l })} />}
 
-          <button className="btn btn-ghost full" onClick={() => setManaging(true)}>
-            <Plus size={16} /> Add or remove courses
-          </button>
-
-          {COMING_SOON.length > 0 && (
-            <div className="soon-grid">
-              {COMING_SOON.map((c) => (
-                <div key={c.name} className="soon">
-                  {c.name}
-                  <span className="muted small">soon</span>
+          {level === 'lessons' && (
+            <>
+              <section className="card review-card">
+                <div className="row-between">
+                  <div>
+                    <h2>Review my mistakes</h2>
+                    <p className="muted small">
+                      {due.length ? `${due.length} due today` : cards.length ? `Nothing due. ${cards.length} in your deck.` : 'Wrong answers land here so you can fix them.'}
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
+                <div className="btn-row">
+                  <button className="btn btn-primary" disabled={!due.length} onClick={() => startReview(true)}>
+                    Review {due.length ? `(${Math.min(10, due.length)})` : ''}
+                  </button>
+                  {cards.length > 0 && (
+                    <button className="btn" onClick={() => startReview(false)}>
+                      Practise all
+                    </button>
+                  )}
+                </div>
+                <p className="field-hint">Each right answer in review: +2 XP and +1 heart. Cards you keep getting right come back less often.</p>
+              </section>
+
+              {mine.length === 0 && <p className="muted center">No courses yet. Tap the button below to pick some</p>}
+              {[
+                ['school', 'School'],
+                ['lang', 'Languages'],
+                ['skills', 'Skills & knowledge'],
+              ].map(([key, title]) =>
+                mine.some((c) => sectionOf(c) === key) ? (
+                  <div key={key} className="stack-sm">
+                    <h2 className="section-title">{title}</h2>
+                    {mine
+                      .filter((c) => sectionOf(c) === key)
+                      .map((c) => (
+                        <CourseCard key={c.id} c={c} onOpen={() => setOpen(c.id)} />
+                      ))}
+                  </div>
+                ) : null,
+              )}
+
+              <button className="btn btn-ghost full" onClick={() => setManaging(true)}>
+                <Plus size={16} /> Add or remove courses
+              </button>
+
+              {COMING_SOON.length > 0 && (
+                <div className="soon-grid">
+                  {COMING_SOON.map((c) => (
+                    <div key={c.name} className="soon">
+                      {c.name}
+                      <span className="muted small">soon</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

@@ -6,26 +6,13 @@ import { IT } from './content/it'
 import { ENGLISH } from './content/english'
 import { JAPANESE, KOREAN, MANDARIN, SPANISH, PORTUGUESE, FRENCH, HEBREW } from './content/languages'
 import { ART, CHESS, MUSIC, FINANCE } from './content/skills'
+import { COURSE_LINKS } from './links'
 
 /** Built-in courses. More get added stage by stage. */
-export const COURSES: Course[] = [
-  MATHS,
-  AFRIKAANS,
-  EGD,
-  IT,
-  ENGLISH,
-  JAPANESE,
-  KOREAN,
-  MANDARIN,
-  SPANISH,
-  PORTUGUESE,
-  FRENCH,
-  HEBREW,
-  FINANCE,
-  ART,
-  CHESS,
-  MUSIC,
-]
+export const COURSES: Course[] = ([MATHS, AFRIKAANS, EGD, IT, ENGLISH, JAPANESE, KOREAN, MANDARIN, SPANISH, PORTUGUESE, FRENCH, HEBREW, FINANCE, ART, CHESS, MUSIC] as Course[]).map((c) => ({
+  ...c,
+  links: COURSE_LINKS[c.id],
+}))
 
 /** Shown on the Study home as "coming soon" until their content is written. */
 export const COMING_SOON: { name: string; icon: string; group: 'school' | 'extra' }[] = []

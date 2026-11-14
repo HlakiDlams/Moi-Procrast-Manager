@@ -41,7 +41,7 @@ function Screen({ tab, go }: { tab: TabId; go: (t: TabId) => void }) {
     case 'planner':
       return <PlannerScreen />
     case 'study':
-      return <StudyScreen />
+      return <StudyScreen go={go} />
     case 'selfcare':
       return <SelfCareScreen />
     case 'exercise':
@@ -99,8 +99,8 @@ export default function App() {
   )
 
   const primary = TABS.filter((t) => t.primary)
-  const secondary = TABS.filter((t) => !t.primary)
-  const onSecondary = !def.primary
+  const secondary = TABS.filter((t) => !t.primary && !t.hidden)
+  const onSecondary = !def.primary && !def.hidden
 
   return (
     <ThemeContext.Provider value={theme}>
@@ -150,7 +150,13 @@ export default function App() {
 
         <nav className="bottomnav" aria-label="Main">
           {primary.map((t) => (
-            <button key={t.id} className={'nav-btn' + (tab === t.id ? ' active' : '')} style={theme.tabVars(t.id)} onClick={() => go(t.id)} aria-current={tab === t.id ? 'page' : undefined}>
+            <button
+              key={t.id}
+              className={'nav-btn' + (tab === t.id || (t.id === 'study' && tab === 'homework') ? ' active' : '')}
+              style={theme.tabVars(t.id)}
+              onClick={() => go(t.id)}
+              aria-current={tab === t.id ? 'page' : undefined}
+            >
               <span className="nav-icon">
                 <t.icon size={22} strokeWidth={tab === t.id ? 2.2 : 1.75} />
               </span>
