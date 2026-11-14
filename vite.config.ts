@@ -1,10 +1,12 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import pkg from './package.json' with { type: 'json' }
 
 // https://vite.dev/config/
 export default defineConfig({
   define: {
+    __VERSION__: JSON.stringify(pkg.version.replace(/\.0$/, '')),
     __BUILD__: JSON.stringify(process.env.GITHUB_RUN_NUMBER ?? 'dev'),
     __BUILT_AT__: JSON.stringify(new Date().toISOString().slice(0, 10)),
   },
