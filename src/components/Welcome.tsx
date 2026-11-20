@@ -155,10 +155,11 @@ export default function Welcome({ s }: { s: Settings }) {
               Next <ChevronRight size={16} />
             </button>
             <p className="field-hint center">
-              Everything you enter stays on this device.{' '}
+              Everything you enter stays on this device. By continuing you agree to the{' '}
               <button type="button" className="link-btn small" onClick={() => setLegal(true)}>
-                Privacy and terms
+                EULA and privacy policy
               </button>
+              .
             </p>
             {legal && <Legal onClose={() => setLegal(false)} />}
           </form>

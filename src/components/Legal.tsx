@@ -1,10 +1,12 @@
 import { X } from '../icons'
 import { useState } from 'react'
 
-export const LEGAL_UPDATED = '14 November 2026'
+import { EULA, EULA_EFFECTIVE } from './eula'
+
+export const LEGAL_UPDATED = EULA_EFFECTIVE
 const REPO = 'github.com/HlakiDlams/Moi-Procrast-Manager'
 
-type Tab = 'privacy' | 'terms' | 'licences'
+type Tab = 'privacy' | 'eula' | 'licences'
 
 const LICENCES: [string, string][] = [
   ['React, React DOM', 'MIT'],
@@ -20,17 +22,17 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
   const [tab, setTab] = useState<Tab>(start)
   return (
     <div className="sheet-backdrop modal legal-backdrop" onClick={onClose}>
-      <div className="sheet modal-sheet legal" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Privacy and terms">
+      <div className="sheet modal-sheet legal" onClick={(e) => e.stopPropagation()} role="dialog" aria-label="Privacy, EULA and licences">
         <div className="row-between">
-          <h2>Privacy and terms</h2>
+          <h2>Privacy and EULA</h2>
           <button type="button" className="icon-btn subtle" onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </div>
         <div className="seg seg-3" role="tablist">
-          {(['privacy', 'terms', 'licences'] as const).map((t) => (
+          {(['privacy', 'eula', 'licences'] as const).map((t) => (
             <button type="button" key={t} role="tab" aria-selected={tab === t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>
-              {t === 'privacy' ? 'Privacy' : t === 'terms' ? 'Terms' : 'Licences'}
+              {t === 'privacy' ? 'Privacy' : t === 'eula' ? 'EULA' : 'Open source'}
             </button>
           ))}
         </div>
@@ -95,41 +97,27 @@ export default function Legal({ start = 'privacy', onClose }: { start?: Tab; onC
           </div>
         )}
 
-        {tab === 'terms' && (
+        {tab === 'eula' && (
           <div className="legal-body">
-            <p className="muted small">Last updated {LEGAL_UPDATED}</p>
-            <h3>Using the app</h3>
-            <p>
-              Un-procrast-inator is a free personal study and life planner made by HFactor543 Studios. It is provided as is, with no warranty. There is nothing to buy in the app, so there are no fees,
-              subscriptions or refunds.
-            </p>
-
-            <h3>Study content</h3>
-            <p>
-              Lessons and answers are written to help you revise for South African school subjects, but they can contain mistakes and are not official exam material. Check anything important against
-              your textbook, teacher or past papers. Using the app does not guarantee any result.
-            </p>
-
-            <h3>AI features</h3>
-            <p>
-              Advanced lessons, the Homework Checker and explanations are produced by an AI service (Mistral by default). They can be wrong, so treat them as a study aid, not a final mark. You use
-              these features with your own key, and any cost or limit on that account is yours. Do your own work: use the checker to find and fix mistakes, not to copy answers.
-            </p>
-
-            <h3>Health, body and exercise</h3>
-            <p>
-              BMI, weight ranges, cycle predictions, sleep, steps and workouts are general information and estimates. They are not medical advice, a diagnosis or contraception. Talk to a clinic, nurse
-              or doctor about your health, and stop any exercise that causes pain, dizziness or trouble breathing.
-            </p>
-
-            <h3>Links to other sites</h3>
-            <p>Courses list free outside sites for further study. They open in your browser, are run by other people, and have their own terms and privacy policies.</p>
-
-            <h3>Reminders and alarms</h3>
-            <p>Phones sometimes delay or block notifications to save battery. Do not rely on the app alone for anything critical, such as an exam start time.</p>
-
-            <h3>Your data</h3>
-            <p>Your data lives only on your device. If you lose the device, clear the app's storage or uninstall it without exporting a backup, it cannot be recovered.</p>
+            <h3 style={{ marginTop: 0 }}>Un-procrast-inator: End User License Agreement</h3>
+            <p className="muted small">HFactor543 Studios · Effective {EULA_EFFECTIVE}</p>
+            <p>Please read this agreement before using the Software. By installing or using it, you agree to these terms.</p>
+            {EULA.map((sec) => (
+              <section key={sec.title}>
+                <h3>{sec.title}</h3>
+                {sec.body.map((b, i) =>
+                  typeof b === 'string' ? (
+                    <p key={i}>{b}</p>
+                  ) : (
+                    <ul key={i}>
+                      {b.map((li) => (
+                        <li key={li}>{li}</li>
+                      ))}
+                    </ul>
+                  ),
+                )}
+              </section>
+            ))}
           </div>
         )}
 

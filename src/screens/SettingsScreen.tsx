@@ -263,7 +263,7 @@ export default function SettingsScreen() {
               Send feedback
             </button>
             <button className="btn" style={{ flex: 1 }} onClick={() => setLegal(true)}>
-              Privacy and terms
+              Privacy and EULA
             </button>
           </div>
         </div>
