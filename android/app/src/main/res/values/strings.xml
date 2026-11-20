@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Un-procrast-inator</string>
+    <string name="title_activity_main">Un-procrast-inator</string>
+    <string name="package_name">za.hlaki.planner</string>
+    <string name="custom_url_scheme">za.hlaki.planner</string>
+</resources>
